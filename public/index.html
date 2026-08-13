@@ -72,9 +72,9 @@ header{position:sticky;top:0;z-index:15;background:var(--bg);
   border-bottom:1px solid transparent;transition:border-color .2s, box-shadow .2s}
 header.pegado{border-bottom-color:var(--line)}
 .hrow{display:flex;align-items:center;gap:8px}
-.marca{font:600 13.5px/1 var(--sans);letter-spacing:.19em;text-transform:uppercase;color:var(--ink3)}
-.nav-dia{display:flex;align-items:center;gap:2px;margin-left:auto}
-.nav-dia button{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+.marca{font:600 13px/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--ink3);flex:none}
+.nav-dia{display:flex;align-items:center;gap:1px;margin-left:auto;flex:1;min-width:0;justify-content:flex-end}
+.nav-dia button{width:30px;min-width:30px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;
   color:var(--ink3);font-size:17px;touch-action:manipulation}
 .nav-dia button:active{background:var(--papel2)}
 .nav-dia button[disabled]{opacity:.25}
@@ -84,8 +84,11 @@ header.pegado{border-bottom-color:var(--line)}
 .hoyBtn:active{background:var(--papel2)}
 .futuro .anillo{opacity:.45}
 .futuro .anillo .menos{display:none}
-.dia-txt{font:12.5px/1.25 var(--sans);color:var(--ink3);min-width:98px;text-align:center;padding:0 2px}
-.dia-txt b{display:block;font-weight:600;font-size:13.5px;color:var(--ink)}
+.nav-dia .dia-txt{width:auto;min-width:0;flex:1 1 auto;height:auto;max-width:none;
+  font:11.5px/1.3 var(--sans);color:var(--ink3);text-align:center;padding:0 4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dia-txt b{display:block;font-weight:600;font-size:13.5px;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sync{font:11px/1.3 var(--sans);color:var(--ink3);text-align:right;padding:4px 0 0}
 .sync.mal{color:var(--accent)}
 
@@ -322,6 +325,13 @@ h2,.card{scroll-margin-top:92px}
   font:15px/1 var(--serif);color:var(--ink3);background:var(--paper);touch-action:manipulation}
 .tipoSel button.on{border-color:var(--ink2);color:var(--ink);background:var(--papel2)}
 .apRegla{margin-top:6px}
+.terna{margin-top:2px}
+.terna details{border-bottom:1px solid var(--line2)}
+.terna details:last-child{border-bottom:none}
+.terna summary{padding:12px 0;font-size:15px;color:var(--ink2)}
+.terna summary .n{color:var(--ink3)}
+.terna details[open] summary{color:var(--ink);font-weight:600}
+.terna .body{padding:0 0 14px;font-size:14.5px}
 
 /* ---------- semana ---------- */
 .sfila{border-bottom:1px solid var(--line2);padding:13px 0}
@@ -1544,6 +1554,41 @@ function etiquetaDia(f){
 function q(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
 
 
+
+/* ---------------- las tres reglas del día ----------------
+   Rotación determinista: la misma terna todo el día, distinta cada día,
+   recorriendo el documento entero sin repetir antes de agotarlo. */
+var PLANAS=null;
+function planas(){
+  if(PLANAS) return PLANAS;
+  PLANAS=[];
+  REGLAS.forEach(function(sec){ sec[1].forEach(function(r){ PLANAS.push(r); }); });
+  return PLANAS;
+}
+function ternaDe(f){
+  var L=planas(), N=L.length;
+  var d=Math.floor(new Date(f+'T12:00:00').getTime()/86400000);
+  var out=[], vistos={};
+  for(var j=0; out.length<3 && j<N; j++){
+    var i=((d*3 + j) * 7919) % N;      // 7919 primo: recorre toda la lista
+    if(vistos[i]) continue;
+    vistos[i]=1; out.push(L[i]);
+  }
+  return out;
+}
+/* lo que el calendario del documento pide ese día concreto */
+var AGENDA={
+  0:[['3.7','Compra de la semana con lista'],['—','Una tarde con todo apagado']],
+  6:[['—','Dos horas fuera, sin destino ni ruta'],['—','Un rato de taller: algo que salga mal a la primera'],
+     ['8.5','Un rato solo, elegido y sin plan'],['3.6','Vaciar la bolsa de salida']]
+};
+function agendaDe(f){
+  var d=new Date(f+'T12:00:00');
+  var a=(AGENDA[d.getDay()]||[]).slice();
+  if(d.getDate()===1) a.push(['6.6','Quince minutos de cuentas']);
+  return a;
+}
+
 /* ---------------- la página del día ---------------- */
 function vencimientos(){
   var v=[];
@@ -1627,19 +1672,25 @@ function pintarLog(){
       '" enterkeyhint="done" autocomplete="off">'+
     '<button class="btn sm" data-act="apAdd()">Añadir</button></div>';
 
-  /* ---- las reglas que tocan hoy ---- */
-  var rt=ritosDe(f), hechos=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
-  var porVenir = dias(f)<0;
-  html+='<div class="sep">Del documento'+(porVenir? ' · lo que pedirá ese día'
-        : ' · '+hechos+' de '+rt.length)+'</div>';
-  html+=rt.map(function(r){
-    var ok=ritoHecho(f,r.k);
-    return '<div class="ap rito'+(ok?' ok':'')+(porVenir?' lejos':'')+'">'+
-      '<button class="glifo" data-act="togRito('+q(f)+','+q(r.k)+')" aria-label="Marcar">'+
-        (ok?'◆':'◇')+'</button>'+
-      '<div class="txt">'+esc(r.t)+
-        (/^\d/.test(r.k)?'<span class="ref">'+r.k+'</span>':'')+'</div></div>';
-  }).join('');
+  /* ---- lo que el calendario pide ese día ---- */
+  var ag=agendaDe(f);
+  if(ag.length){
+    html+='<div class="sep">Hoy además</div>';
+    html+=ag.map(function(o){
+      return '<div class="ap rito"><span class="glifo">·</span><div class="txt">'+esc(o[1])+
+        (o[0]!=='—'?'<span class="ref">'+o[0]+'</span>':'')+'</div></div>';
+    }).join('');
+  }
+
+  /* ---- tres reglas del documento, rotando ---- */
+  var tr=ternaDe(f);
+  html+='<div class="sep">Del documento · tres al día</div>';
+  html+='<div class="terna">'+tr.map(function(r){
+    return '<details><summary><span>'+esc(r[1])+'</span><span class="n">'+r[0]+'</span></summary>'+
+      '<div class="body">'+esc(r[2])+
+      '<div class="apRegla"><button class="btn sm" data-act="apuntarRegla('+q(r[0])+','+q(r[1])+')">'+
+      'Apuntar hoy</button></div></div></details>';
+  }).join('')+'</div>';
 
   document.getElementById('logCard').innerHTML=html;
   document.getElementById('hLog').firstChild.textContent =
@@ -1648,8 +1699,7 @@ function pintarLog(){
      : dias(f)===-1 ? 'La página de mañana'
      : 'La página del '+fmt(f))+' ';
 
-  var pend=arr.filter(function(a){ return a.t==='t' && a.e===0; }).length +
-           (porVenir? 0 : rt.length-hechos);
+  var pend=arr.filter(function(a){ return a.t==='t' && a.e===0; }).length;
   document.getElementById('logN').textContent = pend? pend+' sin cerrar' : (n? 'todo cerrado' : '');
 }
 
@@ -1710,6 +1760,19 @@ function lunesDe(f){
   d.setDate(d.getDate()-((d.getDay()+6)%7));
   return iso(d);
 }
+function numSemana(f){
+  var d=new Date(lunesDe(f)+'T12:00:00'), y=d.getFullYear();
+  var ene=new Date(y,0,4);
+  return 1+Math.round(((d-ene)/86400000 - 3 + ((ene.getDay()+6)%7))/7);
+}
+function rangoSemana(lu){
+  var a=new Date(lu+'T12:00:00'), b=new Date(menos(-6,lu)+'T12:00:00');
+  var mesA=a.toLocaleDateString('es-ES',{month:'short'}).replace('.',''),
+      mesB=b.toLocaleDateString('es-ES',{month:'short'}).replace('.','');
+  return a.getMonth()===b.getMonth()
+    ? a.getDate()+'–'+b.getDate()+' '+mesB
+    : a.getDate()+' '+mesA+' – '+b.getDate()+' '+mesB;
+}
 function claveSemana(f){
   var d=new Date(lunesDe(f)+'T12:00:00'), y=d.getFullYear();
   var ene=new Date(y,0,4);
@@ -1728,7 +1791,8 @@ function pintarSemana(){
 
   // intención de la semana
   document.getElementById('semIntencion').innerHTML=
-    '<div class="tiny" style="margin-bottom:2px">Lo que importa esta semana · '+cl.slice(-3).replace('W','semana ')+'</div>'+
+    '<div class="tiny" style="margin-bottom:2px">Lo que importa · semana '+numSemana(lun)+
+      ' · '+rangoSemana(lun)+'</div>'+
     '<input type="text" id="intTxt" class="cosa" placeholder="Una sola cosa, también aquí" '+
       'value="'+esc(S.semanas[cl]||'')+'" enterkeyhint="done">'+
     '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="guardarIntencion()">Guardar</button>'+
@@ -1763,9 +1827,6 @@ function pintarSemana(){
     var esH = f===hoyISO(), porVenir = f>hoyISO();
     var pts=porVenir? '' : ANILLOS.map(function(a){
       return '<i style="'+((d[a.k]||0)>=a.meta()?'background:'+a.col:'')+'"></i>'; }).join('');
-    var rt=ritosDe(f), rh=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
-    if(rh) pts+='<i style="background:transparent;width:auto;border-radius:0;'+
-      'font:10px/1 var(--sans);color:var(--ink3);margin-left:4px">◆'+rh+'</i>';
     var cosaD = (S.hoy && S.hoy.fecha===f) ? '<div class="sitem'+(S.hoy.hecho?' hecha':'')+
       '"><span class="g">★</span><span>'+esc(S.hoy.texto)+'</span></div>' : '';
     var items = cosaD + (arr.length ? arr.map(function(a){
@@ -1811,20 +1872,15 @@ function pintarMes(){
   for(var i=1;i<=ult;i++){
     var f=pre+String(i).padStart(2,'0');
     if(S.dias[f] && esBueno(S.dias[f])) buenos++;
-    if(f<=hoyISO()){
-      var rt=ritosDe(f); ritosTot+=rt.length;
-      ritosOk+=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
-    }
     leerEnts(f).forEach(function(a){
       if(a.t!=='t') return;
       if(a.e===1) cerradas++; else if(a.e===0) abiertas++;
     });
   }
-  var pcRitos = ritosTot? Math.round(ritosOk/ritosTot*100) : 0;
   document.getElementById('mesResumen').innerHTML=
     '<div><div class="n">'+buenos+'</div><div class="tiny">días buenos</div></div>'+
-    '<div><div class="n">'+pcRitos+'%</div><div class="tiny">del documento</div></div>'+
-    '<div><div class="n">'+cerradas+'</div><div class="tiny">tareas cerradas</div></div>';
+    '<div><div class="n">'+cerradas+'</div><div class="tiny">tareas cerradas</div></div>'+
+    '<div><div class="n">'+abiertas+'</div><div class="tiny">sin cerrar</div></div>';
 
   /* --- rejilla --- */
   document.getElementById('mesCab').innerHTML=
@@ -1974,18 +2030,20 @@ function render(){
     t.innerHTML='<b>'+mayus(MESES_L[bm.getMonth()])+'</b>'+
       (enHoy?'este mes':(bm.getFullYear()!==new Date().getFullYear()? bm.getFullYear():'&nbsp;'));
   } else if(vista==='semana'){
-    var lu=lunesDe(fechaVista), do_=menos(-6,lu), lh=lunesDe(hoyISO());
+    var lu=lunesDe(fechaVista), lh=lunesDe(hoyISO());
     enHoy = lu===lh;
     var rel = enHoy? 'Esta semana'
             : lu===menos(7,lh)? 'Semana pasada'
-            : lu===menos(-7,lh)? 'Semana que viene' : 'Semana';
-    t.innerHTML='<b>'+rel+'</b>'+fmt(lu)+' – '+fmt(do_);
+            : lu===menos(-7,lh)? 'Semana que viene' : 'Semana '+numSemana(lu);
+    var sub = /^Semana \d/.test(rel)? rangoSemana(lu) : 'S'+numSemana(lu)+' · '+rangoSemana(lu);
+    t.innerHTML='<b>'+rel+'</b>'+sub;
   } else {
     enHoy = d0===0;
     t.innerHTML = d0===0 ? '<b>Hoy</b>'+new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'})
       : d0===1  ? '<b>Ayer</b>'+fmt(fechaVista)
       : d0===-1 ? '<b>Mañana</b>'+fmt(fechaVista)
-      : '<b>'+mayus(fmtLargo(fechaVista).replace(/,.*/,'').replace(/\.$/,''))+'</b>'+fmt(fechaVista);
+      : '<b>'+mayus(fmtLargo(fechaVista).replace(/,.*/,'').replace(/\.$/,''))+'</b>'+
+        fmt(fechaVista)+' · S'+numSemana(fechaVista);
   }
   document.getElementById('btnSig').disabled = false;
   document.getElementById('btnHoy').classList.toggle('hidden', enHoy);
