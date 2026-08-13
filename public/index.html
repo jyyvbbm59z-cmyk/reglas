@@ -159,21 +159,21 @@ nav button.on .punto{opacity:1}
 nav button{position:relative}
 
 /* ---------- anillos ---------- */
-.anillos{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.anillos{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
 .anillo{position:relative;text-align:center;padding:2px 0 0;touch-action:manipulation;
   border-radius:12px;transition:background .15s}
 .anillo:active{background:var(--papel2)}
 .anillo svg{display:block;margin:0 auto;overflow:visible}
-.anillo .tr{fill:none;stroke:var(--vacio);stroke-width:6.5}
-.anillo .pr{fill:none;stroke-width:6.5;stroke-linecap:round;
+.anillo .tr{fill:none;stroke:var(--vacio);stroke-width:5.5}
+.anillo .pr{fill:none;stroke-width:5.5;stroke-linecap:round;
   transform:rotate(-90deg);transform-origin:50% 50%;
   transition:stroke-dashoffset .6s cubic-bezier(.34,1.4,.5,1)}
-.anillo .val{font:600 13px/1 var(--sans);fill:var(--ink3)}
+.anillo .val{font:600 11.5px/1 var(--sans);fill:var(--ink3)}
 .anillo.full .val{fill:var(--ink)}
-.anillo .lb{display:block;font:9.5px/1.2 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  color:var(--ink3);margin-top:7px}
+.anillo .lb{display:block;font:9px/1.2 var(--sans);letter-spacing:.02em;text-transform:uppercase;
+  color:var(--ink3);margin-top:6px}
 .anillo.full .lb{color:var(--ink);font-weight:600}
-.menos{position:absolute;top:0;right:calc(50% - 40px);width:22px;height:22px;border-radius:50%;
+.menos{position:absolute;top:-1px;right:calc(50% - 33px);width:20px;height:20px;border-radius:50%;
   display:grid;place-items:center;font-size:14px;line-height:1;color:var(--ink3);
   background:var(--bg);border:1px solid var(--line);opacity:0;transform:scale(.6);
   transition:opacity .2s, transform .2s}
@@ -182,7 +182,7 @@ nav button{position:relative}
 @keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.16)}100%{transform:scale(1)}}
 @keyframes halo{0%{opacity:.5;transform:scale(.8)}100%{opacity:0;transform:scale(1.75)}}
 .anillo.pop svg{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
-.glow{position:absolute;left:50%;top:36px;width:58px;height:58px;margin:-29px 0 0 -29px;
+.glow{position:absolute;left:50%;top:31px;width:50px;height:50px;margin:-25px 0 0 -25px;
   border-radius:50%;pointer-events:none;opacity:0}
 .anillo.pop .glow{animation:halo .65s ease-out}
 
@@ -384,7 +384,7 @@ h2,.card{scroll-margin-top:92px}
 #sheet .asa{width:38px;height:4px;border-radius:2px;background:var(--line);margin:6px auto 14px}
 #sheet h4{font:600 12px/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;
   color:var(--ink3);margin:0 0 4px}
-#sheet .op{display:flex;align-items:center;gap:12px;width:100%;padding:14px 0;
+#sheet .op{display:flex;align-items:center;gap:13px;width:100%;padding:14px 0;
   border-bottom:1px solid var(--line2);font-size:16px;text-align:left;touch-action:manipulation}
 #sheet .op:last-of-type{border-bottom:none}
 #sheet .op .der{margin-left:auto;font:12.5px/1 var(--sans);color:var(--ink3)}
@@ -458,6 +458,8 @@ h2,.card{scroll-margin-top:92px}
       <div class="anillos" id="anillos"></div>
       <div class="consejo" id="consejo"></div>
       <div class="tiny ayer" id="ayer"></div>
+
+      <div class="tiny" style="margin-top:9px">Zero es el cierre del día: cocina recogida, superficies despejadas, todo en su sitio (3.1 · 3.2 · 3.4).</div>
 
       <div class="marcador">
         <div>
@@ -573,8 +575,6 @@ h2,.card{scroll-margin-top:92px}
     <div class="card">
       <div class="row between" style="margin-bottom:8px"><span class="muted">Vasos de agua al día</span>
         <input type="number" inputmode="numeric" id="mAgua" style="width:66px;text-align:right" data-chg="guardarMetas()"></div>
-      <div class="row between" style="margin-bottom:8px"><span class="muted">Comidas sentadas al día</span>
-        <input type="number" inputmode="numeric" id="mComida" style="width:66px;text-align:right" data-chg="guardarMetas()"></div>
       <div class="row between"><span class="muted">Hora de acostarse</span>
         <input type="text" id="mHora" style="width:82px;text-align:right" placeholder="23:30" data-chg="guardarMetas()"></div>
       <div class="tiny" style="margin-top:11px">7.1 · Se fija la hora de irse a la cama y la noche se organiza hacia atrás desde ahí.</div>
@@ -839,7 +839,7 @@ var ANILLOS=[
 ];
 function dia(iso){ if(!S.dias[iso]) S.dias[iso]={agua:0,comida:0,mov:0,sueno:0}; return S.dias[iso]; }
 function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
-function esBueno(d){ return completos(d) >= 3; }
+function esBueno(d){ return completos(d) >= 3; }   // tres de cinco; cinco es día redondo
 function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
 
 var animar=null;
@@ -855,7 +855,7 @@ function anillo(k,delta){
 }
 function celebrar(){
   var el=document.getElementById('baseMsg');
-  el.innerHTML='<span class="celebra" style="color:var(--mov)">Día bueno número '+totalBuenos()+'. Tres de cuatro.</span>';
+  el.innerHTML='<span class="celebra" style="color:var(--mov)">Día bueno número '+totalBuenos()+'. Tres de cinco.</span>';
   if(navigator.vibrate) try{ navigator.vibrate([12,50,12]); }catch(e){}
 }
 function pintarAnillos(){
@@ -878,10 +878,10 @@ function pintarAnillos(){
   var el=document.getElementById('baseMsg');
   if(el.querySelector('.celebra') && c<3) el.innerHTML='';
   if(!el.querySelector('.celebra')){
-    el.textContent = c===4 ? 'Los cuatro. Nada que añadir.'
+    el.textContent = c===5 ? 'Los cinco. Nada que añadir.'
       : c===3 ? 'Día bueno. El cuarto es de propina.'
       : c===0 ? 'Toca el anillo para sumar. Agua es lo más barato de arreglar.'
-      : 'Vas por '+c+' de 4. Con tres, el día ya cuenta.';
+      : 'Vas por '+c+' de 5. Con tres, el día ya cuenta.';
   }
 
   document.getElementById('numBuenos').textContent = totalBuenos();
@@ -920,24 +920,66 @@ function irDia(n){
 }
 
 /* ---------------- la base ---------------- */
-var ANILLOS=[
- {k:'agua',   lb:'Agua',       col:'var(--agua)',   meta:function(){return Math.max(1,S.metas.agua||8)}},
- {k:'comida', lb:'Comida',     col:'var(--comida)', meta:function(){return Math.max(1,S.metas.comida||3)}},
- {k:'mov',    lb:'Movimiento', col:'var(--mov)',    meta:function(){return 1}},
- {k:'sueno',  lb:'Sueño',      col:'var(--sueno)',  meta:function(){return 1}}
+var COMIDA_Q=[
+  {k:'v', t:'¿Verdura en dos comidas?'},
+  {k:'p', t:'¿Nada de paquete?'},
+  {k:'s', t:'¿Sentado y sin pantalla?'}
 ];
-function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0}; return S.dias[f]; }
-function leer(f){ return S.dias[f] || {agua:0,comida:0,mov:0,sueno:0}; }
+var ANILLOS=[
+ {k:'agua',   lb:'Agua',   tipo:'cuenta', col:'var(--agua)',
+  meta:function(){ return Math.max(1,S.metas.agua||8); }},
+ {k:'comida', lb:'Comida', tipo:'lista',  col:'var(--comida)', meta:function(){ return 1; }},
+ {k:'mov',    lb:'Mover',  tipo:'si',     col:'var(--mov)',    meta:function(){ return 1; }},
+ {k:'sueno',  lb:'Sueño',  tipo:'si',     col:'var(--sueno)',  meta:function(){ return 1; }},
+ {k:'zero',   lb:'Zero',   tipo:'si',     col:'var(--zero)',   meta:function(){ return 1; }}
+];
+/* comida: se cierra con dos síes de tres (misma lógica que el 2.1) */
+function comidaSi(f){ return (leer(f).cq||[]).length; }
+function togComida(f,k){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f); d.cq=d.cq||[];
+  var i=d.cq.indexOf(k);
+  if(i>=0) d.cq.splice(i,1); else d.cq.push(k);
+  var antes=d.comida>=1;
+  d.comida = d.cq.length>=2 ? 1 : 0;
+  if(!antes && d.comida) animar='comida';
+  var eraBueno=false;
+  persist(); hojaComida(f); render();
+}
+function hojaComida(f){
+  var d=leer(f), n=(d.cq||[]).length;
+  abrirSheet('<h4>La comida de '+etiquetaDia(f).toLowerCase()+'</h4>'+
+    '<p class="muted" style="margin:2px 0 12px">Con dos de tres, el anillo cierra.</p>'+
+    COMIDA_Q.map(function(q){
+      var ok=(d.cq||[]).indexOf(q.k)>=0;
+      return '<button class="op" data-act="togComida('+qq(f)+','+qq(q.k)+')">'+
+        '<span class="chk '+(ok?'on':'')+'">'+(ok?'✓':'')+'</span><span>'+q.t+'</span></button>';
+    }).join('')+
+    '<div class="note" style="margin:14px 0 4px'+(n>=2?';border-color:var(--comida);color:var(--comida)':'')+'">'+
+      (n>=2? 'Cerrado. Con dos basta; el tercero es de propina.'
+           : n+' de 3. Con dos, el anillo cierra.')+'</div>'+
+    '<div class="tiny" style="margin-bottom:8px">Si viene en bolsa y se come sin plato, no cuenta como comida.</div>');
+}
+function qq(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
+function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[]};
+  if(S.dias[f].zero===undefined) S.dias[f].zero=0;
+  if(!S.dias[f].cq) S.dias[f].cq=[];
+  return S.dias[f]; }
+function leer(f){ return S.dias[f] || {agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[]}; }
 function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
-function esBueno(d){ return completos(d) >= 3; }
+function esBueno(d){ return completos(d) >= 3; }   // tres de cinco; cinco es día redondo
 function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
 
 var animar=null;
 function anillo(k,delta){
   if(dias(fechaVista)<0){ avisar('Ese día todavía no ha llegado.'); return; }
-  var d=dia(fechaVista), a=ANILLOS.filter(function(x){return x.k===k})[0];
+  var a=ANILLOS.filter(function(x){return x.k===k})[0];
+  if(a.tipo==='lista'){ if(delta>0) hojaComida(fechaVista); return; }
+  var d=dia(fechaVista);
   var antes=(d[k]||0)>=a.meta(), eraBueno=esBueno(d);
-  var v=Math.max(0, Math.min(a.meta(), (d[k]||0)+delta));
+  var v;
+  if(a.tipo==='si') v = delta>0 ? ((d[k]||0)?0:1) : 0;
+  else v = Math.max(0, Math.min(a.meta(), (d[k]||0)+delta));
   if(v===(d[k]||0)) return;
   d[k]=v;
   if(!antes && v>=a.meta()) animar=k;
@@ -947,7 +989,7 @@ function anillo(k,delta){
 function festejar(){
   var el=document.getElementById('consejo');
   el.innerHTML='<span class="ico" style="background:var(--mov)"></span>'+
-    '<b>Día bueno número '+totalBuenos()+'.</b> Tres de cuatro, que es lo que hace falta.';
+    '<b>Día bueno número '+totalBuenos()+'.</b> Tres de cinco, que es lo que hace falta.';
   el.dataset.fijo='1';
   if(navigator.vibrate){ try{ navigator.vibrate([10,45,14]); }catch(e){} }
 }
@@ -964,12 +1006,12 @@ function consejo(){
             'var(--ink3)'];
   }
   if(!esHoy()){
-    if(c===4) return ['Los cuatro. Día redondo.','var(--mov)'];
+    if(c===5) return ['Los cinco. Día redondo.','var(--mov)'];
     if(c>=3)  return ['Día bueno. Ya cuenta.','var(--mov)'];
     return ['Estás rellenando un día pasado. Toca los anillos que sí hiciste.','var(--ink3)'];
   }
-  if(c===4) return ['Los cuatro cerrados. No hay nada más que hacer hoy.','var(--mov)'];
-  if(c===3) return ['El día ya cuenta. El cuarto, si sale, es de propina.','var(--mov)'];
+  if(c===5) return ['Los cinco cerrados. Día redondo, no hay más que hacer.','var(--mov)'];
+  if(c>=3) return ['El día ya cuenta. Lo que salga de aquí es de propina.','var(--mov)'];
 
   // el que está más cerca de cerrarse
   var cerca=faltan.slice().sort(function(a,b){
@@ -978,6 +1020,12 @@ function consejo(){
   var falta_sueno = faltan.some(function(a){return a.k==='sueno'});
   var falta_mov = faltan.some(function(a){return a.k==='mov'});
 
+  var falta_zero = faltan.some(function(a){return a.k==='zero'});
+  var falta_com  = faltan.some(function(a){return a.k==='comida'});
+  if(h>=21 && falta_zero && !falta_sueno)
+    return ['Antes de dormir: cocina cerrada, superficies despejadas, todo a su sitio. Eso es el Zero.','var(--zero)'];
+  if(h>=14 && falta_com && (d.cq||[]).length===0)
+    return ['La comida del día está sin juzgar. Toca el anillo: con dos de tres cierra.','var(--comida)'];
   if(h<11 && falta_agua && (d.agua||0)===0)
     return ['Un vaso de agua antes que cualquier pantalla. Es lo más barato del día.','var(--agua)'];
   if(h>=21 && falta_sueno)
@@ -1003,19 +1051,24 @@ function compAyer(){
 
 /* ---------------- pintar los anillos ---------------- */
 function pintarAnillos(){
-  var d=leer(fechaVista), R=25.5, C=2*Math.PI*R;
+  var d=leer(fechaVista), R=21, C=2*Math.PI*R;
   document.getElementById('anillos').innerHTML = ANILLOS.map(function(a){
-    var v=d[a.k]||0, m=a.meta(), p=Math.min(1,v/m), full=v>=m;
-    return '<div class="anillo'+(full?' full':'')+(v>0?' tiene':'')+(animar===a.k?' pop':'')+
-      '" data-k="'+a.k+'" role="button" tabindex="0" aria-label="'+a.lb+' '+v+' de '+m+'">'+
+    var v=d[a.k]||0, m=a.meta(), full=v>=m, p=Math.min(1,v/m), txt;
+    if(a.tipo==='lista'){
+      var n=(d.cq||[]).length; p=Math.min(1,n/2); full=n>=2;
+      txt = full? '✓' : n+'/2';
+    } else if(a.tipo==='si'){ txt = full? '✓' : '·'; }
+    else { txt = full? '✓' : v+'/'+m; }
+    return '<div class="anillo'+(full?' full':'')+(v>0&&a.tipo==='cuenta'?' tiene':'')+
+      (animar===a.k?' pop':'')+'" data-k="'+a.k+'" role="button" tabindex="0" '+
+      'aria-label="'+a.lb+', '+(full?'cerrado':'abierto')+'">'+
       '<div class="glow" style="background:'+a.col+'"></div>'+
       '<button class="menos" tabindex="-1" aria-label="Quitar uno de '+a.lb+'">−</button>'+
-      '<svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">'+
-        '<circle class="tr" cx="32" cy="32" r="'+R+'"></circle>'+
-        '<circle class="pr" cx="32" cy="32" r="'+R+'" stroke="'+a.col+'" '+
+      '<svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">'+
+        '<circle class="tr" cx="27" cy="27" r="'+R+'"></circle>'+
+        '<circle class="pr" cx="27" cy="27" r="'+R+'" stroke="'+a.col+'" '+
           'stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"></circle>'+
-        '<text class="val" x="32" y="36.5" text-anchor="middle">'+
-          (full?'✓':(m>1? v+'/'+m : '·'))+'</text>'+
+        '<text class="val" x="27" y="31" text-anchor="middle">'+txt+'</text>'+
       '</svg><span class="lb">'+a.lb+'</span></div>';
   }).join('');
   animar=null;
@@ -1101,6 +1154,8 @@ function pintarCierre(){
       '<input type="text" id="c1" placeholder="Un hecho, sin adjetivos"></div>'+
     '<div style="margin-bottom:14px"><div class="tiny">¿Dónde acerté el foco?</div><input type="text" id="c2"></div>'+
     '<div style="margin-bottom:14px"><div class="tiny">¿Qué asumí bien?</div><input type="text" id="c3"></div>'+
+    '<div class="note" style="margin-top:0">Antes de cerrar: ¿queda la cocina como te gustaría encontrarla? '+
+      'Si sí, el anillo Zero es tuyo.</div>'+
     '<div style="margin-bottom:18px"><div class="tiny">La cosa de mañana</div>'+
       '<input type="text" id="cman" class="cosa" placeholder="Una sola, terminable"></div>'+
     '<button class="btn primary full" data-act="cerrarDia()">Cerrar el día</button>'+
@@ -1119,7 +1174,7 @@ function cerrarDia(){
   var msg = bueno
     ? '<div class="note" style="border-color:var(--mov);color:var(--mov);margin-bottom:0">'+
       'Día bueno número '+totalBuenos()+'.'+(man?' Mañana ya tiene su cosa.':'')+'</div>'
-    : '<div class="note" style="margin-bottom:0">Cerrado con '+c+' de 4. No resta nada: mañana empieza igual que cualquier otro día.'+
+    : '<div class="note" style="margin-bottom:0">Cerrado con '+c+' de 5. No resta nada: mañana empieza igual que cualquier otro día.'+
       (man?' Su cosa ya está escrita.':'')+'</div>';
   var box=document.getElementById('cierreCard');
   box.innerHTML='<div class="muted" style="margin-bottom:10px">Día cerrado.</div>'+msg;
@@ -1401,7 +1456,7 @@ function renderAvance(){
 
   var conAlgo=Object.keys(S.dias).filter(function(f){ return completos(S.dias[f])>0; }).length;
   document.getElementById('mapaPie').textContent = conAlgo
-    ? 'Cada cuadro es un día. Cuanto más lleno, más anillos: el más oscuro son los cuatro.'
+    ? 'Cada cuadro es un día. Cuanto más lleno, más anillos: el más oscuro son los cinco.'
     : 'Cada cuadro es un día. Se irán llenando solos.';
 
   var html='', flojo=null, peor=101;
@@ -1422,8 +1477,8 @@ function renderAvance(){
   document.getElementById('filas').innerHTML=html;
 
   var dg=document.getElementById('diagnostico');
-  if(!flojo) dg.textContent='Cuando lleves unos días, aquí te diré cuál de los cuatro te está fallando.';
-  else if(peor>=70) dg.textContent='Los cuatro por encima del 70 %. No hay nada que arreglar: sostén.';
+  if(!flojo) dg.textContent='Cuando lleves unos días, aquí te diré cuál de los cinco te está fallando.';
+  else if(peor>=70) dg.textContent='Los cinco por encima del 70 %. No hay nada que arreglar: sostén.';
   else dg.innerHTML='El que más te falla es <b style="color:'+flojo.col+'">'+flojo.lb.toLowerCase()+
     '</b>, con un '+peor+' %. Si vas a cambiar una sola cosa esta semana, que sea esa.';
 }
@@ -1842,7 +1897,6 @@ function tema(t){
 /* ---------------- ajustes y datos ---------------- */
 function guardarMetas(){
   S.metas.agua=Math.max(1,+document.getElementById('mAgua').value||8);
-  S.metas.comida=Math.max(1,+document.getElementById('mComida').value||3);
   S.metas.hora=document.getElementById('mHora').value;
   S.umbral=+document.getElementById('umbral').value||100;
   S.borrar=document.getElementById('borrar').value;
@@ -1882,8 +1936,8 @@ function estado(){
 /* ---------------- bienvenida ---------------- */
 var HOLA=[
  ['Esto no es una app de productividad.','No sirve para hacer más cosas. Sirve para que la vida quepa en el día sin tener que negociarla cada mañana.'],
- ['Cuatro anillos y ya.','Agua, comida, movimiento, sueño. Tocas el anillo y suma; si te pasas, la esquina resta. Mantén pulsado para ir rápido.'],
- ['Tres de cuatro es un día bueno.','El contador solo sube y nunca se reinicia. Fallar un día no resta nada: ese día simplemente no cuenta. Se puede suspender todo, sin culpa.']
+ ['Cinco anillos y ya.','Agua, comida, mover, sueño y Zero. El agua se toca y suma —mantén pulsado para ir rápido—; la comida abre tres preguntas; el resto es un toque.'],
+ ['Tres de cinco es un día bueno.','El contador solo sube y nunca se reinicia. Fallar un día no resta nada: ese día simplemente no cuenta. Se puede suspender todo, sin culpa.']
 ];
 var holaI=0;
 function pintarHola(){
@@ -1948,7 +2002,6 @@ function seguir(){
   renderAvance();
 
   document.getElementById('mAgua').value=S.metas.agua;
-  document.getElementById('mComida').value=S.metas.comida;
   document.getElementById('mHora').value=S.metas.hora||'';
   document.getElementById('umbral').value=S.umbral;
   document.getElementById('borrar').value=S.borrar||'';
