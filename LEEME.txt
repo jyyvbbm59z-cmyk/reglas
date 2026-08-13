@@ -1,0 +1,72 @@
+REGLAS — cómo ponerla en el iPhone
+==================================
+
+Esta carpeta contiene un solo archivo: index.html
+No lo renombres. GitHub busca ese nombre exacto.
+
+
+PARTE 1 — Publicarla (ordenador, 10 minutos, una sola vez)
+----------------------------------------------------------
+
+ 1. Ve a github.com y crea una cuenta si no la tienes. Gratis.
+
+ 2. Arriba a la derecha, el botón "+" → "New repository".
+
+ 3. Rellena:
+       Repository name:  reglas
+       Público (Public) — tiene que ser público para que Pages funcione gratis
+    No marques nada más. Botón verde "Create repository".
+
+ 4. En la página que sale, pincha en el enlace
+       "uploading an existing file"
+    (está en la frase gris del medio: "…or upload an existing file")
+
+ 5. Arrastra el archivo index.html a la zona de la pantalla.
+    Abajo, botón verde "Commit changes".
+
+ 6. Arriba del repositorio: pestaña "Settings" (el engranaje).
+    En la columna de la izquierda, baja hasta "Pages".
+
+ 7. En "Branch", donde pone "None", elige "main".
+    Deja la carpeta en "/ (root)". Botón "Save".
+
+ 8. Espera un minuto y recarga esa misma página. Aparecerá arriba:
+       "Your site is live at https://TUNOMBRE.github.io/reglas/"
+    Esa es tu dirección. Cópiala.
+
+
+PARTE 2 — Instalarla en el iPhone (1 minuto)
+---------------------------------------------
+
+ 1. Abre SAFARI en el iPhone. Tiene que ser Safari.
+    Chrome no ofrece esta opción en iPhone.
+
+ 2. Escribe la dirección de arriba.
+
+ 3. Abajo en el centro, el botón Compartir
+    (el cuadrado con una flecha hacia arriba).
+
+ 4. Baja en la lista hasta "Añadir a pantalla de inicio".
+
+ 5. Toca "Añadir" arriba a la derecha.
+
+Ya está. Aparece el icono en la pantalla de inicio y se abre
+a pantalla completa, sin barra del navegador.
+
+
+COSAS QUE CONVIENE SABER
+-------------------------
+
+· Los datos se guardan en tu iPhone, no en GitHub. Aunque el
+  repositorio sea público, nadie ve lo que escribes: en internet
+  solo está la app vacía.
+
+· Funciona sin conexión una vez cargada. Si no carga en un túnel,
+  ciérrala y ábrela de nuevo con cobertura.
+
+· De vez en cuando: pestaña "Más" → "Exportar copia". Se guarda un
+  archivo con tus listas. Es tu única copia de seguridad.
+
+· Para cambiar algo de la app en el futuro: en GitHub, entra en
+  index.html, el lápiz de editar, y "Commit changes". En dos
+  minutos está actualizado en el móvil.
