@@ -79,7 +79,7 @@ header.pegado{border-bottom-color:var(--line)}
 .nav-dia button:active{background:var(--papel2)}
 .nav-dia button[disabled]{opacity:.25}
 .dia-txt{font:12.5px/1.25 var(--sans);color:var(--ink3);min-width:98px;text-align:center;padding:0 2px}
-.dia-txt b{display:block;font-weight:600;font-size:13.5px;color:var(--ink);text-transform:capitalize}
+.dia-txt b{display:block;font-weight:600;font-size:13.5px;color:var(--ink)}
 .sync{font:11px/1.3 var(--sans);color:var(--ink3);text-align:right;padding:4px 0 0}
 .sync.mal{color:var(--accent)}
 
@@ -242,7 +242,8 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 .filaR .pc{font:600 13px/1 var(--sans);width:42px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 
 /* ---------- segmentado ---------- */
-.segm{display:flex;background:var(--papel2);border-radius:10px;padding:3px;gap:3px}
+.segm{display:flex;background:var(--papel2);border-radius:10px;padding:3px;gap:3px;scroll-margin-top:92px}
+h2,.card{scroll-margin-top:92px}
 .segm button{flex:1;padding:9px 0;border-radius:8px;font:13px/1 var(--sans);color:var(--ink2);
   touch-action:manipulation;transition:background .15s,color .15s}
 .segm button.on{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:var(--sombra)}
@@ -268,6 +269,64 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 #hola .pasos i{width:6px;height:6px;border-radius:50%;background:var(--vacio)}
 #hola .pasos i.on{background:var(--ink2);width:18px;border-radius:3px}
 
+/* ---------- diario ---------- */
+.altas{display:flex;gap:7px;margin-bottom:10px}
+.altas button{flex:1;padding:9px 0;border:1px solid var(--line);border-radius:9px;
+  font:13px/1 var(--sans);color:var(--ink3);background:var(--paper);touch-action:manipulation}
+.altas button.on{border-color:var(--ink2);color:var(--ink);font-weight:600}
+.altas .g{font-family:var(--serif);margin-right:5px}
+.ap{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line2)}
+.ap:last-child{border-bottom:none}
+.ap .glifo{width:26px;min-width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  font:15px/1 var(--serif);color:var(--ink2);touch-action:manipulation;margin-top:-2px}
+.ap .glifo:active{background:var(--papel2)}
+.ap.ev .glifo{color:var(--agua)}
+.ap.no .glifo{color:var(--ink3)}
+.ap .txt{flex:1;min-width:0;font-size:15.5px;line-height:1.45;word-break:break-word}
+.ap.hecha .txt{color:var(--ink3);text-decoration:line-through}
+.ap.fuera .txt{color:var(--ink3);opacity:.6;text-decoration:line-through}
+.ap .mv{color:var(--ink3);font:15px/1 var(--sans);padding:5px 7px;border-radius:8px;min-width:30px;
+  touch-action:manipulation}
+.ap .mv:active{background:var(--papel2)}
+.veces{font:10.5px/1 var(--sans);color:var(--accent);border:1px solid var(--accent);
+  border-radius:999px;padding:2px 6px;margin-left:7px;vertical-align:1px;white-space:nowrap}
+
+/* ---------- semana ---------- */
+.sfila{border-bottom:1px solid var(--line2);padding:13px 0}
+.sfila:last-child{border-bottom:none}
+.sfila.hoy{background:linear-gradient(90deg,color-mix(in srgb,var(--mov) 7%,transparent),transparent);
+  margin:0 -16px;padding:13px 16px;border-radius:8px}
+.scab{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.scab .nom{font:600 12.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.scab .fch{font:12px/1 var(--sans);color:var(--ink3)}
+.scab .pts{display:flex;gap:3px;margin-left:auto}
+.scab .pts i{width:7px;height:7px;border-radius:50%;background:var(--vacio)}
+.scab .mas{color:var(--ink3);font-size:19px;padding:2px 6px;border-radius:7px;line-height:1;touch-action:manipulation}
+.scab .mas:active{background:var(--papel2)}
+.sitem{display:flex;gap:9px;align-items:baseline;padding:4px 0 4px 2px;font-size:14.5px}
+.sitem .g{color:var(--ink3);font-size:13px;min-width:13px}
+.sitem.hecha{color:var(--ink3);text-decoration:line-through}
+.svacio{font-size:13.5px;color:var(--ink3);font-style:italic;padding:3px 0}
+
+/* ---------- hoja inferior ---------- */
+#sheet{position:fixed;inset:0;z-index:45;display:none}
+#sheet.ver{display:block}
+#sheet .velo{position:absolute;inset:0;background:rgba(20,18,15,.34);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);opacity:0;transition:opacity .22s}
+#sheet.ver .velo{opacity:1}
+#sheet .caja{position:absolute;left:0;right:0;bottom:0;background:var(--paper);
+  border-radius:18px 18px 0 0;padding:8px 17px calc(20px + env(safe-area-inset-bottom));
+  max-height:82vh;overflow:auto;transform:translateY(100%);transition:transform .27s cubic-bezier(.2,.9,.3,1);
+  box-shadow:var(--sombra2);max-width:620px;margin:0 auto}
+#sheet.ver .caja{transform:none}
+#sheet .asa{width:38px;height:4px;border-radius:2px;background:var(--line);margin:6px auto 14px}
+#sheet h4{font:600 12px/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink3);margin:0 0 4px}
+#sheet .op{display:flex;align-items:center;gap:12px;width:100%;padding:14px 0;
+  border-bottom:1px solid var(--line2);font-size:16px;text-align:left;touch-action:manipulation}
+#sheet .op:last-of-type{border-bottom:none}
+#sheet .op .der{margin-left:auto;font:12.5px/1 var(--sans);color:var(--ink3)}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
@@ -287,6 +346,8 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
   </div>
 </div>
 
+<div id="sheet"><div class="velo" data-act="cerrarSheet()"></div><div class="caja"><div class="asa"></div><div id="sheetBody"></div></div></div>
+
 <div id="toast"><span class="grow" id="toastTxt"></span><button data-act="deshacer()" id="toastBtn">Deshacer</button></div>
 
 <div class="wrap">
@@ -304,6 +365,19 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 
   <!-- ======================= HOY ======================= -->
   <section id="v-hoy">
+    <div class="segm" style="margin:16px 0 13px" id="segVista">
+      <button data-act="verVista(dia)" id="vDia">Día</button>
+      <button data-act="verVista(semana)" id="vSemana">Semana</button>
+    </div>
+
+  <div id="vistaSemana" class="hidden">
+    <div class="card" id="semIntencion"></div>
+    <div class="card hidden" id="semMigrar"></div>
+    <div class="card" id="semDias"></div>
+    <div class="tiny" style="margin:0 2px 26px">Toca un día para abrirlo. El «+» apunta directamente en ese día.</div>
+  </div>
+
+  <div id="vistaDia">
     <div class="card hero">
       <div class="anillos" id="anillos"></div>
       <div class="consejo" id="consejo"></div>
@@ -321,6 +395,9 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
     <h2>La cosa de hoy <span class="der" id="cosaEstado"></span></h2>
     <div class="card" id="cosaCard"></div>
 
+    <h2>Apuntes <span class="der" id="apN"></span></h2>
+    <div class="card" id="apCard"></div>
+
     <div class="card" style="padding:0 16px">
       <details class="plegable" id="detToca">
         <summary>Hoy toca <span class="n" id="tocaN"></span></summary>
@@ -337,6 +414,7 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 
     <h2 id="hCierre">Cerrar el día</h2>
     <div class="card" id="cierreCard"></div>
+  </div>
   </section>
 
   <!-- ======================= AVANCE ======================= -->
@@ -561,7 +639,7 @@ function guardarLocal(){ var s=JSON.stringify(S); try{ hasLS?localStorage.setIte
 function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
 
 var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
-         dias:{},umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
+         dias:{},entradas:{},semanas:{},umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
 function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
   if(!o.metas) o.metas=DEF.metas; return o; }
 
@@ -607,6 +685,21 @@ function fusionar(local, remoto){
 
   ['espera','cuarentena','filtro','bitacora','promesas'].forEach(function(k){
     r[k]=unir(l[k], r[k], function(i){ return i.t+'|'+i.f; }); });
+
+  // apuntes: se unen por identificador; gana el estado más avanzado
+  var ee={};
+  [r.entradas||{}, l.entradas||{}].forEach(function(src){
+    Object.keys(src).forEach(function(f){
+      ee[f]=ee[f]||[];
+      (src[f]||[]).forEach(function(it){
+        var y=ee[f].filter(function(z){return z.i===it.i})[0];
+        if(!y) ee[f].push(Object.assign({},it));
+        else { y.e=Math.max(y.e||0,it.e||0); y.v=Math.max(y.v||0,it.v||0); }
+      });
+    });
+  });
+  r.entradas=ee;
+  r.semanas=Object.assign({}, r.semanas||{}, l.semanas||{});
   r.hist=unir(l.hist, r.hist, function(i){ return i.fecha+'|'+i.texto; });
 
   // la cosa del día: gana la de fecha más reciente; a igualdad, la marcada
@@ -759,7 +852,8 @@ var fechaVista = hoyISO();
 function esHoy(){ return fechaVista===hoyISO(); }
 
 function irDia(n){
-  var f=menos(-n, fechaVista);
+  var f=menos(-(vista==='semana'? n*7 : n), fechaVista);
+  if(vista==='semana' && f>hoyISO()) f=hoyISO();
   if(f > hoyISO()) return;
   if(dias(f) > 400) return;
   fechaVista=f; render();
@@ -1051,7 +1145,8 @@ function del(k,i){
 }
 function deshacer(){
   if(!borrado) return;
-  S[borrado.k].splice(borrado.i,0,borrado.o);
+  if(borrado.k==='__ent') ents(borrado.f).splice(borrado.i,0,borrado.o);
+  else S[borrado.k].splice(borrado.i,0,borrado.o);
   borrado=null; persist(); render(); ocultarToast();
 }
 function tog(k,i){ S[k][i].hecho=!S[k][i].hecho; persist(); render(); }
@@ -1285,6 +1380,213 @@ function renderAvance(){
     '</b>, con un '+peor+' %. Si vas a cambiar una sola cosa esta semana, que sea esa.';
 }
 
+
+/* ==========================================================================
+   Diario · registro rápido, semana y migración
+   Un apunte: {i:id, t:'t'|'e'|'n', x:texto, e:0 pendiente|1 hecha|2 fuera, v:veces movida}
+   ========================================================================== */
+var TIPOS={ t:{g:'·', n:'Tarea'}, e:{g:'○', n:'Evento'}, n:{g:'—', n:'Nota'} };
+var tipoNuevo='t';
+var DIAS_L=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
+
+function ents(f){ if(!S.entradas[f]) S.entradas[f]=[]; return S.entradas[f]; }
+function leerEnts(f){ return S.entradas[f]||[]; }
+function nuevoId(){ return Math.random().toString(36).slice(2,9)+(Object.keys(S.entradas).length); }
+
+function tipo(t){ tipoNuevo=t; pintarApuntes(); var i=document.getElementById('apIn'); if(i) i.focus(); }
+
+function apAdd(fecha){
+  var f=fecha||fechaVista;
+  var el=document.getElementById(fecha?'sheetIn':'apIn');
+  var x=el? el.value.trim() : '';
+  if(!x) return;
+  ents(f).push({i:nuevoId(), t:tipoNuevo, x:x, e:0, v:0});
+  el.value='';
+  persist();
+  if(fecha){ cerrarSheet(); avisar('Apuntado en '+etiquetaDia(f).toLowerCase()+'.'); }
+  render();
+}
+function apEstado(f,id){
+  var a=leerEnts(f).filter(function(z){return z.i===id})[0]; if(!a) return;
+  a.e = a.t==='t' ? (a.e+1)%3 : (a.e===0?2:0);
+  persist(); render();
+}
+function apBorrar(f,id){
+  var arr=leerEnts(f), ix=arr.findIndex(function(z){return z.i===id});
+  if(ix<0) return;
+  borrado={k:'__ent', f:f, i:ix, o:arr[ix]};
+  arr.splice(ix,1); persist(); cerrarSheet(); render(); avisar('Borrado.', true);
+}
+function apMover(f,id,dest){
+  var arr=leerEnts(f), ix=arr.findIndex(function(z){return z.i===id});
+  if(ix<0) return;
+  var it=arr.splice(ix,1)[0];
+  it.v=(it.v||0)+1;
+  ents(dest).push(it);
+  persist(); cerrarSheet(); render();
+  avisar('Movido a '+etiquetaDia(dest).toLowerCase()+'.');
+}
+
+function mayus(t){ return t.charAt(0).toUpperCase()+t.slice(1); }
+function etiquetaDia(f){
+  var d=dias(f);
+  if(d===0) return 'Hoy';
+  if(d===1) return 'Ayer';
+  if(d===-1) return 'Mañana';
+  var x=new Date(f+'T12:00:00');
+  return DIAS_L[(x.getDay()+6)%7].charAt(0).toUpperCase()+DIAS_L[(x.getDay()+6)%7].slice(1)+' '+fmt(f);
+}
+
+/* ---------------- apuntes del día ---------------- */
+function pintarApuntes(){
+  var f=fechaVista, arr=leerEnts(f);
+  var pend=arr.filter(function(a){ return a.t==='t' && a.e===0; }).length;
+  document.getElementById('apN').textContent = arr.length? (pend? pend+' sin cerrar' : 'al día') : '';
+
+  var filas = arr.length ? arr.map(function(a){
+    var cls = a.e===1?'hecha' : a.e===2?'fuera' : '';
+    if(a.t==='e') cls+=' ev'; if(a.t==='n') cls+=' no';
+    var g = a.t==='t' ? (a.e===1?'✕' : a.e===2?'~' : '·') : TIPOS[a.t].g;
+    return '<div class="ap '+cls+'">'+
+      '<button class="glifo" data-act="apEstado('+q(f)+','+q(a.i)+')" aria-label="Cambiar estado">'+g+'</button>'+
+      '<div class="txt">'+esc(a.x)+(a.v>1?'<span class="veces">movida '+a.v+' veces</span>':'')+'</div>'+
+      '<button class="mv" data-act="hojaMover('+q(f)+','+q(a.i)+')" aria-label="Mover">›</button>'+
+      '</div>';
+  }).join('') : '<div class="empty">Nada apuntado'+(esHoy()?' hoy':'')+'.</div>';
+
+  document.getElementById('apCard').innerHTML =
+    '<div class="altas">'+Object.keys(TIPOS).map(function(k){
+      return '<button class="'+(tipoNuevo===k?'on':'')+'" data-act="tipo('+q(k)+')">'+
+        '<span class="g">'+TIPOS[k].g+'</span>'+TIPOS[k].n+'</button>'; }).join('')+'</div>'+
+    '<div class="row"><input type="text" id="apIn" class="grow" placeholder="'+
+      (tipoNuevo==='t'?'Qué hay que hacer':tipoNuevo==='e'?'Qué pasa y a qué hora':'Qué quieres recordar')+
+      '" enterkeyhint="done" autocomplete="off">'+
+      '<button class="btn sm" data-act="apAdd()">Añadir</button></div>'+
+    '<div style="margin-top:6px">'+filas+'</div>'+
+    '<div class="tiny" style="margin-top:12px">Toca el signo para cerrar una tarea · el «›» la mueve de día. '+
+    'Si algo se mueve tres veces, probablemente no había que hacerlo.</div>';
+}
+function q(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
+
+/* ---------------- hoja: mover a otro día ---------------- */
+function hojaMover(f,id){
+  var a=leerEnts(f).filter(function(z){return z.i===id})[0]; if(!a) return;
+  var ops='';
+  for(var i=1;i<=7;i++){
+    var d=menos(-i, f);
+    ops+='<button class="op" data-act="apMover('+q(f)+','+q(id)+','+q(d)+')">'+
+      '<span>'+etiquetaDia(d)+'</span><span class="der">'+fmt(d)+'</span></button>';
+  }
+  if(dias(f)>0) ops='<button class="op" data-act="apMover('+q(f)+','+q(id)+','+q(hoyISO())+')">'+
+      '<span>Hoy</span><span class="der">'+fmt(hoyISO())+'</span></button>'+ops;
+  abrirSheet('<h4>Mover apunte</h4><p class="muted" style="margin:2px 0 10px">'+esc(a.x)+
+    (a.v?' <span class="veces">movida '+a.v+(a.v===1?' vez':' veces')+'</span>':'')+'</p>'+ops+
+    '<button class="op" style="color:var(--accent)" data-act="apBorrar('+q(f)+','+q(id)+')">Fuera: no era importante</button>');
+}
+function hojaApuntar(f){
+  abrirSheet('<h4>Apuntar en '+etiquetaDia(f)+'</h4>'+
+    '<div class="altas" style="margin:12px 0 10px">'+Object.keys(TIPOS).map(function(k){
+      return '<button class="'+(tipoNuevo===k?'on':'')+'" data-act="tipoSheet('+q(k)+','+q(f)+')">'+
+        '<span class="g">'+TIPOS[k].g+'</span>'+TIPOS[k].n+'</button>'; }).join('')+'</div>'+
+    '<div class="row"><input type="text" id="sheetIn" class="grow" placeholder="Qué apuntas" '+
+      'enterkeyhint="done" autocomplete="off">'+
+      '<button class="btn sm" data-act="apAdd('+q(f)+')">Añadir</button></div>'+
+    '<div style="height:10px"></div>');
+  setTimeout(function(){ var i=document.getElementById('sheetIn'); if(i) i.focus(); },240);
+}
+function tipoSheet(k,f){ tipoNuevo=k; hojaApuntar(f); }
+
+function abrirSheet(html){
+  document.getElementById('sheetBody').innerHTML=html;
+  document.getElementById('sheet').classList.add('ver');
+}
+function cerrarSheet(){ document.getElementById('sheet').classList.remove('ver'); }
+
+/* ---------------- vista semana ---------------- */
+var vista='dia';
+function verVista(v){
+  vista=v;
+  document.getElementById('vistaDia').classList.toggle('hidden', v!=='dia');
+  document.getElementById('vistaSemana').classList.toggle('hidden', v!=='semana');
+  document.getElementById('vDia').classList.toggle('on', v==='dia');
+  document.getElementById('vSemana').classList.toggle('on', v==='semana');
+  window.scrollTo(0,0);
+  render();
+}
+function lunesDe(f){
+  var d=new Date(f+'T12:00:00');
+  d.setDate(d.getDate()-((d.getDay()+6)%7));
+  return iso(d);
+}
+function claveSemana(f){
+  var d=new Date(lunesDe(f)+'T12:00:00'), y=d.getFullYear();
+  var ene=new Date(y,0,4);
+  var n=1+Math.round(((d-ene)/86400000 - 3 + ((ene.getDay()+6)%7))/7);
+  return y+'-W'+String(n).padStart(2,'0');
+}
+function guardarIntencion(){
+  var e=document.getElementById('intTxt'); if(!e) return;
+  S.semanas[claveSemana(fechaVista)]=e.value.trim();
+  persist(); avisar('Guardado.');
+}
+function abrirDia(f){ fechaVista=f; verVista('dia'); }
+
+function pintarSemana(){
+  var lun=lunesDe(fechaVista), cl=claveSemana(fechaVista);
+
+  // intención de la semana
+  document.getElementById('semIntencion').innerHTML=
+    '<div class="tiny" style="margin-bottom:2px">Lo que importa esta semana · '+cl.slice(-3).replace('W','semana ')+'</div>'+
+    '<input type="text" id="intTxt" class="cosa" placeholder="Una sola cosa, también aquí" '+
+      'value="'+esc(S.semanas[cl]||'')+'" enterkeyhint="done">'+
+    '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="guardarIntencion()">Guardar</button>'+
+    '<span class="tiny grow">Del 4.6: lo que no sirve a esto ni a lo que ya has decidido que importa, es dispersión.</span></div>';
+
+  // migración: tareas abiertas de días pasados
+  var abiertas=[];
+  Object.keys(S.entradas).forEach(function(f){
+    if(f>=hoyISO()) return;
+    leerEnts(f).forEach(function(a){ if(a.t==='t' && a.e===0) abiertas.push({f:f,a:a}); });
+  });
+  abiertas.sort(function(x,y){ return x.f<y.f?-1:1; });
+  var mig=document.getElementById('semMigrar');
+  mig.classList.toggle('hidden', abiertas.length===0);
+  if(abiertas.length){
+    mig.innerHTML='<div class="tiny" style="margin-bottom:9px">Migración · '+abiertas.length+
+      (abiertas.length===1?' cosa abierta de días pasados':' cosas abiertas de días pasados')+'</div>'+
+      abiertas.slice(0,12).map(function(o){
+        return '<div class="ap"><div class="txt">'+esc(o.a.x)+
+          '<div class="tiny">'+etiquetaDia(o.f)+(o.a.v?' · movida '+o.a.v+(o.a.v===1?' vez':' veces'):'')+'</div></div>'+
+          '<button class="btn sm" data-act="apMover('+q(o.f)+','+q(o.a.i)+','+q(hoyISO())+')">Hoy</button>'+
+          '<button class="btn sm" data-act="hojaMover('+q(o.f)+','+q(o.a.i)+')">···</button></div>';
+      }).join('')+
+      '<div class="note" style="margin-bottom:0">Por cada una: se hace, se mueve con fecha, o se cae. '+
+      'Dejarla ahí sin decidir no es esperar, es cargar con ella (5.2).</div>';
+  }
+
+  // los siete días
+  var html='';
+  for(var i=0;i<7;i++){
+    var f=menos(-i, lun), d=leer(f), arr=leerEnts(f);
+    var esH = f===hoyISO();
+    var pts=ANILLOS.map(function(a){
+      return '<i style="'+((d[a.k]||0)>=a.meta()?'background:'+a.col:'')+'"></i>'; }).join('');
+    var items = arr.length ? arr.map(function(a){
+      var g = a.t==='t' ? (a.e===1?'✕' : a.e===2?'~' : '·') : TIPOS[a.t].g;
+      return '<div class="sitem'+(a.e?' hecha':'')+'"><span class="g">'+g+'</span>'+
+             '<span>'+esc(a.x)+'</span></div>'; }).join('')
+      : '';
+    html+='<div class="sfila'+(esH?' hoy':'')+'">'+
+      '<div class="scab"><button class="nom" data-act="abrirDia('+q(f)+')">'+
+        mayus(DIAS_L[i].slice(0,3))+'</button>'+
+      '<span class="fch">'+fmt(f)+'</span>'+
+      '<span class="pts">'+pts+'</span>'+
+      '<button class="mas" data-act="hojaApuntar('+q(f)+')" aria-label="Apuntar aquí">+</button></div>'+
+      items+'</div>';
+  }
+  document.getElementById('semDias').innerHTML=html;
+}
+
 /* ---------------- tema ---------------- */
 function tema(t){
   if(t){ S.tema=t; persist(); }
@@ -1376,13 +1678,24 @@ function render(){
   // cabecera
   var t=document.getElementById('diaTxt');
   var d0=dias(fechaVista);
+  if(vista==='semana'){
+    var lu=lunesDe(fechaVista), do_=menos(-6,lu);
+    t.innerHTML='<b>'+(lunesDe(hoyISO())===lu?'Esta semana':'Semana')+'</b>'+fmt(lu)+' – '+fmt(do_);
+    document.getElementById('btnSig').disabled = lunesDe(hoyISO())===lu;
+    seguir();
+    return;
+  }
   t.innerHTML = d0===0 ? '<b>Hoy</b>'+new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'})
     : d0===1 ? '<b>Ayer</b>'+fmt(fechaVista)
-    : '<b>'+fmtLargo(fechaVista).replace(/,.*/,'')+'</b>'+fmt(fechaVista);
+    : '<b>'+mayus(fmtLargo(fechaVista).replace(/,.*/,'').replace(/\.$/,''))+'</b>'+fmt(fechaVista);
   document.getElementById('btnSig').disabled = esHoy();
-
+  seguir();
+}
+function seguir(){
+  if(vista==='semana'){ pintarSemana(); }
   pintarAnillos();
   pintarCosa();
+  pintarApuntes();
   pintarToca();
   pintarCierre();
   pintarListas();
@@ -1410,6 +1723,8 @@ document.addEventListener('keydown', function(e){
   var id=(e.target||{}).id||'';
   if(id==='nuevaCosa'){ e.preventDefault(); fijarCosa(); }
   if(id.indexOf('in_')===0){ e.preventDefault(); add(id.slice(3)); }
+  if(id==='apIn'){ e.preventDefault(); apAdd(); }
+  if(id==='intTxt'){ e.preventDefault(); guardarIntencion(); }
 });
 window.addEventListener('scroll', function(){
   document.getElementById('cab').classList.toggle('pegado', window.scrollY>4);
@@ -1424,7 +1739,7 @@ document.addEventListener('visibilitychange', function(){
 });
 
 tema();
-render();
+verVista('dia');
 estado();
 pintarSync();
 calc();
