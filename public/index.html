@@ -1,1 +1,949 @@
-test
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12110f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reglas">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAABr0lEQVR42u3csQ2CQBSAYSC3A4EpTKycwNpRnMRRrJ2AioSRrOwIjUTfO75vAAOXP++8BGjHoW9gTWcJEAfiQByIA3EgDsSBOBAH4gBxIA7EgTgQB+JAHIgDcSAO+Cjf/8QyT9YxoNP5YnJgWyHjtrLjHCPULm9yIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOBAH4kAcIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOMimxL/E5/1a6+rfHi+TA9sK4kAciAPynlaC/6U3ORAHiANxIA7EgTgQB+JAHIgDcYA4EAfiQByIA3EgDvIp2W8g+PtwqR+ANTkQB+JAHIgDp5XDHgdMDsSBOBAHiANxIA7EgTgQB+JAHIgDcSAOEAfiQByIg/8odd/eD96Hq/ghVpMDcSAOxIE4cFpxlDA5EAfiQByIA8SBOBAH4kAciANxIA7EgThAHIgDcSAOxIE4EAfiQByIA8SBOBAH4kAciANxkM2eH29Z5smCmhyIg2Nrx6G3CpgciANxIA7EgTgQB+JAHIgDxIE4EAfiQByIA3EgDsSBOEAcbHsDTnYYPEyjlGkAAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAABr0lEQVR42u3csQ2CQBSAYSC3A4EpTKycwNpRnMRRrJ2AioSRrOwIjUTfO75vAAOXP++8BGjHoW9gTWcJEAfiQByIA3EgDsSBOBAH4gBxIA7EgTgQB+JAHIgDcSAO+Cjf/8QyT9YxoNP5YnJgWyHjtrLjHCPULm9yIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOBAH4kAcIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOMimxL/E5/1a6+rfHi+TA9sK4kAciAPynlaC/6U3ORAHiANxIA7EgTgQB+JAHIgDcYA4EAfiQByIA3EgDvIp2W8g+PtwqR+ANTkQB+JAHIgDp5XDHgdMDsSBOBAHiANxIA7EgTgQB+JAHIgDcSAOEAfiQByIg/8odd/eD96Hq/ghVpMDcSAOxIE4cFpxlDA5EAfiQByIA8SBOBAH4kAciANxIA7EgThAHIgDcSAOxIE4EAfiQByIA8SBOBAH4kAciANxkM2eH29Z5smCmhyIg2Nrx6G3CpgciANxIA7EgTgQB+JAHIgDxIE4EAfiQByIA3EgDsSBOEAcbHsDTnYYPEyjlGkAAAAASUVORK5CYII=">
+<title>Reglas</title>
+<style>
+:root{
+  --bg:#f6f3ec; --paper:#fffdf8; --ink:#1f1d19; --ink2:#5f594e; --ink3:#918878;
+  --line:#e0dacd; --line2:#efeae0; --accent:#8a4b2a;
+  --agua:#3f7f9c; --comida:#a8762f; --mov:#4f7d47; --sueno:#6b5c92;
+  --vacio:#e8e3d7;
+  --r:12px;
+}
+/* Oscuro: gris cálido, no negro. Sube el papel y baja el contraste bruto. */
+html[data-tema="oscuro"]{
+  --bg:#23211d; --paper:#2c2a25; --ink:#f0ece3; --ink2:#bab3a6; --ink3:#8d8578;
+  --line:#413d36; --line2:#33302a; --accent:#e0a074;
+  --agua:#7fb6d1; --comida:#e0b366; --mov:#9cc78c; --sueno:#b3a2d6;
+  --vacio:#3a3630;
+}
+@media (prefers-color-scheme: dark){
+  html[data-tema="auto"]{
+    --bg:#23211d; --paper:#2c2a25; --ink:#f0ece3; --ink2:#bab3a6; --ink3:#8d8578;
+    --line:#413d36; --line2:#33302a; --accent:#e0a074;
+    --agua:#7fb6d1; --comida:#e0b366; --mov:#9cc78c; --sueno:#b3a2d6;
+    --vacio:#3a3630;
+  }
+}
+html{ background:var(--bg); }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-size:16px;
+  font-family:ui-serif,Georgia,'Iowan Old Style','Times New Roman',serif;line-height:1.55;
+  -webkit-font-smoothing:antialiased;padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+.wrap{max-width:640px;margin:0 auto;padding:0 18px}
+header{padding:calc(16px + env(safe-area-inset-top)) 0 10px;border-bottom:1px solid var(--line)}
+h1{font-size:15px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin:0;color:var(--ink2)}
+.date{font-size:13px;color:var(--ink3);margin-top:2px}
+h2{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600;
+   margin:28px 0 10px;font-family:ui-sans-serif,system-ui,sans-serif}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.muted{color:var(--ink2);font-size:14.5px}
+.tiny{color:var(--ink3);font-size:12.5px;font-family:ui-sans-serif,system-ui,sans-serif;line-height:1.45}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0}
+.btn{min-height:42px;touch-action:manipulation;border:1px solid var(--line);background:var(--paper);
+  border-radius:8px;padding:9px 14px;font-size:14px;font-family:ui-sans-serif,system-ui,sans-serif;color:var(--ink2)}
+.btn:active{background:var(--line2);transform:scale(.97)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.sm{min-height:34px;padding:6px 12px;font-size:13px}
+input[type=text],input[type=number],textarea{width:100%;background:transparent;border:none;
+  border-bottom:1px solid var(--line);padding:9px 0;outline:none;resize:none}
+input:focus,textarea:focus{border-bottom-color:var(--ink2)}
+::placeholder{color:var(--ink3);opacity:1}
+.row{display:flex;gap:10px;align-items:center}
+.row.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+ul.list{list-style:none;margin:0;padding:0}
+ul.list li{border-bottom:1px solid var(--line2);padding:12px 0;display:flex;gap:12px;align-items:flex-start}
+ul.list li:last-child{border-bottom:none}
+.pill{font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--ink3);white-space:nowrap}
+.pill.due{border-color:var(--accent);color:var(--accent)}
+.x{color:var(--ink3);font-size:22px;line-height:1;padding:2px 8px;min-width:34px;touch-action:manipulation}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav .inner{max-width:640px;margin:0 auto;display:flex}
+nav button{flex:1;min-height:54px;padding:9px 0 11px;touch-action:manipulation;text-align:center;
+  font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+nav button.on{color:var(--ink)}
+nav .ic{display:block;font-size:17px;margin-bottom:2px;font-family:ui-serif,Georgia,serif;letter-spacing:0}
+.today{font-size:21px;line-height:1.35;padding:4px 0 2px;border:none;font-family:inherit}
+.done{text-decoration:line-through;color:var(--ink3)}
+.chk{width:24px;height:24px;min-width:24px;border:1px solid var(--ink2);border-radius:6px;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--bg);touch-action:manipulation}
+.chk.on{background:var(--ink);border-color:var(--ink)}
+details{border-bottom:1px solid var(--line2)}
+details summary{list-style:none;cursor:pointer;padding:13px 0;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+details summary::-webkit-details-marker{display:none}
+details summary .n{color:var(--ink3);font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;padding-top:3px}
+details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
+.sechead{margin:26px 0 2px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);
+  font-family:ui-sans-serif,system-ui,sans-serif;font-weight:600}
+.hidden{display:none}
+.q{margin-bottom:14px}
+.q label{display:block;font-size:14px;color:var(--ink2);margin-bottom:2px}
+.empty{color:var(--ink3);font-size:14px;padding:14px 0;font-style:italic}
+.note{border-left:2px solid var(--line);padding-left:12px;color:var(--ink2);font-size:14px;margin:12px 0}
+
+/* ---------- avance ---------- */
+.cifra{display:flex;gap:22px;flex-wrap:wrap}
+.cifra > div{min-width:74px}
+.cifra .n{font-size:28px;line-height:1.1;font-weight:600;letter-spacing:-.01em;font-family:ui-sans-serif,system-ui,sans-serif}
+.mapa{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin:0 -2px}
+.mapa .rejilla{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:3px;width:max-content;padding:0 2px}
+.mapa i{width:11px;height:11px;border-radius:2.5px;background:var(--vacio);display:block}
+.mapa i.b1{background:color-mix(in srgb,var(--mov) 40%,var(--vacio))}
+.mapa i.b2{background:color-mix(in srgb,var(--mov) 70%,var(--vacio))}
+.mapa i.b3{background:var(--mov)}
+.mapa i.hoy{outline:1.5px solid var(--ink2);outline-offset:1px}
+.mapa i.fuera{background:transparent}
+.meses{display:grid;grid-auto-flow:column;grid-auto-columns:11px;gap:3px;width:max-content;padding:0 2px;
+  margin-bottom:6px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:9.5px;color:var(--ink3);
+  letter-spacing:.04em;height:12px}
+.meses span{white-space:nowrap;overflow:visible}
+.filaR{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.filaR:last-child{border-bottom:none}
+.filaR .pt{width:9px;height:9px;border-radius:50%;flex:none}
+.filaR .nm{font-size:14.5px;width:88px;flex:none}
+.filaR .spark{flex:1;display:flex;gap:1.5px;align-items:flex-end;height:26px;min-width:0}
+.filaR .spark span{flex:1;border-radius:1px;min-height:2px;background:var(--vacio)}
+.filaR .pc{font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;font-weight:600;width:40px;text-align:right;flex:none}
+.segm{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.segm button{flex:1;padding:10px 0;font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;color:var(--ink3);
+  touch-action:manipulation;border-right:1px solid var(--line)}
+.segm button:last-child{border-right:none}
+.segm button.on{background:var(--ink);color:var(--bg)}
+
+/* ---------- anillos ---------- */
+.anillos{display:flex;justify-content:space-between;gap:6px}
+.anillo{flex:1;text-align:center;touch-action:manipulation;position:relative;padding:2px 0}
+.anillo svg{display:block;margin:0 auto;overflow:visible}
+.anillo .tr{fill:none;stroke:var(--vacio);stroke-width:6}
+.anillo .pr{fill:none;stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;
+  transition:stroke-dashoffset .55s cubic-bezier(.4,1.3,.5,1)}
+.anillo .val{font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;font-weight:600;fill:var(--ink2)}
+.anillo .lb{display:block;font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink3);margin-top:5px}
+.anillo.full .lb{color:var(--ink)}
+.anillo.full .val{fill:var(--ink)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes halo{0%{opacity:.55;transform:scale(.85)}100%{opacity:0;transform:scale(1.5)}}
+.anillo.pop svg{animation:pop .45s ease-out}
+.anillo .glow{position:absolute;left:50%;top:34px;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;
+  pointer-events:none;opacity:0}
+.anillo.pop .glow{animation:halo .6s ease-out}
+.menos{position:absolute;right:2px;top:0;font-size:16px;color:var(--ink3);padding:4px 6px;line-height:1}
+
+.marcador{display:flex;align-items:baseline;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2)}
+.big{font-size:30px;line-height:1;font-weight:600;letter-spacing:-.01em}
+@keyframes subir{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+.celebra{animation:subir .5s ease-out}
+.barrita{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:10px}
+.barrita div{height:100%;background:var(--ink2);transition:width .6s ease}
+.hoymes{display:flex;gap:3px;flex-wrap:wrap;margin-top:12px}
+.hoymes span{width:9px;height:9px;border-radius:2px;background:var(--vacio)}
+.hoymes span.b{background:var(--mov)}
+.hoymes span.h{outline:1px solid var(--ink2);outline-offset:1px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="row between">
+    <div><h1>Reglas</h1><div class="date" id="hoyFecha"></div></div>
+    <button class="tiny" id="sync" data-act="sincronizarYa()" style="text-align:right;line-height:1.3"></button>
+  </header>
+
+  <!-- ============ HOY ============ -->
+  <section id="v-hoy">
+    <h2>La base</h2>
+    <div class="card">
+      <div class="anillos" id="anillos"></div>
+      <div class="tiny" style="margin-top:14px" id="baseMsg"></div>
+
+      <div class="marcador">
+        <div><div class="big" id="numBuenos">0</div>
+          <div class="tiny">días buenos</div></div>
+        <div class="grow" style="text-align:right">
+          <div class="muted" id="mesBuenos"></div>
+          <div class="tiny">este mes</div>
+        </div>
+      </div>
+      <div class="hoymes" id="calMes"></div>
+      <div class="tiny" style="margin-top:10px">Un día bueno son tres anillos de cuatro. El contador solo suma: fallar un día no resta nada, simplemente ese día no cuenta.</div>
+    </div>
+
+    <h2>La cosa de hoy</h2>
+    <div class="card">
+      <div id="hoyBox"></div>
+      <div class="tiny" style="margin-top:10px">Una, no tres. Terminable hoy y comprobable. Si el día se tuerce y solo sale esa, el día está bien.</div>
+    </div>
+
+    <h2>Hoy toca</h2>
+    <div class="card"><ul class="list" id="hoyToca"></ul></div>
+
+    <h2>Vencimientos</h2>
+    <div class="card"><ul class="list" id="hoyVence"></ul></div>
+
+    <h2>Cierre de la noche</h2>
+    <div class="card">
+      <div class="q"><label>¿Dónde perdí la calma?</label><input type="text" id="c1" placeholder="Un hecho, sin adjetivos"></div>
+      <div class="q"><label>¿Dónde acerté el foco?</label><input type="text" id="c2"></div>
+      <div class="q"><label>¿Qué asumí bien?</label><input type="text" id="c3"></div>
+      <div class="q"><label>La cosa de mañana</label><input type="text" id="cman" placeholder="Una sola, terminable"></div>
+      <div class="row" style="margin-top:14px"><button class="btn primary" data-act="cerrarDia()">Cerrar el día</button></div>
+      <div id="cierreMsg"></div>
+    </div>
+  </section>
+
+
+  <!-- ============ AVANCE ============ -->
+  <section id="v-avance" class="hidden">
+    <h2>Días buenos</h2>
+    <div class="card">
+      <div class="cifra">
+        <div><div class="n" id="avTotal">0</div><div class="tiny">en total</div></div>
+        <div><div class="n" id="avRacha">0</div><div class="tiny">seguidos ahora</div></div>
+        <div><div class="n" id="avMejor">0</div><div class="tiny">mejor racha</div></div>
+        <div><div class="n" id="avMes">0</div><div class="tiny">este mes</div></div>
+      </div>
+    </div>
+
+    <h2>El año</h2>
+    <div class="card">
+      <div class="mapa" id="mapa"></div>
+      <div class="tiny" style="margin-top:10px" id="mapaPie"></div>
+    </div>
+
+    <h2>Los últimos 30 días</h2>
+    <div class="card">
+      <div id="filas"></div>
+      <div class="tiny" style="margin-top:12px" id="diagnostico"></div>
+    </div>
+  </section>
+
+  <!-- ============ LISTAS ============ -->
+  <section id="v-listas" class="hidden">
+    <h2>Espera de 30 días · 2.2</h2>
+    <div class="card">
+      <div class="row"><input type="text" id="espTxt" class="grow" placeholder="Qué quieres comprar">
+        <button class="btn sm" data-act="add(espera)">Añadir</button></div>
+      <ul class="list" id="lEspera"></ul>
+      <div class="tiny" id="espStat"></div>
+    </div>
+
+    <h2>Cuarentena · 2.5</h2>
+    <div class="card">
+      <div class="row"><input type="text" id="cuaTxt" class="grow" placeholder="Objeto dudoso a la caja">
+        <button class="btn sm" data-act="add(cuarentena)">Añadir</button></div>
+      <ul class="list" id="lCuarentena"></ul>
+      <div class="tiny">A los tres meses sin abrirla, se va sin abrirla.</div>
+    </div>
+
+    <h2>Te digo mañana · 4.6</h2>
+    <div class="card">
+      <div class="row"><input type="text" id="filTxt" class="grow" placeholder="Compromiso que te proponen">
+        <button class="btn sm" data-act="add(filtro)">Añadir</button></div>
+      <ul class="list" id="lFiltro"></ul>
+      <div class="tiny">Mañana, en frío: ¿concentra el foco o lo dispersa?</div>
+    </div>
+
+    <h2>Reparaciones · 2.6</h2>
+    <div class="card">
+      <div class="row"><input type="text" id="repTxt" class="grow" placeholder="Objeto y avería">
+        <button class="btn sm" data-act="add(bitacora)">Añadir</button></div>
+      <ul class="list" id="lBitacora"></ul>
+      <div class="tiny">Nada a medio arreglar más de un mes.</div>
+    </div>
+
+    <h2>Promesas · 10.4</h2>
+    <div class="card">
+      <input type="text" id="proTxt" placeholder="A quién y qué">
+      <div class="row" style="margin-top:4px"><input type="text" id="proFecha" class="grow" placeholder="Para cuándo">
+        <button class="btn sm" data-act="addPromesa()">Añadir</button></div>
+      <ul class="list" id="lPromesas"></ul>
+      <div class="tiny">Un compromiso, una fecha. Si no llegas, se avisa hoy.</div>
+    </div>
+  </section>
+
+  <!-- ============ DECIDIR ============ -->
+  <section id="v-filtro" class="hidden">
+    <h2>Hecho e interpretación · 5.1</h2>
+    <div class="card">
+      <div class="q"><label>A — Hecho: lo que grabaría una cámara</label>
+        <textarea id="fA" rows="4" placeholder="Verificable, sin adjetivos"></textarea></div>
+      <div class="q"><label>B — Interpretación: lo que has añadido tú</label>
+        <textarea id="fB" rows="4" placeholder="Intenciones supuestas, consecuencias proyectadas"></textarea></div>
+      <div id="alerta"></div>
+      <div class="note">Sobre A se puede actuar hoy. Sobre B no se puede hacer nada, porque no ha pasado.</div>
+    </div>
+
+    <h2>Las tres cajas · 5.2</h2>
+    <div class="card">
+      <div class="q"><label>Lo controlo — se ejecuta o se agenda</label><input type="text" id="k1"></div>
+      <div class="q"><label>Influyo — una acción, y sale de tu cabeza</label><input type="text" id="k2"></div>
+      <div class="q"><label>No lo controlo — dato de entrada</label><input type="text" id="k3"></div>
+      <button class="btn" style="margin-top:8px" data-act="pasarAHoy()">Pasar «lo controlo» a la cosa de hoy</button>
+    </div>
+
+    <h2>Coste por uso · 2.3 · 6.4</h2>
+    <div class="card">
+      <div class="row" style="gap:16px">
+        <div class="grow"><div class="tiny">Precio €</div><input type="number" id="cPrecio" data-inp="calc()"></div>
+        <div class="grow"><div class="tiny">Usos previstos</div><input type="number" id="cUsos" data-inp="calc()"></div>
+        <div class="grow"><div class="tiny">Tu € / hora</div><input type="number" id="cHora" data-inp="calc()"></div>
+      </div>
+      <div id="calcOut" class="muted" style="margin-top:14px">—</div>
+    </div>
+  </section>
+
+  <!-- ============ REGLAS ============ -->
+  <section id="v-reglas" class="hidden"><div id="reglasOut"></div></section>
+
+  <!-- ============ MÁS ============ -->
+  <section id="v-ajustes" class="hidden">
+    <h2>Aspecto</h2>
+    <div class="card">
+      <div class="segm">
+        <button data-act="tema(claro)" id="tClaro">Claro</button>
+        <button data-act="tema(oscuro)" id="tOscuro">Oscuro</button>
+        <button data-act="tema(auto)" id="tAuto">Automático</button>
+      </div>
+      <div class="tiny" style="margin-top:10px">Automático sigue al sistema: claro de día, oscuro de noche.</div>
+    </div>
+
+    <h2>Metas de la base</h2>
+    <div class="card">
+      <div class="row between" style="margin-bottom:6px"><span class="muted">Vasos de agua al día</span>
+        <input type="number" id="mAgua" style="width:70px;text-align:right" data-chg="guardarMetas()"></div>
+      <div class="row between" style="margin-bottom:6px"><span class="muted">Comidas sentadas al día</span>
+        <input type="number" id="mComida" style="width:70px;text-align:right" data-chg="guardarMetas()"></div>
+      <div class="row between"><span class="muted">Hora de acostarse</span>
+        <input type="text" id="mHora" style="width:90px;text-align:right" placeholder="23:30" data-chg="guardarMetas()"></div>
+      <div class="tiny" style="margin-top:10px">7.1 · Se fija la hora de irse a la cama y la noche se organiza hacia atrás desde ahí.</div>
+    </div>
+
+    <h2>Umbral de espera</h2>
+    <div class="card">
+      <div class="row between"><span class="muted">Por encima de</span>
+        <span><input type="number" id="umbral" style="width:80px;text-align:right" data-chg="guardarMetas()"> €</span></div>
+      <div class="tiny" style="margin-top:8px">Todo lo no consumible por encima de esta cifra espera 30 días.</div>
+    </div>
+
+    <h2>Instalar</h2>
+    <div class="card" id="instalar"></div>
+
+    <h2>Datos</h2>
+    <div class="card">
+      <p class="tiny" style="margin-top:0">Todo se guarda solo en este móvil. No hay cuenta, ni servidor, ni nadie mirando.</p>
+      <div class="row" style="flex-wrap:wrap">
+        <button class="btn" data-act="exportar()">Exportar copia</button>
+        <button class="btn" data-act="abrirImport()">Importar</button>
+        <input type="file" id="imp" accept=".json" class="hidden" data-chg="importar(event)">
+      </div>
+    </div>
+
+    <h2>Revisión · 12</h2>
+    <div class="card">
+      <p class="muted" style="margin-top:0">Cada regla tiene que devolver algo medible: tiempo, dinero, atención o sueño. La que no devuelva nada en un mes se borra, sin discusión.</p>
+      <div class="q" style="margin:0"><label>Qué borro este mes</label><input type="text" id="borrar" data-chg="guardarMetas()"></div>
+      <div class="tiny" style="margin-top:10px">8.6 · Un incumplimiento es un dato sobre la regla, no sobre ti.</div>
+    </div>
+
+    <h2>Historial</h2>
+    <div class="card"><ul class="list" id="lHist"></ul></div>
+  </section>
+</div>
+
+<nav><div class="inner">
+  <button data-v="hoy" class="on"><span class="ic">◉</span>Hoy</button>
+  <button data-v="avance"><span class="ic">▚</span>Avance</button>
+  <button data-v="listas"><span class="ic">≡</span>Listas</button>
+  <button data-v="filtro"><span class="ic">∥</span>Decidir</button>
+  <button data-v="reglas"><span class="ic">§</span>Reglas</button>
+  <button data-v="ajustes"><span class="ic">◦</span>Más</button>
+</div></nav>
+
+<script>
+/* ================= delegación de eventos (sin handlers inline) ================= */
+function runAct(code, ev){
+  try{
+    var m = code.match(/^([A-Za-z_$][\w$]*)\((.*)\)$/); if(!m) return;
+    var fn = window[m[1]]; if(typeof fn !== 'function') return;
+    if(m[1]==='importar') return fn(ev);
+    var raw=m[2].trim(), args=[];
+    if(raw) args = raw.split(',').map(function(a){ a=a.trim();
+      return /^-?\d+(\.\d+)?$/.test(a) ? parseFloat(a) : a.replace(/^['"]|['"]$/g,''); });
+    fn.apply(null,args);
+  }catch(e){ console.warn('act',code,e); }
+}
+document.addEventListener('click',function(e){
+  var t=e.target;
+  var nb=t.closest&&t.closest('nav button[data-v]'); if(nb){ e.preventDefault(); ir(nb.dataset.v); return; }
+  var an=t.closest&&t.closest('.menos');   if(an){ e.preventDefault(); e.stopPropagation(); anillo(an.dataset.k,-1); return; }
+  var ap=t.closest&&t.closest('.anillo');  if(ap){ e.preventDefault(); anillo(ap.dataset.k,1); return; }
+  var el=t.closest&&t.closest('[data-act]'); if(el){ e.preventDefault(); runAct(el.dataset.act,e); }
+},false);
+document.addEventListener('input',function(e){ var el=e.target.closest&&e.target.closest('[data-inp]'); if(el) runAct(el.dataset.inp,e); },false);
+document.addEventListener('change',function(e){ var el=e.target.closest&&e.target.closest('[data-chg]'); if(el) runAct(el.dataset.chg,e); },false);
+
+/* ================= almacenamiento ================= */
+var mem={}, hasLS=true;
+try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){ hasLS=false; }
+function guardarLocal(){ var s=JSON.stringify(S); try{ hasLS?localStorage.setItem('reglas.v1',s):(mem.d=s); }catch(e){ mem.d=s; } }
+function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
+
+var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
+         dias:{},umbral:100,borrar:'',tema:'claro',metas:{agua:8,comida:3,hora:'23:30'}};
+function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
+  if(!o.metas) o.metas=DEF.metas; return o; }
+
+var S = completar(leerLocal());
+
+/* ---- sincronización con el servidor ---- */
+var NUBE={ hay:false, rev:0, email:null, estado:'local', cuando:null, tmr:null, enVuelo:false, otra:false };
+
+function pintarSync(){
+  var e=document.getElementById('sync'); if(!e) return;
+  var m={ local:'· solo en este móvil', cargando:'sincronizando…', guardando:'guardando…',
+          guardado:'guardado', error:'sin conexión', conflicto:'recargado desde el servidor' };
+  var col={ error:'var(--accent)', conflicto:'var(--accent)', guardado:'var(--ink3)' };
+  e.innerHTML = (m[NUBE.estado]||'') + (NUBE.email? '<br><span style="opacity:.7">'+esc(NUBE.email)+'</span>' : '');
+  e.style.color = col[NUBE.estado] || 'var(--ink3)';
+}
+function marcar(x){ NUBE.estado=x; pintarSync(); }
+
+
+/* ---- fusión al detectar conflicto: no se pierde nada de ninguno de los dos ---- */
+function unir(a,b,clave){
+  var out=[], vistos={};
+  (a||[]).concat(b||[]).forEach(function(i){
+    var k=clave(i);
+    if(vistos[k]===undefined){ vistos[k]=out.length; out.push(Object.assign({},i)); }
+    else { var p=out[vistos[k]]; if(i.hecho) p.hecho=true; if(i.p && !p.p) p.p=i.p; }
+  });
+  return out;
+}
+function fusionar(local, remoto){
+  var r=completar(JSON.parse(JSON.stringify(remoto)));
+  var l=completar(local||{});
+
+  // anillos: por cada día, el valor más alto de los dos
+  var dd={};
+  [l.dias, r.dias].forEach(function(src){
+    Object.keys(src||{}).forEach(function(f){
+      dd[f]=dd[f]||{agua:0,comida:0,mov:0,sueno:0};
+      ['agua','comida','mov','sueno'].forEach(function(k){
+        dd[f][k]=Math.max(dd[f][k]||0, (src[f]||{})[k]||0); });
+    });
+  });
+  r.dias=dd;
+
+  ['espera','cuarentena','filtro','bitacora','promesas'].forEach(function(k){
+    r[k]=unir(l[k], r[k], function(i){ return i.t+'|'+i.f; }); });
+  r.hist=unir(l.hist, r.hist, function(i){ return i.fecha+'|'+i.texto; });
+
+  // la cosa del día: gana la de fecha más reciente; a igualdad, la marcada
+  var a=l.hoy, b=r.hoy;
+  if(a && b) r.hoy = (a.fecha>b.fecha) ? a : (b.fecha>a.fecha ? b : (a.hecho?a:b));
+  else r.hoy = a || b;
+
+  // ajustes: manda este dispositivo, que es donde se acaban de tocar
+  r.metas=l.metas; r.umbral=l.umbral; r.borrar=l.borrar||r.borrar; r.tema=l.tema||r.tema;
+  return r;
+}
+
+function persist(){
+  guardarLocal();
+  if(!NUBE.hay) return;
+  marcar('guardando');
+  clearTimeout(NUBE.tmr);
+  NUBE.tmr = setTimeout(subir, 800);
+}
+
+function subir(forzar){
+  if(!NUBE.hay) return;
+  if(NUBE.enVuelo){ NUBE.otra=true; return; }
+  NUBE.enVuelo=true;
+  fetch('/api/estado',{ method:'PUT', headers:{'content-type':'application/json'},
+    body: JSON.stringify({ rev:NUBE.rev, estado:S, forzar: !!forzar }) })
+  .then(function(r){
+    if(r.status===409){ return r.json().then(function(j){
+      NUBE.rev=j.rev;
+      if(j.estado){ S=fusionar(S, j.estado); guardarLocal(); render(); }
+      marcar('conflicto');
+      setTimeout(function(){ subir(true); }, 200);   // sube ya fusionado
+    }); }
+    if(!r.ok) throw new Error(r.status);
+    return r.json().then(function(j){ NUBE.rev=j.rev; NUBE.cuando=j.actualizado; marcar('guardado'); });
+  })
+  .catch(function(){ marcar('error'); })
+  .then(function(){ NUBE.enVuelo=false; if(NUBE.otra){ NUBE.otra=false; subir(); } });
+}
+
+function sincronizarYa(){ if(NUBE.hay){ marcar('guardando'); subir(); } else { arrancarNube(); } }
+
+function arrancarNube(){
+  if(location.protocol==='file:') { marcar('local'); return; }
+  marcar('cargando');
+  fetch('/api/estado',{ headers:{ 'accept':'application/json' } })
+  .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(function(j){
+    NUBE.hay=true; NUBE.email=j.email; NUBE.rev=j.rev||0; NUBE.cuando=j.actualizado;
+    var local=leerLocal();
+    if(j.estado){
+      var hayLocal = local && (Object.keys(local.dias||{}).length || local.hoy || (local.espera||[]).length);
+      S = hayLocal ? fusionar(local, j.estado) : completar(j.estado);
+      guardarLocal(); tema();
+      if(hayLocal) subir(true); else marcar('guardado');
+    } else {
+      subir(true);                              // primera vez: sube lo que haya en local
+    }
+    render(); estado(); pintarSync();
+  })
+  .catch(function(){ NUBE.hay=false; marcar('local'); estado(); });
+}
+
+/* ================= fechas ================= */
+function hoyISO(){ var d=new Date(), o=d.getTimezoneOffset();
+  return new Date(d.getTime()-o*60000).toISOString().slice(0,10); }
+function manana(){ var d=new Date(); d.setDate(d.getDate()+1); var o=d.getTimezoneOffset();
+  return new Date(d.getTime()-o*60000).toISOString().slice(0,10); }
+function dias(iso){ return Math.round((new Date(hoyISO()) - new Date(iso))/86400000); }
+function fmt(iso){ return new Date(iso+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'}); }
+
+/* ================= la base ================= */
+var ANILLOS=[
+ {k:'agua',   lb:'Agua',      col:'var(--agua)',  meta:function(){return S.metas.agua||8}},
+ {k:'comida', lb:'Comida',    col:'var(--comida)',meta:function(){return S.metas.comida||3}},
+ {k:'mov',    lb:'Movimiento',col:'var(--mov)',   meta:function(){return 1}},
+ {k:'sueno',  lb:'Sueño',     col:'var(--sueno)', meta:function(){return 1}}
+];
+function dia(iso){ if(!S.dias[iso]) S.dias[iso]={agua:0,comida:0,mov:0,sueno:0}; return S.dias[iso]; }
+function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
+function esBueno(d){ return completos(d) >= 3; }
+function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
+
+var animar=null;
+function anillo(k,delta){
+  var d=dia(hoyISO()), a=ANILLOS.filter(function(x){return x.k===k})[0];
+  var antes=(d[k]||0)>=a.meta();
+  var eraBueno=esBueno(d);
+  d[k]=Math.max(0, Math.min(a.meta(), (d[k]||0)+delta));
+  var ahora=d[k]>=a.meta();
+  if(!antes && ahora) animar=k;
+  persist(); render();
+  if(!eraBueno && esBueno(d)) celebrar();
+}
+function celebrar(){
+  var el=document.getElementById('baseMsg');
+  el.innerHTML='<span class="celebra" style="color:var(--mov)">Día bueno número '+totalBuenos()+'. Tres de cuatro.</span>';
+  if(navigator.vibrate) try{ navigator.vibrate([12,50,12]); }catch(e){}
+}
+function pintarAnillos(){
+  var d=dia(hoyISO()), R=25, C=2*Math.PI*R;
+  document.getElementById('anillos').innerHTML = ANILLOS.map(function(a){
+    var v=d[a.k]||0, m=a.meta(), p=Math.min(1,v/m), full=v>=m;
+    return '<div class="anillo'+(full?' full':'')+(animar===a.k?' pop':'')+'" data-k="'+a.k+'">'+
+      '<div class="glow" style="background:'+a.col+'"></div>'+
+      (v>0?'<button class="menos" data-k="'+a.k+'">−</button>':'')+
+      '<svg width="62" height="62" viewBox="0 0 62 62">'+
+        '<circle class="tr" cx="31" cy="31" r="'+R+'"></circle>'+
+        '<circle class="pr" cx="31" cy="31" r="'+R+'" stroke="'+a.col+'" '+
+          'stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"></circle>'+
+        '<text class="val" x="31" y="35" text-anchor="middle">'+(full?'✓':(m>1? v+'/'+m : '·'))+'</text>'+
+      '</svg><span class="lb">'+a.lb+'</span></div>';
+  }).join('');
+  animar=null;
+
+  var c=completos(d);
+  var el=document.getElementById('baseMsg');
+  if(el.querySelector('.celebra') && c<3) el.innerHTML='';
+  if(!el.querySelector('.celebra')){
+    el.textContent = c===4 ? 'Los cuatro. Nada que añadir.'
+      : c===3 ? 'Día bueno. El cuarto es de propina.'
+      : c===0 ? 'Toca el anillo para sumar. Agua es lo más barato de arreglar.'
+      : 'Vas por '+c+' de 4. Con tres, el día ya cuenta.';
+  }
+
+  document.getElementById('numBuenos').textContent = totalBuenos();
+  var mes=hoyISO().slice(0,7), nm=0;
+  for(var k in S.dias){ if(k.slice(0,7)===mes && esBueno(S.dias[k])) nm++; }
+  var d1=new Date(), ult=new Date(d1.getFullYear(),d1.getMonth()+1,0).getDate();
+  document.getElementById('mesBuenos').textContent = nm+' de '+d1.getDate();
+  var cells='';
+  for(var i=1;i<=ult;i++){
+    var iso=mes+'-'+String(i).padStart(2,'0');
+    var b=S.dias[iso]&&esBueno(S.dias[iso]);
+    cells+='<span class="'+(b?'b':'')+(i===d1.getDate()?' h':'')+'"></span>';
+  }
+  document.getElementById('calMes').innerHTML=cells;
+}
+
+
+/* ================= tema ================= */
+function tema(t){
+  if(t){ S.tema=t; persist(); }
+  var x=S.tema||'claro';
+  document.documentElement.setAttribute('data-tema',x);
+  var m=document.querySelector('meta[name="theme-color"]');
+  var oscuro = x==='oscuro' || (x==='auto' && window.matchMedia &&
+               window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if(m) m.setAttribute('content', oscuro?'#23211d':'#f6f3ec');
+  ['claro','oscuro','auto'].forEach(function(k){
+    var b=document.getElementById('t'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(b) b.classList.toggle('on', k===x);
+  });
+}
+
+/* ================= avance ================= */
+function iso(d){ var o=d.getTimezoneOffset(); return new Date(d.getTime()-o*60000).toISOString().slice(0,10); }
+function menos(n){ var d=new Date(); d.setDate(d.getDate()-n); return iso(d); }
+
+function rachas(){
+  var hoyD=hoyISO(), ayer=menos(1);
+  // la racha actual admite que hoy aún no esté cerrado: cuenta desde hoy o desde ayer
+  var arranque = (S.dias[hoyD] && esBueno(S.dias[hoyD])) ? 0 : 1;
+  var act=0;
+  for(var i=arranque;;i++){
+    var f=menos(i);
+    if(S.dias[f] && esBueno(S.dias[f])) act++; else break;
+  }
+  // mejor racha histórica
+  var fechas=Object.keys(S.dias).filter(function(f){ return esBueno(S.dias[f]); }).sort();
+  var mejor=0, seg=0, prev=null;
+  fechas.forEach(function(f){
+    if(prev && (new Date(f)-new Date(prev))===86400000) seg++; else seg=1;
+    if(seg>mejor) mejor=seg; prev=f;
+  });
+  return { actual:act, mejor:Math.max(mejor,act) };
+}
+
+var MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function alFinal(){
+  var c=document.getElementById('mapa'); if(!c) return;
+  requestAnimationFrame(function(){ c.scrollLeft = c.scrollWidth; });
+}
+
+function renderAvance(){
+  var r=rachas();
+  document.getElementById('avTotal').textContent=totalBuenos();
+  document.getElementById('avRacha').textContent=r.actual;
+  document.getElementById('avMejor').textContent=r.mejor;
+  var mes=hoyISO().slice(0,7), nm=0;
+  for(var k in S.dias){ if(k.slice(0,7)===mes && esBueno(S.dias[k])) nm++; }
+  document.getElementById('avMes').textContent=nm;
+
+  // ---- mapa del año: 53 semanas, lunes arriba ----
+  var fin=new Date(hoyISO()+'T12:00:00');
+  var ini=new Date(fin); ini.setDate(ini.getDate()-363);
+  while(ini.getDay()!==1) ini.setDate(ini.getDate()-1);   // empieza en lunes
+
+  var celdas='', cabecera='', mesPrev=-1, col=0, filas=0;
+  var cur=new Date(ini);
+  var cols=[];
+  while(cur<=fin){
+    var f=iso(cur), d=S.dias[f], n=d?completos(d):0;
+    var cls = n>=4?'b3' : n===3?'b2' : n>0?'b1' : '';
+    celdas+='<i class="'+cls+(f===hoyISO()?' hoy':'')+'" title="'+f+'"></i>';
+    filas++;
+    if(filas%7===1){ cols.push(cur.getMonth()); }
+    cur.setDate(cur.getDate()+1);
+  }
+  // relleno para completar la última columna
+  while(filas%7!==0){ celdas+='<i class="fuera"></i>'; filas++; }
+  cols.forEach(function(m){
+    if(m!==mesPrev){ cabecera+='<span>'+MESES[m]+'</span>'; mesPrev=m; }
+    else cabecera+='<span></span>';
+  });
+
+  var cont=document.getElementById('mapa');
+  cont.innerHTML='<div style="width:max-content"><div class="meses">'+cabecera+'</div>'+
+                 '<div class="rejilla">'+celdas+'</div></div>';
+  alFinal();
+
+  var conAlgo=Object.keys(S.dias).filter(function(f){ return completos(S.dias[f])>0; }).length;
+  document.getElementById('mapaPie').textContent =
+    conAlgo ? 'Cuanto más lleno el cuadro, más anillos ese día. El más oscuro son los cuatro.'
+            : 'Cada cuadrito es un día. Se irán llenando solos.';
+
+  // ---- últimos 30 días, anillo por anillo ----
+  var html='', flojo=null, peor=101;
+  ANILLOS.forEach(function(a){
+    var barras='', hechos=0, hay=0;
+    for(var i=29;i>=0;i--){
+      var f=menos(i), d=S.dias[f], v=d?(d[a.k]||0):0, m=a.meta();
+      var p=Math.min(1, v/m);
+      if(v>0) hay++;
+      if(p>=1) hechos++;
+      barras+='<span style="height:'+Math.round(4+p*22)+'px'+(p>0?';background:'+a.col:'')+
+              (p>=1?'':';opacity:'+(0.35+p*0.5))+'"></span>';
+    }
+    var pc=Math.round(hechos/30*100);
+    if(hay>0 && pc<peor){ peor=pc; flojo=a; }
+    html+='<div class="filaR"><span class="pt" style="background:'+a.col+'"></span>'+
+          '<span class="nm">'+a.lb+'</span>'+
+          '<span class="spark">'+barras+'</span>'+
+          '<span class="pc" style="color:'+(pc>=70?a.col:'var(--ink3)')+'">'+pc+'%</span></div>';
+  });
+  document.getElementById('filas').innerHTML=html;
+
+  var dg=document.getElementById('diagnostico');
+  if(!flojo) dg.textContent='Cuando lleves unos días, aquí verás cuál de los cuatro te falla.';
+  else if(peor>=70) dg.textContent='Los cuatro van bien. No hay nada que arreglar.';
+  else dg.innerHTML='El que más te falla es <b style="color:'+flojo.col+'">'+flojo.lb.toLowerCase()+
+       '</b>, con un '+peor+'%. Si vas a cambiar una sola cosa esta semana, que sea esa.';
+}
+
+/* ================= reglas (texto) ================= */
+var REGLAS=[
+ ['2 · Material',[
+  ['2.1','Umbral de entrada','Antes de comprar un aparato, tres preguntas. Hacen falta dos síes: ¿funciona sin conexión?, ¿se puede abrir y reparar?, ¿seguirá sirviendo dentro de diez años?'],
+  ['2.2','Espera de 30 días','Todo lo no consumible por encima de tu umbral se apunta con fecha y se compra 30 días después. Alrededor de un tercio se cae solo.'],
+  ['2.3','Coste por uso','El precio no es el dato. Chaqueta de 300 € usada 400 veces = 0,75 €/uso. Auriculares de 60 € usados dos veces = 30 €/uso.'],
+  ['2.4','Entra uno, sale uno','De la misma categoría, en el mismo día. Sin «de momento lo guardo».'],
+  ['2.5','Cuarentena','Lo dudoso va a una caja con la fecha escrita. A los tres meses sin abrirla, se va sin abrirla.'],
+  ['2.6','Reparación','Nada a medio arreglar más de un mes: o se repara, o se da por muerto. En dos años tienes el historial de fiabilidad real de tu casa.'],
+  ['2.7','Inventario','Dos veces al año, una sola categoría hasta el fondo. Una, no cuatro.'],
+  ['2.8','Lo que se acaba, se acaba','Un repuesto de lo imprescindible, ninguno de lo demás. El almacén doméstico no ahorra dinero: ocupa metros que pagas al mes.']]],
+ ['3 · Casa',[
+  ['3.1','Se termina donde se empieza','Veinte segundos ahora o quince minutos tres días después, que es cuando se hace si no se hace ya.'],
+  ['3.2','Una superficie siempre vacía','Mantener todo despejado se abandona en dos semanas; mantener una es un gesto de diez segundos al pasar.'],
+  ['3.3','La silla','La ropa está limpia, sucia o puesta. No existe el cuarto estado.'],
+  ['3.4','Cerrar la cocina','Fregadero vacío y cafetera preparada antes de dormir. No es limpieza: es un regalo al de mañana.'],
+  ['3.5','La entrada','Sitio fijo y único para llaves, cartera y gafas. Buscarlas cuesta cuatro minutos y arranca el día en tensión.'],
+  ['3.6','La bolsa de salida','Lo que hay que devolver, llevar o tirar va ahí en cuanto se decide, no cuando se sale.'],
+  ['3.7','Una compra a la semana','Con lista hecha en casa. Las visitas sueltas traen lo que no estaba previsto.']]],
+ ['4 · Atención',[
+  ['4.1','Primera hora','Si lo primero que ves es la cola de peticiones de otros, el día ya viene ordenado por sus prioridades.'],
+  ['4.2','Notificaciones: solo personas','Una notificación de una persona es una comunicación. Todo lo demás es publicidad con permiso de interrumpirte.'],
+  ['4.3','Las bandejas se vacían, no se vigilan','La primera semana crees que se te escapa algo; en la segunda descubres que era el impulso de mirar.'],
+  ['4.4','Un aparato de guardia','Solo una pantalla tiene permiso para interrumpirte. El resto se consultan cuando tú vas.'],
+  ['4.5','Cargador fuera del dormitorio','La regla con mejor relación coste/resultado del documento, y la que más resistencia da.'],
+  ['4.6','Filtro previo','La regla no es decir que no: es responder después. «Déjame verlo y te digo mañana».'],
+  ['4.7','Umbral','Si el sitio y el ruido son idénticos antes y después, lo anterior no termina: se queda de fondo.']]],
+ ['5 · Decisión',[
+  ['5.1','Hecho e interpretación','A: lo que grabaría una cámara. B: lo que has añadido tú. Señal de que estás en B: siempre, nunca, otra vez, va a, seguro que.'],
+  ['5.2','Las tres cajas','Lo controlo → se ejecuta. Influyo → una acción, y sale de tu cabeza. No lo controlo → dato de entrada. «Esperar» vale, si tiene fecha.'],
+  ['5.3','Una cosa al día','Escrita la noche anterior. Si el día se tuerce y solo sale esa, el día está bien.']]],
+ ['6 · Dinero',[
+  ['6.1','Techo declarado','Lo que entre por encima tiene destino fijado y no sube el nivel de vida.'],
+  ['6.2','Destino automático','El ahorro sale el mismo día que entra el dinero. Lo que sobra a final de mes casi nunca sobra.'],
+  ['6.3','Presupuesto de disfrute','Dentro de la cifra, todo vale la pena; fuera, nada. Sin esto el documento se convierte en tacañería.'],
+  ['6.4','Coste en horas de vida','Un objeto de 600 € cuesta los días que tardas en ganarlos.'],
+  ['6.5','Deuda con condición','Solo para lo que aumenta capacidad futura. El plazo se fija antes de firmar.'],
+  ['6.6','Quince minutos al mes','Ni más frecuente —ansiedad sin información nueva—, ni menos —deja de ser revisión y pasa a ser sorpresa.']]],
+ ['7 · Cuerpo',[
+  ['7.1','Hora de acostarse','Se fija la hora de irse a la cama y la noche se organiza hacia atrás. Dormir no es lo que sobra al final del día.'],
+  ['7.2','Mínimo diario, no propósito','Un umbral bajo que se cumpla también en un mal día. Lo ambicioso se cae el primer martes complicado.'],
+  ['7.3','Decidir la comida con la nevera llena','Sentado y sin hambre, no de pie frente a la nevera a las nueve.'],
+  ['7.4','Comer sentado y sin pantalla','De pie y mirando algo no cuenta ni como comida ni como descanso.'],
+  ['7.5','Cuarentena de síntomas','Lo que falle más de dos semanas va a consulta. «Ya se pasará» sin fecha no es esperar, es ignorar.'],
+  ['7.6','Revisión anual','No se hace porque algo duela; se hace porque toca.']]],
+ ['8 · Cuidado',[
+  ['8.1','Uniforme','El objetivo no es la austeridad: es que vestirse deje de ser una decisión. Si al abrir el armario dudas, sobra ropa. No falta.'],
+  ['8.2','Aseo: pocos productos','Cuando algo se acaba se repone lo mismo, no se prueba otro.'],
+  ['8.3','Mantenimiento con fecha, no con espejo','Esperar a que se note es vivir un mes con ello notándose.'],
+  ['8.4','Un hueco vacío al día','El aburrimiento no es un fallo del día: es la parte del día en la que se ordena el resto.'],
+  ['8.5','Estar solo a propósito','Lo que cansa de la soledad no es la soledad: es no haberla elegido.'],
+  ['8.6','Cómo te hablas cuando fallas','Un incumplimiento es un dato sobre la regla, no sobre ti.'],
+  ['8.7','Permiso explícito','Se suspende entero y sin culpa. Un sistema que no se puede suspender no se abandona un día: se abandona del todo.']]],
+ ['9 · Relaciones',[
+  ['9.1','Fecha, no «ya quedaremos»','Lo que no tiene fecha no ocurre, y a los dos años eso ya no se llama falta de tiempo.'],
+  ['9.2','Presencia sin aparato','Si puede sonar delante de otra persona, esa persona ya sabe que no tiene toda tu atención.'],
+  ['9.3','El no honesto es más barato','La verdad breve ofende menos que un sí a medias que luego se cumple mal.'],
+  ['9.4','Un gesto pequeño al día','Preguntar una cosa concreta y no «qué tal».'],
+  ['9.5','Balance, no episodio','La pregunta no es «¿cómo ha ido hoy?», es «¿esto suma o resta, en general?».']]],
+ ['10 · Palabra',[
+  ['10.1','No prometas en caliente','El plazo lo pones tú. «Te digo mañana con una fecha».'],
+  ['10.2','Un compromiso, una fecha','Sin fecha no es un compromiso: es una intención, y las intenciones no se cumplen ni se olvidan.'],
+  ['10.3','Aviso temprano','En cuanto sepas que no llegas, se avisa ese mismo día.'],
+  ['10.4','Bitácora de promesas','Los compromisos pequeños por separado parecen nada y juntos son la mitad del malestar de un mes.']]]
+];
+var CAL={0:['Compra de la semana con lista · 3.7','Una tarde con todo apagado'],
+         6:['Dos horas fuera, sin destino ni ruta registrada','Un rato de taller: algo que salga mal a la primera',
+            'Un rato solo, elegido y sin plan · 8.5','Vaciar la bolsa de salida · 3.6']};
+var DIARIO=['Quince minutos de hueco vacío · 8.4','Un gesto con alguien · 9.4',
+            'Cerrar la cocina antes de dormir · 3.4','Cargador fuera del dormitorio · 4.5'];
+
+/* ================= render ================= */
+function esc(s){ return String(s==null?'':s).replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c]}); }
+
+function render(){
+  var d=new Date();
+  document.getElementById('hoyFecha').textContent=d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  pintarAnillos();
+
+  var h=S.hoy, box=document.getElementById('hoyBox');
+  if(h && h.fecha===hoyISO()){
+    box.innerHTML='<div class="row"><div class="chk '+(h.hecho?'on':'')+'" data-act="toggleHoy()">'+(h.hecho?'✓':'')+'</div>'+
+      '<div class="grow today '+(h.hecho?'done':'')+'">'+esc(h.texto)+'</div>'+
+      '<button class="x" data-act="borrarHoy()">×</button></div>';
+  } else if(h && h.fecha===manana()){
+    box.innerHTML='<div class="muted">Para mañana ya está escrita: <b>'+esc(h.texto)+'</b></div>'+
+      '<div style="margin-top:10px"><button class="btn sm" data-act="borrarHoy()">Cambiarla</button></div>';
+  } else {
+    box.innerHTML='<input type="text" class="today" id="nuevaHoy" placeholder="Escribe la única cosa de hoy">'+
+      '<div style="margin-top:12px"><button class="btn" data-act="setHoy()">Fijar</button></div>';
+  }
+
+  var toca=DIARIO.concat(CAL[d.getDay()]||[]);
+  if(d.getDate()===1) toca.push('Quince minutos de cuentas · 6.6');
+  document.getElementById('hoyToca').innerHTML=toca.map(function(t){
+    return '<li><span class="muted grow">'+esc(t)+'</span></li>'; }).join('');
+
+  var v=[];
+  S.espera.forEach(function(i){ if(dias(i.f)>=30) v.push(['Espera cumplida: '+i.t,'decide']); });
+  S.cuarentena.forEach(function(i){ if(dias(i.f)>=90) v.push(['Cuarentena cumplida: '+i.t,'fuera']); });
+  S.filtro.forEach(function(i){ if(dias(i.f)>=1) v.push(['Toca responder: '+i.t,'hoy']); });
+  S.bitacora.forEach(function(i){ if(!i.hecho&&dias(i.f)>=30) v.push(['A medio arreglar 30 días: '+i.t,'cierra']); });
+  S.promesas.forEach(function(i){ if(!i.hecho) v.push(['Prometido: '+i.t+(i.p?' — '+i.p:''),'']); });
+  document.getElementById('hoyVence').innerHTML = v.length
+    ? v.map(function(x){ return '<li><span class="grow">'+esc(x[0])+'</span>'+(x[1]?'<span class="pill due">'+x[1]+'</span>':'')+'</li>'; }).join('')
+    : '<li><span class="empty">Nada vence hoy.</span></li>';
+
+  lista('espera','lEspera',30,'compra o borra');
+  lista('cuarentena','lCuarentena',90,'fuera sin abrir');
+  lista('filtro','lFiltro',1,'responde hoy');
+  lista('bitacora','lBitacora',30,'cierra o recicla');
+  lista('promesas','lPromesas',null,null);
+
+  var pend=S.espera.length, listo=S.espera.filter(function(i){return dias(i.f)>=30}).length;
+  document.getElementById('espStat').textContent = pend?(listo+' de '+pend+' han cumplido los 30 días.'):'';
+
+  document.getElementById('mAgua').value=S.metas.agua;
+  document.getElementById('mComida').value=S.metas.comida;
+  document.getElementById('mHora').value=S.metas.hora||'';
+  document.getElementById('umbral').value=S.umbral;
+  document.getElementById('borrar').value=S.borrar||'';
+
+  document.getElementById('lHist').innerHTML = S.hist.length
+    ? S.hist.slice(-30).reverse().map(function(x){
+        return '<li><span class="tiny" style="min-width:58px">'+fmt(x.fecha)+'</span>'+
+               '<span class="grow muted '+(x.hecho?'':'done')+'">'+esc(x.texto)+'</span></li>'; }).join('')
+    : '<li><span class="empty">Todavía no hay días cerrados.</span></li>';
+
+  renderAvance();
+  if(!document.getElementById('reglasOut').dataset.done) renderReglas();
+}
+
+function lista(k,el,plazo,accion){
+  var arr=S[k];
+  document.getElementById(el).innerHTML = arr.length ? arr.map(function(i,ix){
+    var pill = plazo===null ? (i.p?'<span class="pill">'+esc(i.p)+'</span>':'')
+      : (plazo-dias(i.f)>0 ? '<span class="pill">'+(plazo-dias(i.f))+' d</span>'
+                           : '<span class="pill due">'+accion+'</span>');
+    return '<li>'+((k==='bitacora'||k==='promesas')
+        ? '<div class="chk '+(i.hecho?'on':'')+'" data-act="tog('+"'"+k+"'"+','+ix+')">'+(i.hecho?'✓':'')+'</div>' : '')+
+      '<div class="grow"><div class="'+(i.hecho?'done':'')+'">'+esc(i.t)+'</div>'+
+      '<div class="tiny">'+fmt(i.f)+'</div></div>'+pill+
+      '<button class="x" data-act="del('+"'"+k+"'"+','+ix+')">×</button></li>';
+  }).join('') : '<li><span class="empty">Vacío.</span></li>';
+}
+
+function renderReglas(){
+  var o=document.getElementById('reglasOut');
+  o.innerHTML = REGLAS.map(function(s){
+    return '<div class="sechead">'+esc(s[0])+'</div>'+s[1].map(function(r){
+      return '<details><summary><span>'+esc(r[1])+'</span><span class="n">'+r[0]+'</span></summary>'+
+             '<div class="body">'+esc(r[2])+'</div></details>'; }).join('');
+  }).join('')+'<div class="note" style="margin:26px 0 40px">Cumplirlas todas al cien por cien no es el objetivo. El objetivo es no tener que pensarlas.</div>';
+  o.dataset.done='1';
+}
+
+/* ================= acciones ================= */
+function guardarMetas(){
+  S.metas.agua=Math.max(1,+document.getElementById('mAgua').value||8);
+  S.metas.comida=Math.max(1,+document.getElementById('mComida').value||3);
+  S.metas.hora=document.getElementById('mHora').value;
+  S.umbral=+document.getElementById('umbral').value||100;
+  S.borrar=document.getElementById('borrar').value;
+  persist(); render();
+}
+function setHoy(){ var e=document.getElementById('nuevaHoy'), t=e&&e.value.trim(); if(!t) return;
+  S.hoy={fecha:hoyISO(),texto:t,hecho:false}; persist(); render(); }
+function toggleHoy(){ S.hoy.hecho=!S.hoy.hecho; persist(); render(); }
+function borrarHoy(){ S.hoy=null; persist(); render(); }
+var IDS={espera:'espTxt',cuarentena:'cuaTxt',filtro:'filTxt',bitacora:'repTxt'};
+function add(k){ var e=document.getElementById(IDS[k]), t=e.value.trim(); if(!t) return;
+  S[k].push({t:t,f:hoyISO(),hecho:false}); e.value=''; persist(); render(); }
+function addPromesa(){ var e=document.getElementById('proTxt'), f=document.getElementById('proFecha'), t=e.value.trim();
+  if(!t) return; S.promesas.push({t:t,f:hoyISO(),p:f.value.trim(),hecho:false});
+  e.value=''; f.value=''; persist(); render(); }
+function del(k,i){ S[k].splice(i,1); persist(); render(); }
+function tog(k,i){ S[k][i].hecho=!S[k][i].hecho; persist(); render(); }
+
+function cerrarDia(){
+  var man=document.getElementById('cman').value.trim();
+  if(S.hoy && S.hoy.fecha===hoyISO()) S.hist.push(S.hoy);
+  S.hoy = man ? {fecha:manana(),texto:man,hecho:false} : null;
+  var d=dia(hoyISO()), c=completos(d), bueno=esBueno(d);
+  ['c1','c2','c3','cman'].forEach(function(id){ document.getElementById(id).value=''; });
+  persist(); render();
+  var msg = bueno
+    ? '<div class="note celebra" style="border-color:var(--mov);color:var(--mov);margin-bottom:0">Día bueno número '+totalBuenos()+'.'+
+      (man?' Mañana ya tiene su cosa.':'')+'</div>'
+    : '<div class="note celebra" style="margin-bottom:0">Día cerrado con '+c+' de 4. No resta nada: mañana empieza igual que cualquier otro.'+
+      (man?' Su cosa ya está escrita.':'')+'</div>';
+  document.getElementById('cierreMsg').innerHTML=msg;
+}
+
+var SENAL=/\b(siempre|nunca|otra vez|va a|seguro que|jamás|todo el mundo|nadie)\b/gi;
+function chequear(){
+  var m=document.getElementById('fA').value.match(SENAL);
+  document.getElementById('alerta').innerHTML = m
+    ? '<div class="note" style="border-color:var(--accent);color:var(--accent)">«'+esc(m.join('», «'))+'» no lo puede grabar una cámara. Eso es columna B.</div>' : '';
+}
+function pasarAHoy(){ var t=document.getElementById('k1').value.trim(); if(!t) return;
+  S.hoy={fecha:hoyISO(),texto:t,hecho:false}; persist(); render(); ir('hoy'); }
+function calc(){
+  var p=+document.getElementById('cPrecio').value,u=+document.getElementById('cUsos').value,h=+document.getElementById('cHora').value,o=[];
+  if(p>0&&u>0) o.push('<b>'+(p/u).toFixed(2).replace('.',',')+' € por uso.</b>');
+  if(p>0&&h>0){ var hh=p/h; o.push('Te cuesta '+hh.toFixed(1).replace('.',',')+' horas de trabajo'+(hh>8?' — más de una jornada.':'.')); }
+  if(p>0&&p>=S.umbral) o.push('<span class="tiny">Por encima de tu umbral: a la lista de espera, 30 días.</span>');
+  document.getElementById('calcOut').innerHTML=o.length?o.join('<br>'):'—';
+}
+function exportar(){ var b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(b); a.download='reglas-'+hoyISO()+'.json'; a.click(); }
+function abrirImport(){ document.getElementById('imp').click(); }
+function importar(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader();
+  r.onload=function(){ try{ var n=JSON.parse(r.result); Object.keys(DEF).forEach(function(k){ if(n[k]===undefined) n[k]=DEF[k]; });
+    S=n; guardarLocal(); tema(); render(); if(NUBE.hay) subir(true); }catch(x){ alert('Archivo no válido'); } }; r.readAsText(f); }
+
+function estado(){
+  var standalone = window.navigator.standalone===true || (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
+  var iOS=/iPad|iPhone|iPod/.test(navigator.userAgent), h='';
+  if(standalone) h='<p class="muted" style="margin:0">Instalada. La estás usando desde la pantalla de inicio.</p>';
+  else if(window.self!==window.top) h='<p class="muted" style="margin-top:0">Vista previa dentro de otra app. Ábrela en Safari para usarla de verdad.</p>';
+  else if(location.protocol==='file:') h='<p class="muted" style="margin-top:0">Estás abriendo el archivo desde el disco. iOS no deja añadir a la pantalla de inicio un archivo local: hace falta una dirección web.</p>';
+  else if(iOS) h='<p class="muted" style="margin-top:0">Botón <b>Compartir</b> en Safari → <b>Añadir a pantalla de inicio</b>.</p><p class="tiny">Tiene que ser Safari; Chrome en iPhone no lo ofrece.</p>';
+  else h='<p class="muted" style="margin-top:0">Menú del navegador → <b>Instalar aplicación</b>.</p>';
+  h+= NUBE.hay
+    ? '<p class="tiny" style="margin-bottom:0">Sesión: <b>'+esc(NUBE.email)+'</b>. Los datos se guardan en el servidor y se copian solos una vez al día. Este móvil guarda además una copia local para abrir al instante.</p>'
+    : '<p class="tiny" style="margin-bottom:0">'+(hasLS?'Sin servidor: los datos están solo en este navegador. Exporta una copia de vez en cuando.':'Este contexto no permite guardar datos.')+'</p>';
+  document.getElementById('instalar').innerHTML=h;
+}
+function ir(v){
+  ['hoy','avance','listas','filtro','reglas','ajustes'].forEach(function(x){
+    document.getElementById('v-'+x).classList.toggle('hidden',x!==v); });
+  document.querySelectorAll('nav button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===v); });
+  window.scrollTo(0,0);
+  if(v==='avance') alFinal();
+}
+document.getElementById('fA').addEventListener('input',chequear);
+tema(); render(); estado(); pintarSync(); arrancarNube();
+if(window.matchMedia){ try{ window.matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', function(){ if((S.tema||'claro')==='auto') tema(); }); }catch(e){} }
+</script>
+</body>
+</html>
