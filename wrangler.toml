@@ -1,0 +1,8 @@
+name = "reglas"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "reglas"
+database_id = "a74b9d9a-f23d-486b-811e-c8de8f993b44"
