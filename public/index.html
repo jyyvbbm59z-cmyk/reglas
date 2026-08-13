@@ -78,6 +78,12 @@ header.pegado{border-bottom-color:var(--line)}
   color:var(--ink3);font-size:17px;touch-action:manipulation}
 .nav-dia button:active{background:var(--papel2)}
 .nav-dia button[disabled]{opacity:.25}
+.hoyBtn{width:auto!important;padding:0 10px;height:28px;border:1px solid var(--line);border-radius:999px;
+  font:11.5px/1 var(--sans);letter-spacing:.03em;color:var(--ink2);
+  background:var(--paper);margin-left:3px;flex:none}
+.hoyBtn:active{background:var(--papel2)}
+.futuro .anillo{opacity:.45}
+.futuro .anillo .menos{display:none}
 .dia-txt{font:12.5px/1.25 var(--sans);color:var(--ink3);min-width:98px;text-align:center;padding:0 2px}
 .dia-txt b{display:block;font-weight:600;font-size:13.5px;color:var(--ink)}
 .sync{font:11px/1.3 var(--sans);color:var(--ink3);text-align:right;padding:4px 0 0}
@@ -291,6 +297,32 @@ h2,.card{scroll-margin-top:92px}
 .veces{font:10.5px/1 var(--sans);color:var(--accent);border:1px solid var(--accent);
   border-radius:999px;padding:2px 6px;margin-left:7px;vertical-align:1px;white-space:nowrap}
 
+/* ---------- la página del día ---------- */
+.log{margin:0}
+.log .sep{font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);
+  padding:16px 0 4px;margin-top:6px;border-top:1px solid var(--line2)}
+.log .sep:first-child{border-top:none;margin-top:0;padding-top:2px}
+.ap.cosa{align-items:center}
+.ap.cosa .txt{font-size:18.5px;line-height:1.35}
+.ap.cosa .glifo{color:var(--ink);font-size:16px}
+.ap.rito .txt{font-size:14.5px;color:var(--ink2)}
+.ap.rito .glifo{color:var(--ink3);font-size:12px}
+.ap.rito.ok .txt{color:var(--ink3);text-decoration:line-through}
+.ap.rito.ok .glifo{color:var(--mov)}
+.ap.rito.lejos{opacity:.5}
+.ap.rito.lejos .glifo{pointer-events:none}
+.ap.vence .glifo{color:var(--accent)}
+.ap.vence .txt{font-size:14.5px}
+.ref{font:11px/1 var(--sans);color:var(--ink3);border:1px solid var(--line);border-radius:5px;
+  padding:2px 5px;margin-left:8px;vertical-align:1px;white-space:nowrap}
+.log .ap:last-of-type{border-bottom:none}
+.nuevo{display:flex;gap:9px;align-items:center;margin-top:10px;padding-top:12px;border-top:1px solid var(--line2)}
+.tipoSel{display:flex;gap:4px;flex:none}
+.tipoSel button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);
+  font:15px/1 var(--serif);color:var(--ink3);background:var(--paper);touch-action:manipulation}
+.tipoSel button.on{border-color:var(--ink2);color:var(--ink);background:var(--papel2)}
+.apRegla{margin-top:6px}
+
 /* ---------- semana ---------- */
 .sfila{border-bottom:1px solid var(--line2);padding:13px 0}
 .sfila:last-child{border-bottom:none}
@@ -307,6 +339,36 @@ h2,.card{scroll-margin-top:92px}
 .sitem .g{color:var(--ink3);font-size:13px;min-width:13px}
 .sitem.hecha{color:var(--ink3);text-decoration:line-through}
 .svacio{font-size:13.5px;color:var(--ink3);font-style:italic;padding:3px 0}
+
+/* ---------- mes ---------- */
+.mres{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.mres .n{font:600 24px/1.1 var(--sans);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mrej{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.mcab{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px}
+.mcab span{text-align:center;font:9.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.mdia{aspect-ratio:1/1.06;border-radius:9px;background:var(--vacio);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;touch-action:manipulation;position:relative;
+  transition:transform .12s}
+.mdia:active{transform:scale(.93)}
+.mdia.vacio{background:transparent;pointer-events:none}
+.mdia.b1{background:color-mix(in srgb,var(--mov) 26%,var(--vacio))}
+.mdia.b2{background:color-mix(in srgb,var(--mov) 55%,var(--vacio))}
+.mdia.b3{background:var(--mov)}
+.mdia .d{font:600 13px/1 var(--sans);color:var(--ink2);font-variant-numeric:tabular-nums}
+.mdia.b2 .d,.mdia.b3 .d{color:var(--paper)}
+.mdia.hoy{box-shadow:0 0 0 2px var(--ink2)}
+.mdia.porvenir{background:transparent;border:1px dashed var(--line)}
+.mdia.porvenir .d{color:var(--ink3)}
+.mdia .ms{display:flex;gap:2px;height:4px}
+.mdia .ms i{width:4px;height:4px;border-radius:50%;background:var(--ink3);opacity:.75}
+.mdia.b2 .ms i,.mdia.b3 .ms i{background:var(--paper);opacity:.9}
+.mdia .ms i.ev{background:var(--agua)}
+.mdia.b2 .ms i.ev,.mdia.b3 .ms i.ev{background:var(--paper)}
+.mev{display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line2)}
+.mev:last-child{border-bottom:none}
+.mev .f{font:600 12px/1.3 var(--sans);color:var(--ink3);min-width:52px;text-transform:uppercase;letter-spacing:.04em}
+.mev .g{color:var(--agua);min-width:12px}
+.mev.tar .g{color:var(--ink3)}
 
 /* ---------- hoja inferior ---------- */
 #sheet{position:fixed;inset:0;z-index:45;display:none}
@@ -356,8 +418,9 @@ h2,.card{scroll-margin-top:92px}
       <span class="marca">Reglas</span>
       <div class="nav-dia">
         <button data-act="irDia(-1)" aria-label="Día anterior">‹</button>
-        <div class="dia-txt" id="diaTxt"></div>
+        <button class="dia-txt" id="diaTxt" data-act="irHoy()" aria-label="Volver a hoy"></button>
         <button data-act="irDia(1)" id="btnSig" aria-label="Día siguiente">›</button>
+        <button class="hoyBtn hidden" id="btnHoy" data-act="irHoy()">Hoy</button>
       </div>
     </div>
     <div class="sync" id="sync"></div>
@@ -368,6 +431,7 @@ h2,.card{scroll-margin-top:92px}
     <div class="segm" style="margin:16px 0 13px" id="segVista">
       <button data-act="verVista(dia)" id="vDia">Día</button>
       <button data-act="verVista(semana)" id="vSemana">Semana</button>
+      <button data-act="verVista(mes)" id="vMes">Mes</button>
     </div>
 
   <div id="vistaSemana" class="hidden">
@@ -375,6 +439,18 @@ h2,.card{scroll-margin-top:92px}
     <div class="card hidden" id="semMigrar"></div>
     <div class="card" id="semDias"></div>
     <div class="tiny" style="margin:0 2px 26px">Toca un día para abrirlo. El «+» apunta directamente en ese día.</div>
+  </div>
+
+  <div id="vistaMes" class="hidden">
+    <div class="card"><div class="mres" id="mesResumen"></div></div>
+    <div class="card">
+      <div class="mcab" id="mesCab"></div>
+      <div class="mrej" id="mesRejilla"></div>
+      <div class="tiny" style="margin-top:12px" id="mesPie"></div>
+    </div>
+    <h2>Lo que hay en el mes <span class="der" id="mesN"></span></h2>
+    <div class="card" id="mesLista"></div>
+    <div style="height:20px"></div>
   </div>
 
   <div id="vistaDia">
@@ -392,25 +468,8 @@ h2,.card{scroll-margin-top:92px}
       </div>
     </div>
 
-    <h2>La cosa de hoy <span class="der" id="cosaEstado"></span></h2>
-    <div class="card" id="cosaCard"></div>
-
-    <h2>Apuntes <span class="der" id="apN"></span></h2>
-    <div class="card" id="apCard"></div>
-
-    <div class="card" style="padding:0 16px">
-      <details class="plegable" id="detToca">
-        <summary>Hoy toca <span class="n" id="tocaN"></span></summary>
-        <div class="body" style="padding-bottom:12px"><ul class="list" id="hoyToca"></ul></div>
-      </details>
-    </div>
-
-    <div class="card hidden" id="venceCard" style="padding:0 16px">
-      <details class="plegable" open>
-        <summary>Vence <span class="n" id="venceN"></span></summary>
-        <div class="body" style="padding-bottom:12px"><ul class="list" id="hoyVence"></ul></div>
-      </details>
-    </div>
+    <h2 id="hLog">La página de hoy <span class="der" id="logN"></span></h2>
+    <div class="card log" id="logCard"></div>
 
     <h2 id="hCierre">Cerrar el día</h2>
     <div class="card" id="cierreCard"></div>
@@ -849,13 +908,14 @@ function fmt(f){ return new Date(f+'T12:00:00').toLocaleDateString('es-ES',{day:
 function fmtLargo(f){ return new Date(f+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}); }
 
 var fechaVista = hoyISO();
+function irHoy(){ fechaVista=hoyISO(); render(); window.scrollTo(0,0); }
 function esHoy(){ return fechaVista===hoyISO(); }
 
 function irDia(n){
-  var f=menos(-(vista==='semana'? n*7 : n), fechaVista);
-  if(vista==='semana' && f>hoyISO()) f=hoyISO();
-  if(f > hoyISO()) return;
-  if(dias(f) > 400) return;
+  var f = vista==='mes' ? moverMes(fechaVista,n)
+        : menos(-(vista==='semana'? n*7 : n), fechaVista);
+  var d=dias(f);
+  if(d > 3650 || d < -730) return;   // dos años hacia delante, diez hacia atrás
   fechaVista=f; render();
 }
 
@@ -874,6 +934,7 @@ function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n+
 
 var animar=null;
 function anillo(k,delta){
+  if(dias(fechaVista)<0){ avisar('Ese día todavía no ha llegado.'); return; }
   var d=dia(fechaVista), a=ANILLOS.filter(function(x){return x.k===k})[0];
   var antes=(d[k]||0)>=a.meta(), eraBueno=esBueno(d);
   var v=Math.max(0, Math.min(a.meta(), (d[k]||0)+delta));
@@ -896,6 +957,12 @@ function consejo(){
   var d=leer(fechaVista), c=completos(d), h=new Date().getHours();
   var faltan=ANILLOS.filter(function(a){ return (d[a.k]||0) < a.meta(); });
 
+  if(dias(fechaVista)<0){
+    var n=leerEnts(fechaVista).length;
+    return [n? 'Día por venir. Tienes '+n+(n===1?' cosa apuntada':' cosas apuntadas')+'.'
+             : 'Día por venir. Apunta aquí lo que ya sepas: los anillos se marcan cuando llegue.',
+            'var(--ink3)'];
+  }
   if(!esHoy()){
     if(c===4) return ['Los cuatro. Día redondo.','var(--mov)'];
     if(c>=3)  return ['Día bueno. Ya cuenta.','var(--mov)'];
@@ -977,31 +1044,6 @@ function pintarAnillos(){
 }
 
 /* ---------------- la cosa del día ---------------- */
-function pintarCosa(){
-  var h=S.hoy, box=document.getElementById('cosaCard'), est=document.getElementById('cosaEstado');
-  est.textContent='';
-  if(!esHoy()){
-    box.innerHTML='<div class="tiny">La cosa del día solo se lleva en el día de hoy.</div>';
-    return;
-  }
-  if(h && h.fecha===hoyISO()){
-    est.textContent = h.hecho? 'hecha' : '';
-    box.innerHTML='<div class="row" style="align-items:flex-start">'+
-      '<div class="chk '+(h.hecho?'on':'')+'" data-act="toggleCosa()" role="checkbox" aria-checked="'+
-        (h.hecho?'true':'false')+'">'+(h.hecho?'✓':'')+'</div>'+
-      '<div class="grow cosa '+(h.hecho?'cosa-hecha':'')+'">'+esc(h.texto)+'</div>'+
-      '<button class="x" data-act="borrarCosa()" aria-label="Quitar">×</button></div>'+
-      (h.hecho? '<div class="tiny" style="margin-top:10px">Hecha. El día ya está bien aunque no salga nada más.</div>' : '');
-  } else if(h && h.fecha===manana()){
-    box.innerHTML='<div class="muted">Mañana ya tiene la suya: <b>'+esc(h.texto)+'</b></div>'+
-      '<button class="btn sm" style="margin-top:12px" data-act="borrarCosa()">Cambiarla</button>';
-  } else {
-    box.innerHTML='<input type="text" class="cosa" id="nuevaCosa" placeholder="Una sola cosa. Terminable hoy." '+
-      'enterkeyhint="done" autocomplete="off">'+
-      '<div class="row" style="margin-top:13px"><button class="btn primary" data-act="fijarCosa()">Fijar</button>'+
-      '<span class="tiny grow">Si el día se tuerce y solo sale esa, el día está bien.</span></div>';
-  }
-}
 function fijarCosa(){ var e=document.getElementById('nuevaCosa'), t=e&&e.value.trim(); if(!t) return;
   S.hoy={fecha:hoyISO(),texto:t,hecho:false}; persist(); render(); avisar('Fijada. Es la única de hoy.'); }
 function toggleCosa(){ S.hoy.hecho=!S.hoy.hecho; persist(); render();
@@ -1009,33 +1051,37 @@ function toggleCosa(){ S.hoy.hecho=!S.hoy.hecho; persist(); render();
 function borrarCosa(){ S.hoy=null; persist(); render(); }
 
 /* ---------------- hoy toca / vencimientos ---------------- */
-var CAL={0:['Compra de la semana con lista · 3.7','Una tarde con todo apagado'],
-         6:['Dos horas fuera, sin destino ni ruta registrada','Un rato de taller: algo que salga mal a la primera',
-            'Un rato solo, elegido y sin plan · 8.5','Vaciar la bolsa de salida · 3.6']};
-var DIARIO=['Quince minutos de hueco vacío · 8.4','Un gesto con alguien · 9.4',
-            'Cerrar la cocina antes de dormir · 3.4','Cargador fuera del dormitorio · 4.5'];
+var RITO_DIA=[
+  {k:'8.4', t:'Quince minutos de hueco vacío'},
+  {k:'9.4', t:'Un gesto con alguien'},
+  {k:'3.4', t:'Cerrar la cocina antes de dormir'},
+  {k:'4.5', t:'Cargador fuera del dormitorio'}
+];
+var RITO_SEM={
+  0:[{k:'3.7', t:'Compra de la semana con lista'},
+     {k:'w1', t:'Una tarde con todo apagado'}],
+  6:[{k:'w2', t:'Dos horas fuera, sin destino ni ruta'},
+     {k:'w3', t:'Un rato de taller: algo que salga mal a la primera'},
+     {k:'8.5', t:'Un rato solo, elegido y sin plan'},
+     {k:'3.6', t:'Vaciar la bolsa de salida'}]
+};
+var RITO_MES=[{k:'6.6', t:'Quince minutos de cuentas'}];
 
-function pintarToca(){
-  var d=new Date(fechaVista+'T12:00:00');
-  var toca=DIARIO.concat(CAL[d.getDay()]||[]);
-  if(d.getDate()===1) toca.push('Quince minutos de cuentas · 6.6');
-  document.getElementById('tocaN').textContent=toca.length;
-  document.getElementById('hoyToca').innerHTML=toca.map(function(t){
-    return '<li><span class="muted grow">'+esc(t)+'</span></li>'; }).join('');
-
-  var v=[];
-  S.espera.forEach(function(i){ if(dias(i.f)>=30) v.push(['Espera cumplida: '+i.t,'decide']); });
-  S.cuarentena.forEach(function(i){ if(dias(i.f)>=90) v.push(['Cuarentena cumplida: '+i.t,'fuera']); });
-  S.filtro.forEach(function(i){ if(dias(i.f)>=1) v.push(['Toca responder: '+i.t,'hoy']); });
-  S.bitacora.forEach(function(i){ if(!i.hecho&&dias(i.f)>=30) v.push(['30 días a medio arreglar: '+i.t,'cierra']); });
-  S.promesas.forEach(function(i){ if(!i.hecho) v.push(['Prometido: '+i.t+(i.p?' — '+i.p:''),'']); });
-
-  document.getElementById('venceCard').classList.toggle('hidden', v.length===0 || !esHoy());
-  document.getElementById('venceN').textContent=v.length;
-  document.getElementById('hoyVence').innerHTML=v.map(function(x){
-    return '<li><span class="grow">'+esc(x[0])+'</span>'+
-      (x[1]?'<span class="pill due">'+x[1]+'</span>':'')+'</li>'; }).join('');
+function ritosDe(f){
+  var d=new Date(f+'T12:00:00');
+  var r=RITO_DIA.concat(RITO_SEM[d.getDay()]||[]);
+  if(d.getDate()===1) r=r.concat(RITO_MES);
+  return r;
 }
+function ritoHecho(f,k){ return (leer(f).r||[]).indexOf(k)>=0; }
+function togRito(f,k){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f); d.r=d.r||[];
+  var i=d.r.indexOf(k);
+  if(i>=0) d.r.splice(i,1); else d.r.push(k);
+  persist(); render();
+}
+
 
 /* ---------------- cierre del día ---------------- */
 function pintarCierre(){
@@ -1279,7 +1325,9 @@ function renderReglas(){
       s[1].map(function(r){
         return '<details data-txt="'+esc((r[1]+' '+r[2]+' '+r[0]).toLowerCase())+'">'+
           '<summary><span>'+esc(r[1])+'</span><span class="n">'+r[0]+'</span></summary>'+
-          '<div class="body">'+esc(r[2])+'</div></details>';
+          '<div class="body">'+esc(r[2])+
+          '<div class="apRegla"><button class="btn sm" data-act="apuntarRegla('+q(r[0])+','+q(r[1])+')">'+
+          'Apuntar hoy</button></div></div></details>';
       }).join('')+'</div>';
   }).join('')+
   '<div class="note" style="margin:22px 0 34px">Cumplirlas todas al cien por cien no es el objetivo. '+
@@ -1393,7 +1441,7 @@ function ents(f){ if(!S.entradas[f]) S.entradas[f]=[]; return S.entradas[f]; }
 function leerEnts(f){ return S.entradas[f]||[]; }
 function nuevoId(){ return Math.random().toString(36).slice(2,9)+(Object.keys(S.entradas).length); }
 
-function tipo(t){ tipoNuevo=t; pintarApuntes(); var i=document.getElementById('apIn'); if(i) i.focus(); }
+function tipo(t){ tipoNuevo=t; pintarLog(); var i=document.getElementById('apIn'); if(i) i.focus(); }
 
 function apAdd(fecha){
   var f=fecha||fechaVista;
@@ -1438,35 +1486,124 @@ function etiquetaDia(f){
 }
 
 /* ---------------- apuntes del día ---------------- */
-function pintarApuntes(){
-  var f=fechaVista, arr=leerEnts(f);
-  var pend=arr.filter(function(a){ return a.t==='t' && a.e===0; }).length;
-  document.getElementById('apN').textContent = arr.length? (pend? pend+' sin cerrar' : 'al día') : '';
-
-  var filas = arr.length ? arr.map(function(a){
-    var cls = a.e===1?'hecha' : a.e===2?'fuera' : '';
-    if(a.t==='e') cls+=' ev'; if(a.t==='n') cls+=' no';
-    var g = a.t==='t' ? (a.e===1?'✕' : a.e===2?'~' : '·') : TIPOS[a.t].g;
-    return '<div class="ap '+cls+'">'+
-      '<button class="glifo" data-act="apEstado('+q(f)+','+q(a.i)+')" aria-label="Cambiar estado">'+g+'</button>'+
-      '<div class="txt">'+esc(a.x)+(a.v>1?'<span class="veces">movida '+a.v+' veces</span>':'')+'</div>'+
-      '<button class="mv" data-act="hojaMover('+q(f)+','+q(a.i)+')" aria-label="Mover">›</button>'+
-      '</div>';
-  }).join('') : '<div class="empty">Nada apuntado'+(esHoy()?' hoy':'')+'.</div>';
-
-  document.getElementById('apCard').innerHTML =
-    '<div class="altas">'+Object.keys(TIPOS).map(function(k){
-      return '<button class="'+(tipoNuevo===k?'on':'')+'" data-act="tipo('+q(k)+')">'+
-        '<span class="g">'+TIPOS[k].g+'</span>'+TIPOS[k].n+'</button>'; }).join('')+'</div>'+
-    '<div class="row"><input type="text" id="apIn" class="grow" placeholder="'+
-      (tipoNuevo==='t'?'Qué hay que hacer':tipoNuevo==='e'?'Qué pasa y a qué hora':'Qué quieres recordar')+
-      '" enterkeyhint="done" autocomplete="off">'+
-      '<button class="btn sm" data-act="apAdd()">Añadir</button></div>'+
-    '<div style="margin-top:6px">'+filas+'</div>'+
-    '<div class="tiny" style="margin-top:12px">Toca el signo para cerrar una tarea · el «›» la mueve de día. '+
-    'Si algo se mueve tres veces, probablemente no había que hacerlo.</div>';
-}
 function q(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
+
+
+/* ---------------- la página del día ---------------- */
+function vencimientos(){
+  var v=[];
+  S.espera.forEach(function(i,ix){ if(dias(i.f)>=30)
+    v.push({x:'Cumplidos los 30 días: '+i.t, a:'espera'}); });
+  S.cuarentena.forEach(function(i){ if(dias(i.f)>=90)
+    v.push({x:'Cuarentena cumplida: '+i.t, a:'cuarentena'}); });
+  S.filtro.forEach(function(i){ if(dias(i.f)>=1)
+    v.push({x:'Toca responder: '+i.t, a:'pendientes'}); });
+  S.bitacora.forEach(function(i){ if(!i.hecho && dias(i.f)>=30)
+    v.push({x:'Un mes a medio arreglar: '+i.t, a:'cuarentena'}); });
+  S.promesas.forEach(function(i){ if(!i.hecho)
+    v.push({x:'Prometido: '+i.t+(i.p?' — '+i.p:''), a:'pendientes'}); });
+  return v;
+}
+function irLista(g){ listaActiva=g; ir('listas'); pintarListas(); }
+
+function pintarLog(){
+  var f=fechaVista, h=S.hoy, html='', n=0;
+
+  /* ---- la cosa del día ---- */
+  html+='<div class="sep">La cosa del día</div>';
+  if(h && h.fecha===f){
+    n++;
+    html+='<div class="ap cosa'+(h.hecho?' hecha':'')+'">'+
+      '<button class="glifo" data-act="toggleCosa()" aria-label="Hecha">'+(h.hecho?'✕':'★')+'</button>'+
+      '<div class="txt">'+esc(h.texto)+'</div>'+
+      '<button class="mv" data-act="borrarCosa()" aria-label="Quitar">×</button></div>';
+  } else if(h && h.fecha===manana() && esHoy()){
+    html+='<div class="ap"><div class="txt muted">Mañana ya tiene la suya: <b>'+esc(h.texto)+'</b>'+
+      ' <button class="btn sm" style="margin-left:6px" data-act="borrarCosa()">Cambiar</button></div></div>';
+  } else if(dias(f)<0){
+    html+='<div class="ap"><div class="txt tiny">La cosa del día se escribe la noche antes. '+
+      'Lo que ya sepas de este día, apúntalo abajo.</div></div>';
+  } else if(esHoy()){
+    html+='<div class="ap"><input type="text" class="cosa grow" id="nuevaCosa" '+
+      'placeholder="Una sola cosa. Terminable hoy." enterkeyhint="done" autocomplete="off">'+
+      '<button class="btn sm" data-act="fijarCosa()">Fijar</button></div>';
+  } else {
+    html+='<div class="empty">Sin nada fijado ese día.</div>';
+  }
+
+  /* ---- lo que reclama el documento ---- */
+  if(esHoy()){
+    var v=vencimientos();
+    if(v.length){
+      n+=v.length;
+      html+='<div class="sep">Vence hoy</div>';
+      html+=v.map(function(o){
+        return '<div class="ap vence"><span class="glifo">!</span>'+
+          '<div class="txt">'+esc(o.x)+'</div>'+
+          '<button class="mv" data-act="irLista('+q(o.a)+')" aria-label="Ver">›</button></div>';
+      }).join('');
+    }
+  }
+
+  /* ---- tus apuntes ---- */
+  var arr=leerEnts(f);
+  html+='<div class="sep">Apuntes</div>';
+  if(arr.length){
+    n+=arr.length;
+    html+=arr.map(function(a){
+      var cls = 'apunte '+(a.e===1?'hecha' : a.e===2?'fuera' : '');
+      if(a.t==='e') cls+=' ev'; if(a.t==='n') cls+=' no';
+      var g = a.t==='t' ? (a.e===1?'✕' : a.e===2?'~' : '·') : TIPOS[a.t].g;
+      return '<div class="ap '+cls+'">'+
+        '<button class="glifo" data-act="apEstado('+q(f)+','+q(a.i)+')" aria-label="Cambiar estado">'+g+'</button>'+
+        '<div class="txt">'+esc(a.x)+(a.v>1?'<span class="veces">movida '+a.v+' veces</span>':'')+'</div>'+
+        '<button class="mv" data-act="hojaMover('+q(f)+','+q(a.i)+')" aria-label="Mover">›</button></div>';
+    }).join('');
+  } else {
+    html+='<div class="empty">Nada apuntado todavía.</div>';
+  }
+
+  html+='<div class="nuevo"><div class="tipoSel">'+
+    Object.keys(TIPOS).map(function(k){
+      return '<button class="'+(tipoNuevo===k?'on':'')+'" data-act="tipo('+q(k)+')" '+
+        'aria-label="'+TIPOS[k].n+'">'+TIPOS[k].g+'</button>'; }).join('')+
+    '</div><input type="text" id="apIn" class="grow" placeholder="'+
+      (tipoNuevo==='t'?'Qué hay que hacer':tipoNuevo==='e'?'Qué pasa y cuándo':'Qué quieres recordar')+
+      '" enterkeyhint="done" autocomplete="off">'+
+    '<button class="btn sm" data-act="apAdd()">Añadir</button></div>';
+
+  /* ---- las reglas que tocan hoy ---- */
+  var rt=ritosDe(f), hechos=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
+  var porVenir = dias(f)<0;
+  html+='<div class="sep">Del documento'+(porVenir? ' · lo que pedirá ese día'
+        : ' · '+hechos+' de '+rt.length)+'</div>';
+  html+=rt.map(function(r){
+    var ok=ritoHecho(f,r.k);
+    return '<div class="ap rito'+(ok?' ok':'')+(porVenir?' lejos':'')+'">'+
+      '<button class="glifo" data-act="togRito('+q(f)+','+q(r.k)+')" aria-label="Marcar">'+
+        (ok?'◆':'◇')+'</button>'+
+      '<div class="txt">'+esc(r.t)+
+        (/^\d/.test(r.k)?'<span class="ref">'+r.k+'</span>':'')+'</div></div>';
+  }).join('');
+
+  document.getElementById('logCard').innerHTML=html;
+  document.getElementById('hLog').firstChild.textContent =
+    (dias(f)===0 ? 'La página de hoy'
+     : dias(f)===1 ? 'La página de ayer'
+     : dias(f)===-1 ? 'La página de mañana'
+     : 'La página del '+fmt(f))+' ';
+
+  var pend=arr.filter(function(a){ return a.t==='t' && a.e===0; }).length +
+           (porVenir? 0 : rt.length-hechos);
+  document.getElementById('logN').textContent = pend? pend+' sin cerrar' : (n? 'todo cerrado' : '');
+}
+
+/* ---- una regla del documento se puede apuntar en el día ---- */
+function apuntarRegla(num, txt){
+  ents(hoyISO()).push({i:nuevoId(), t:'t', x:txt+' · '+num, e:0, v:0});
+  persist(); fechaVista=hoyISO(); render(); ir('hoy');
+  avisar('Apuntado en la página de hoy.');
+}
 
 /* ---------------- hoja: mover a otro día ---------------- */
 function hojaMover(f,id){
@@ -1506,10 +1643,10 @@ function cerrarSheet(){ document.getElementById('sheet').classList.remove('ver')
 var vista='dia';
 function verVista(v){
   vista=v;
-  document.getElementById('vistaDia').classList.toggle('hidden', v!=='dia');
-  document.getElementById('vistaSemana').classList.toggle('hidden', v!=='semana');
-  document.getElementById('vDia').classList.toggle('on', v==='dia');
-  document.getElementById('vSemana').classList.toggle('on', v==='semana');
+  ['dia','semana','mes'].forEach(function(x){
+    document.getElementById('vista'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('hidden', x!==v);
+    document.getElementById('v'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('on', x===v);
+  });
   window.scrollTo(0,0);
   render();
 }
@@ -1568,14 +1705,19 @@ function pintarSemana(){
   var html='';
   for(var i=0;i<7;i++){
     var f=menos(-i, lun), d=leer(f), arr=leerEnts(f);
-    var esH = f===hoyISO();
-    var pts=ANILLOS.map(function(a){
+    var esH = f===hoyISO(), porVenir = f>hoyISO();
+    var pts=porVenir? '' : ANILLOS.map(function(a){
       return '<i style="'+((d[a.k]||0)>=a.meta()?'background:'+a.col:'')+'"></i>'; }).join('');
-    var items = arr.length ? arr.map(function(a){
+    var rt=ritosDe(f), rh=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
+    if(rh) pts+='<i style="background:transparent;width:auto;border-radius:0;'+
+      'font:10px/1 var(--sans);color:var(--ink3);margin-left:4px">◆'+rh+'</i>';
+    var cosaD = (S.hoy && S.hoy.fecha===f) ? '<div class="sitem'+(S.hoy.hecho?' hecha':'')+
+      '"><span class="g">★</span><span>'+esc(S.hoy.texto)+'</span></div>' : '';
+    var items = cosaD + (arr.length ? arr.map(function(a){
       var g = a.t==='t' ? (a.e===1?'✕' : a.e===2?'~' : '·') : TIPOS[a.t].g;
       return '<div class="sitem'+(a.e?' hecha':'')+'"><span class="g">'+g+'</span>'+
              '<span>'+esc(a.x)+'</span></div>'; }).join('')
-      : '';
+      : '');
     html+='<div class="sfila'+(esH?' hoy':'')+'">'+
       '<div class="scab"><button class="nom" data-act="abrirDia('+q(f)+')">'+
         mayus(DIAS_L[i].slice(0,3))+'</button>'+
@@ -1585,6 +1727,99 @@ function pintarSemana(){
       items+'</div>';
   }
   document.getElementById('semDias').innerHTML=html;
+}
+
+
+/* ---------------- vista mes ---------------- */
+var MESES_L=['enero','febrero','marzo','abril','mayo','junio','julio',
+             'agosto','septiembre','octubre','noviembre','diciembre'];
+
+function primeroDeMes(f){ return f.slice(0,8)+'01'; }
+function moverMes(f,n){
+  var d=new Date(f+'T12:00:00');
+  var dia0=d.getDate();
+  d.setDate(1); d.setMonth(d.getMonth()+n);
+  var ult=new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  d.setDate(Math.min(dia0, ult));
+  return iso(d);
+}
+
+function pintarMes(){
+  var base=new Date(fechaVista+'T12:00:00');
+  var y=base.getFullYear(), m=base.getMonth();
+  var pre=y+'-'+String(m+1).padStart(2,'0')+'-';
+  var ult=new Date(y,m+1,0).getDate();
+  var primerDia=(new Date(y,m,1).getDay()+6)%7;   // 0 = lunes
+
+  /* --- resumen --- */
+  var buenos=0, ritosOk=0, ritosTot=0, cerradas=0, abiertas=0;
+  for(var i=1;i<=ult;i++){
+    var f=pre+String(i).padStart(2,'0');
+    if(S.dias[f] && esBueno(S.dias[f])) buenos++;
+    if(f<=hoyISO()){
+      var rt=ritosDe(f); ritosTot+=rt.length;
+      ritosOk+=rt.filter(function(r){ return ritoHecho(f,r.k); }).length;
+    }
+    leerEnts(f).forEach(function(a){
+      if(a.t!=='t') return;
+      if(a.e===1) cerradas++; else if(a.e===0) abiertas++;
+    });
+  }
+  var pcRitos = ritosTot? Math.round(ritosOk/ritosTot*100) : 0;
+  document.getElementById('mesResumen').innerHTML=
+    '<div><div class="n">'+buenos+'</div><div class="tiny">días buenos</div></div>'+
+    '<div><div class="n">'+pcRitos+'%</div><div class="tiny">del documento</div></div>'+
+    '<div><div class="n">'+cerradas+'</div><div class="tiny">tareas cerradas</div></div>';
+
+  /* --- rejilla --- */
+  document.getElementById('mesCab').innerHTML=
+    ['L','M','X','J','V','S','D'].map(function(d){ return '<span>'+d+'</span>'; }).join('');
+
+  var cel='';
+  for(var k=0;k<primerDia;k++) cel+='<div class="mdia vacio"></div>';
+  for(var i=1;i<=ult;i++){
+    var f=pre+String(i).padStart(2,'0');
+    var d=S.dias[f], n=d?completos(d):0;
+    var cls = n>=4?'b3' : n===3?'b2' : n>0?'b1' : '';
+    if(f===hoyISO()) cls+=' hoy';
+    if(f>hoyISO()) cls+=' porvenir';
+    var arr=leerEnts(f);
+    var hayEv=arr.some(function(a){ return a.t==='e'; });
+    var hayTar=arr.some(function(a){ return a.t==='t' && a.e===0; });
+    var hayCosa=(S.hoy && S.hoy.fecha===f);
+    var marcas='';
+    if(hayEv) marcas+='<i class="ev"></i>';
+    if(hayTar) marcas+='<i></i>';
+    if(hayCosa) marcas+='<i></i>';
+    cel+='<button class="mdia '+cls+'" data-act="abrirDia('+q(f)+')" aria-label="'+i+'">'+
+      '<span class="d">'+i+'</span><span class="ms">'+marcas+'</span></button>';
+  }
+  document.getElementById('mesRejilla').innerHTML=cel;
+  document.getElementById('mesPie').textContent =
+    'El verde es la base: cuanto más oscuro, más anillos ese día. Los puntos son apuntes — el azul, un evento.';
+
+  /* --- lo que hay en el mes --- */
+  var filas=[];
+  for(var i=1;i<=ult;i++){
+    var f=pre+String(i).padStart(2,'0');
+    leerEnts(f).forEach(function(a){
+      if(a.t==='n') return;
+      if(a.t==='t' && a.e!==0) return;
+      filas.push({f:f, a:a});
+    });
+  }
+  document.getElementById('mesN').textContent = filas.length? filas.length : '';
+  document.getElementById('mesLista').innerHTML = filas.length
+    ? filas.map(function(o){
+        var esEv=o.a.t==='e';
+        return '<div class="mev'+(esEv?'':' tar')+'">'+
+          '<span class="f">'+new Date(o.f+'T12:00:00')
+            .toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})+'</span>'+
+          '<span class="g">'+(esEv?'○':'·')+'</span>'+
+          '<span class="grow">'+esc(o.a.x)+'</span>'+
+          '<button class="mv" data-act="abrirDia('+q(o.f)+')" aria-label="Abrir">›</button></div>';
+      }).join('')
+    : '<div class="empty">Ni eventos ni tareas pendientes este mes.</div>';
 }
 
 /* ---------------- tema ---------------- */
@@ -1678,25 +1913,36 @@ function render(){
   // cabecera
   var t=document.getElementById('diaTxt');
   var d0=dias(fechaVista);
-  if(vista==='semana'){
-    var lu=lunesDe(fechaVista), do_=menos(-6,lu);
-    t.innerHTML='<b>'+(lunesDe(hoyISO())===lu?'Esta semana':'Semana')+'</b>'+fmt(lu)+' – '+fmt(do_);
-    document.getElementById('btnSig').disabled = lunesDe(hoyISO())===lu;
-    seguir();
-    return;
+  var enHoy;
+  if(vista==='mes'){
+    var bm=new Date(fechaVista+'T12:00:00');
+    enHoy = primeroDeMes(fechaVista)===primeroDeMes(hoyISO());
+    t.innerHTML='<b>'+mayus(MESES_L[bm.getMonth()])+'</b>'+
+      (enHoy?'este mes':(bm.getFullYear()!==new Date().getFullYear()? bm.getFullYear():'&nbsp;'));
+  } else if(vista==='semana'){
+    var lu=lunesDe(fechaVista), do_=menos(-6,lu), lh=lunesDe(hoyISO());
+    enHoy = lu===lh;
+    var rel = enHoy? 'Esta semana'
+            : lu===menos(7,lh)? 'Semana pasada'
+            : lu===menos(-7,lh)? 'Semana que viene' : 'Semana';
+    t.innerHTML='<b>'+rel+'</b>'+fmt(lu)+' – '+fmt(do_);
+  } else {
+    enHoy = d0===0;
+    t.innerHTML = d0===0 ? '<b>Hoy</b>'+new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'})
+      : d0===1  ? '<b>Ayer</b>'+fmt(fechaVista)
+      : d0===-1 ? '<b>Mañana</b>'+fmt(fechaVista)
+      : '<b>'+mayus(fmtLargo(fechaVista).replace(/,.*/,'').replace(/\.$/,''))+'</b>'+fmt(fechaVista);
   }
-  t.innerHTML = d0===0 ? '<b>Hoy</b>'+new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'})
-    : d0===1 ? '<b>Ayer</b>'+fmt(fechaVista)
-    : '<b>'+mayus(fmtLargo(fechaVista).replace(/,.*/,'').replace(/\.$/,''))+'</b>'+fmt(fechaVista);
-  document.getElementById('btnSig').disabled = esHoy();
+  document.getElementById('btnSig').disabled = false;
+  document.getElementById('btnHoy').classList.toggle('hidden', enHoy);
+  document.body.classList.toggle('futuro', dias(fechaVista)<0);
   seguir();
 }
 function seguir(){
   if(vista==='semana'){ pintarSemana(); }
+  if(vista==='mes'){ pintarMes(); }
   pintarAnillos();
-  pintarCosa();
-  pintarApuntes();
-  pintarToca();
+  pintarLog();
   pintarCierre();
   pintarListas();
   renderAvance();
