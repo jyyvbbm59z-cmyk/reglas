@@ -605,6 +605,7 @@ h2,.card{scroll-margin-top:92px}
       <div class="row" style="flex-wrap:wrap">
         <button class="btn" data-act="exportar()">Exportar copia</button>
         <button class="btn" data-act="abrirImport()">Importar</button>
+        <button class="btn" data-act="hojaCopias()">Copias del servidor</button>
         <input type="file" id="imp" accept=".json,application/json" class="hidden" data-chg="importar(event)">
       </div>
     </div>
@@ -736,22 +737,39 @@ function unir(a,b,clave){
 }
 function fusionar(local, remoto){
   var r=completar(JSON.parse(JSON.stringify(remoto)));
+  var r0dias=(remoto&&remoto.dias)||{};
   var l=completar(local||{});
 
-  // anillos: por cada día, el valor más alto de los dos
+  /* Los días se funden campo a campo SIN lista blanca: cualquier campo que
+     exista en cualquiera de los dos lados sobrevive. Números, el mayor;
+     listas, la unión. Enumerar campos aquí fue justo el error que borró
+     datos: al añadir 'zero' y 'cq' se quedaron fuera de la fusión. */
   var dd={};
   [l.dias, r.dias].forEach(function(src){
     Object.keys(src||{}).forEach(function(f){
-      dd[f]=dd[f]||{agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],min:0};
-      ['agua','comida','mov','sueno','zero','min'].forEach(function(k){
-        dd[f][k]=Math.max(dd[f][k]||0, (src[f]||{})[k]||0); });
-      ['cq','mv','r'].forEach(function(k){
-        var a=dd[f][k]||[], b=(src[f]||{})[k]||[];
-        dd[f][k]=a.concat(b.filter(function(x){ return a.indexOf(x)<0; }));
+      var o = dd[f] = dd[f] || {};
+      var d = src[f] || {};
+      Object.keys(d).forEach(function(k){
+        var v=d[k];
+        if(Array.isArray(v)){
+          var a = Array.isArray(o[k])? o[k] : [];
+          o[k] = a.concat(v.filter(function(x){ return a.indexOf(x)<0; }));
+        } else if(typeof v === 'number'){
+          o[k] = Math.max(typeof o[k]==='number'? o[k] : 0, v);
+        } else if(o[k]===undefined){
+          o[k] = v;
+        }
       });
     });
   });
   r.dias=dd;
+
+  /* Red de seguridad: una fusión jamás puede dejar un día con menos anillos
+     cerrados de los que ya tenía cualquiera de los dos lados. */
+  Object.keys(dd).forEach(function(f){
+    var antes=Math.max(completos((l.dias||{})[f]||{}), completos((r0dias||{})[f]||{}));
+    if(completos(dd[f]) < antes) console.warn('fusión sospechosa en', f);
+  });
 
   ['espera','cuarentena','filtro','bitacora','promesas'].forEach(function(k){
     r[k]=unir(l[k], r[k], function(i){ return i.t+'|'+i.f; }); });
@@ -2146,6 +2164,67 @@ function estado(){
     ?'Sin servidor: los datos están solo en este navegador.'
     :'Este contexto no permite guardar datos.')+'</p>';
   document.getElementById('instalar').innerHTML=h;
+}
+
+
+/* ---------------- copias guardadas en el servidor ---------------- */
+function resumenEstado(e){
+  var d=e&&e.dias||{}, n=0, b=0;
+  Object.keys(d).forEach(function(f){
+    var c=completos(d[f]); if(c>0) n++; if(c>=3) b++;
+  });
+  var ap=0; Object.keys(e&&e.entradas||{}).forEach(function(f){ ap+=(e.entradas[f]||[]).length; });
+  return n+' días con datos · '+b+' buenos · '+ap+' apuntes';
+}
+function hojaCopias(){
+  if(!NUBE.hay){ avisar('Sin servidor: aquí no hay copias.'); return; }
+  abrirSheet('<h4>Copias del servidor</h4><p class="muted" style="margin:2px 0 12px">Cargando…</p>');
+  fetch('/api/copias',{headers:{'accept':'application/json'}})
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    var c=j.copias||[];
+    abrirSheet('<h4>Copias del servidor</h4>'+
+      '<p class="muted" style="margin:2px 0 12px">Una al día, las 30 últimas. '+
+      'Tocar una la trae y te deja verla antes de guardarla.</p>'+
+      (c.length? c.map(function(x){
+        var f=new Date(x.creada);
+        return '<button class="op" data-act="verCopia('+x.id+')">'+
+          '<span class="grow">'+f.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})+
+          '<div class="tiny">'+f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+
+          ' · '+Math.round(x.bytes/1024)+' KB</div></span><span class="der">›</span></button>';
+      }).join('') : '<div class="empty">Todavía no hay copias.</div>'));
+  })
+  .catch(function(){ abrirSheet('<h4>Copias del servidor</h4><p class="muted">No he podido leerlas.</p>'); });
+}
+var copiaVista=null;
+function verCopia(id){
+  fetch('/api/copias?id='+id,{headers:{'accept':'application/json'}})
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    if(!j.estado){ avisar('Esa copia está vacía.'); return; }
+    copiaVista=j.estado;
+    var f=new Date(j.creada);
+    abrirSheet('<h4>Copia del '+f.toLocaleDateString('es-ES',{day:'numeric',month:'long'})+'</h4>'+
+      '<div class="note" style="margin:8px 0 4px"><b>En la copia:</b><br>'+esc(resumenEstado(j.estado))+'</div>'+
+      '<div class="note" style="margin:0 0 14px"><b>Ahora mismo:</b><br>'+esc(resumenEstado(S))+'</div>'+
+      '<button class="btn full" style="margin-bottom:8px" data-act="fundirCopia()">Fundir con lo que tengo</button>'+
+      '<button class="btn full" style="margin-bottom:8px" data-act="reemplazarCopia()">Reemplazar todo por la copia</button>'+
+      '<button class="btn full" data-act="cerrarSheet()">Cancelar</button>'+
+      '<div class="tiny" style="margin:12px 0 6px">Fundir es lo seguro: se queda con lo mejor de cada lado y no borra nada.</div>');
+  })
+  .catch(function(){ avisar('No he podido traerla.'); });
+}
+function fundirCopia(){
+  if(!copiaVista) return;
+  S=fusionar(S, copiaVista);
+  guardarLocal(); tema(); render(); if(NUBE.hay) subir(true);
+  cerrarSheet(); avisar('Fundida. No se ha borrado nada.');
+}
+function reemplazarCopia(){
+  if(!copiaVista) return;
+  S=completar(JSON.parse(JSON.stringify(copiaVista)));
+  guardarLocal(); tema(); render(); if(NUBE.hay) subir(true);
+  cerrarSheet(); avisar('Restaurada esa copia.');
 }
 
 /* ---------------- bienvenida ---------------- */
