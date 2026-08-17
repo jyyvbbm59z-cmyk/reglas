@@ -331,7 +331,19 @@ h2,.card{scroll-margin-top:92px}
 .terna summary{padding:12px 0;font-size:15px;color:var(--ink2)}
 .terna summary .n{color:var(--ink3)}
 .terna details[open] summary{color:var(--ink);font-weight:600}
-.terna .body{padding:0 0 14px;font-size:14.5px}
+.terna .body{padding:0 0 14px;font-size:14.5px}.opr{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 0;
+  border-bottom:1px solid var(--line2);touch-action:manipulation}
+.opr:last-child{border-bottom:none}
+.opr:active{background:var(--papel2)}
+.opr .d{min-width:34px;font:600 11.5px/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.opr .grow b{font-weight:600;font-size:15.5px}
+.opr .fl{color:var(--ink3);font-size:17px;flex:none;padding-left:4px}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:8px 13px;font:13px/1 var(--sans);
+  color:var(--ink2);background:var(--paper);touch-action:manipulation}
+.chip.on{border-color:var(--mov);color:var(--mov);background:color-mix(in srgb,var(--mov) 9%,transparent)}
+.chip:active{background:var(--papel2)}
 
 /* ---------- semana ---------- */
 .sfila{border-bottom:1px solid var(--line2);padding:13px 0}
@@ -341,6 +353,7 @@ h2,.card{scroll-margin-top:92px}
 .scab{display:flex;align-items:center;gap:9px;margin-bottom:2px}
 .scab .nom{font:600 12.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
 .scab .fch{font:12px/1 var(--sans);color:var(--ink3)}
+.scab .ses{font:11px/1.3 var(--sans);color:var(--mov);border:1px solid color-mix(in srgb,var(--mov) 40%,transparent);border-radius:999px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
 .scab .pts{display:flex;gap:3px;margin-left:auto}
 .scab .pts i{width:7px;height:7px;border-radius:50%;background:var(--vacio)}
 .scab .mas{color:var(--ink3);font-size:19px;padding:2px 6px;border-radius:7px;line-height:1;touch-action:manipulation}
@@ -391,7 +404,9 @@ h2,.card{scroll-margin-top:92px}
   max-height:82vh;overflow:auto;transform:translateY(100%);transition:transform .27s cubic-bezier(.2,.9,.3,1);
   box-shadow:var(--sombra2);max-width:620px;margin:0 auto}
 #sheet.ver .caja{transform:none}
-#sheet .asa{width:38px;height:4px;border-radius:2px;background:var(--line);margin:6px auto 14px}
+#sheet .asa{display:block;width:42px;height:5px;border-radius:3px;background:var(--line);
+  margin:8px auto 14px;padding:0;touch-action:manipulation}
+#sheet .asa:active{background:var(--ink3)}
 #sheet h4{font:600 12px/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;
   color:var(--ink3);margin:0 0 4px}
 #sheet .op{display:flex;align-items:center;gap:13px;width:100%;padding:14px 0;
@@ -418,7 +433,7 @@ h2,.card{scroll-margin-top:92px}
   </div>
 </div>
 
-<div id="sheet"><div class="velo" data-act="cerrarSheet()"></div><div class="caja"><div class="asa"></div><div id="sheetBody"></div></div></div>
+<div id="sheet"><div class="velo" data-act="cerrarSheet()"></div><div class="caja"><button class="asa" data-act="cerrarSheet()" aria-label="Cerrar"></button><div id="sheetBody"></div></div></div>
 
 <div id="toast"><span class="grow" id="toastTxt"></span><button data-act="deshacer()" id="toastBtn">Deshacer</button></div>
 
@@ -521,44 +536,21 @@ h2,.card{scroll-margin-top:92px}
       <button data-act="verLista(cuarentena)" data-l="cuarentena">Casa</button>
     </div>
     <div id="listasBody"></div>
-  </section>
 
-  <!-- ======================= DECIDIR ======================= -->
-  <section id="v-filtro" class="hidden">
-    <h2>Hecho e interpretación <span class="der">5.1</span></h2>
-    <div class="card">
-      <div style="margin-bottom:15px">
-        <div class="tiny" style="margin-bottom:2px">A — Hecho: lo que grabaría una cámara</div>
-        <textarea id="fA" rows="3" placeholder="Verificable, sin adjetivos"></textarea>
+    <div id="compraCard">
+      <h2>¿Lo compro? <span class="der">2.1 · 2.3 · 6.4</span></h2>
+      <div class="card">
+        <div class="row" style="gap:14px;align-items:flex-end">
+          <div class="grow"><div class="tiny">Precio €</div>
+            <input type="number" inputmode="decimal" id="cPrecio" data-inp="calc()"></div>
+          <div class="grow"><div class="tiny">Usos previstos</div>
+            <input type="number" inputmode="numeric" id="cUsos" data-inp="calc()"></div>
+          <div class="grow"><div class="tiny">Tu € / hora</div>
+            <input type="number" inputmode="decimal" id="cHora" data-inp="calc()"></div>
+        </div>
+        <div id="calcOut" class="muted" style="margin-top:15px">Rellena lo que sepas.</div>
+        <div id="calcAcc"></div>
       </div>
-      <div>
-        <div class="tiny" style="margin-bottom:2px">B — Interpretación: lo que has añadido tú</div>
-        <textarea id="fB" rows="3" placeholder="Intenciones supuestas, consecuencias proyectadas"></textarea>
-      </div>
-      <div id="alerta"></div>
-      <div class="note" style="margin-bottom:0">Sobre A se puede actuar hoy. Sobre B no se puede hacer nada, porque no ha pasado.</div>
-    </div>
-
-    <h2>Las tres cajas <span class="der">5.2</span></h2>
-    <div class="card">
-      <div style="margin-bottom:14px"><div class="tiny">Lo controlo — se ejecuta o se agenda</div>
-        <input type="text" id="k1"></div>
-      <div style="margin-bottom:14px"><div class="tiny">Influyo — una acción, y sale de tu cabeza</div>
-        <input type="text" id="k2"></div>
-      <div style="margin-bottom:16px"><div class="tiny">No lo controlo — dato de entrada</div>
-        <input type="text" id="k3"></div>
-      <button class="btn full" data-act="pasarAHoy()">Pasar «lo controlo» a la cosa de hoy</button>
-    </div>
-
-    <h2>¿Lo compro? <span class="der">2.1 · 2.3 · 6.4</span></h2>
-    <div class="card">
-      <div class="row" style="gap:14px;align-items:flex-end">
-        <div class="grow"><div class="tiny">Precio €</div><input type="number" inputmode="decimal" id="cPrecio" data-inp="calc()"></div>
-        <div class="grow"><div class="tiny">Usos previstos</div><input type="number" inputmode="numeric" id="cUsos" data-inp="calc()"></div>
-        <div class="grow"><div class="tiny">Tu € / hora</div><input type="number" inputmode="decimal" id="cHora" data-inp="calc()"></div>
-      </div>
-      <div id="calcOut" class="muted" style="margin-top:15px">Rellena lo que sepas.</div>
-      <div id="calcAcc"></div>
     </div>
   </section>
 
@@ -580,6 +572,14 @@ h2,.card{scroll-margin-top:92px}
         <button data-act="tema(auto)" id="tAuto">Automático</button>
       </div>
     </div>
+
+    <h2>Rutina <span class="der">7.2</span></h2>
+    <div class="card" style="padding:2px 16px" id="rutinaCard"></div>
+    <div class="row" style="margin:-2px 0 0;flex-wrap:wrap">
+      <button class="btn sm" data-act="hojaImportar()">Pegar una rutina</button>
+      <button class="btn sm" data-act="reiniciarRutina()">Volver a la de partida</button>
+    </div>
+    <div class="tiny" style="margin:10px 2px 0">Toca un día para cambiar la sesión. El anillo Mover se cierra con la mitad de la sesión, o con el mínimo de veinte minutos andando.</div>
 
     <h2>Metas de la base</h2>
     <div class="card">
@@ -635,9 +635,6 @@ h2,.card{scroll-margin-top:92px}
   <button data-v="listas">
     <svg viewBox="0 0 24 24"><path d="M8 6.5h12M8 12h12M8 17.5h12M4 6.5h.01M4 12h.01M4 17.5h.01"/></svg>
     Listas<span class="punto"></span></button>
-  <button data-v="filtro">
-    <svg viewBox="0 0 24 24"><path d="M4 5h16l-6.4 7.6V20L10.4 18v-5.4z"/></svg>
-    Decidir<span class="punto"></span></button>
   <button data-v="reglas">
     <svg viewBox="0 0 24 24"><path d="M5 4.5h9.5a3.5 3.5 0 0 1 3.5 3.5v11.5H8.5A3.5 3.5 0 0 1 5 16z"/><path d="M8.5 9h6M8.5 12.5h6"/></svg>
     Reglas<span class="punto"></span></button>
@@ -708,7 +705,7 @@ function guardarLocal(){ var s=JSON.stringify(S); try{ hasLS?localStorage.setIte
 function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
 
 var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
-         dias:{},entradas:{},semanas:{},umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
+         dias:{},entradas:{},semanas:{},rutina:null,umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
 function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
   if(!o.metas) o.metas=DEF.metas; return o; }
 
@@ -745,9 +742,13 @@ function fusionar(local, remoto){
   var dd={};
   [l.dias, r.dias].forEach(function(src){
     Object.keys(src||{}).forEach(function(f){
-      dd[f]=dd[f]||{agua:0,comida:0,mov:0,sueno:0};
-      ['agua','comida','mov','sueno'].forEach(function(k){
+      dd[f]=dd[f]||{agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],min:0};
+      ['agua','comida','mov','sueno','zero','min'].forEach(function(k){
         dd[f][k]=Math.max(dd[f][k]||0, (src[f]||{})[k]||0); });
+      ['cq','mv','r'].forEach(function(k){
+        var a=dd[f][k]||[], b=(src[f]||{})[k]||[];
+        dd[f][k]=a.concat(b.filter(function(x){ return a.indexOf(x)<0; }));
+      });
     });
   });
   r.dias=dd;
@@ -778,6 +779,7 @@ function fusionar(local, remoto){
 
   // ajustes: manda este dispositivo, que es donde se acaban de tocar
   r.metas=l.metas; r.umbral=l.umbral; r.borrar=l.borrar||r.borrar; r.tema=l.tema||r.tema;
+  r.rutina=l.rutina||r.rutina;
   return r;
 }
 
@@ -939,7 +941,7 @@ var ANILLOS=[
  {k:'agua',   lb:'Agua',   tipo:'cuenta', col:'var(--agua)',
   meta:function(){ return Math.max(1,S.metas.agua||8); }},
  {k:'comida', lb:'Comida', tipo:'lista',  col:'var(--comida)', meta:function(){ return 1; }},
- {k:'mov',    lb:'Mover',  tipo:'si',     col:'var(--mov)',    meta:function(){ return 1; }},
+ {k:'mov',    lb:'Mover',  tipo:'lista',  col:'var(--mov)',    meta:function(){ return 1; }},
  {k:'sueno',  lb:'Sueño',  tipo:'si',     col:'var(--sueno)',  meta:function(){ return 1; }},
  {k:'zero',   lb:'Zero',   tipo:'si',     col:'var(--zero)',   meta:function(){ return 1; }}
 ];
@@ -971,7 +973,8 @@ function hojaComida(f){
     '<div class="tiny" style="margin-bottom:8px">Si viene en bolsa y se come sin plato, no cuenta como comida.</div>');
 }
 function qq(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
-function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[]};
+function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],min:0};
+  if(!S.dias[f].mv) S.dias[f].mv=[];
   if(S.dias[f].zero===undefined) S.dias[f].zero=0;
   if(!S.dias[f].cq) S.dias[f].cq=[];
   return S.dias[f]; }
@@ -984,7 +987,7 @@ var animar=null;
 function anillo(k,delta){
   if(dias(fechaVista)<0){ avisar('Ese día todavía no ha llegado.'); return; }
   var a=ANILLOS.filter(function(x){return x.k===k})[0];
-  if(a.tipo==='lista'){ if(delta>0) hojaComida(fechaVista); return; }
+  if(a.tipo==='lista'){ if(delta>0){ k==='mov'? hojaSesion(fechaVista) : hojaComida(fechaVista); } return; }
   var d=dia(fechaVista);
   var antes=(d[k]||0)>=a.meta(), eraBueno=esBueno(d);
   var v;
@@ -1040,6 +1043,8 @@ function consejo(){
     return ['Un vaso de agua antes que cualquier pantalla. Es lo más barato del día.','var(--agua)'];
   if(h>=21 && falta_sueno)
     return ['Hora de cerrar. El cargador, fuera del dormitorio.','var(--sueno)'];
+  if(falta_mov && h>=10 && h<20 && sesionDe(fechaVista).n)
+    return ['Hoy toca <b>'+esc(sesionDe(fechaVista).n.toLowerCase())+'</b>. Toca el anillo y verás la sesión.','var(--mov)'];
   if(h>=17 && h<21 && falta_mov)
     return ['Todavía da tiempo a los veinte minutos andando. Es el que menos cuesta y más arrastra.','var(--mov)'];
   if(c===2)
@@ -1064,9 +1069,13 @@ function pintarAnillos(){
   var d=leer(fechaVista), R=21, C=2*Math.PI*R;
   document.getElementById('anillos').innerHTML = ANILLOS.map(function(a){
     var v=d[a.k]||0, m=a.meta(), full=v>=m, p=Math.min(1,v/m), txt;
-    if(a.tipo==='lista'){
+    if(a.tipo==='lista' && a.k==='comida'){
       var n=(d.cq||[]).length; p=Math.min(1,n/2); full=n>=2;
       txt = full? '✓' : n+'/2';
+    } else if(a.tipo==='lista' && a.k==='mov'){
+      p=movProgreso(fechaVista); full=movCierra(fechaVista);
+      var tt=sesionDe(fechaVista).e.length;
+      txt = full? '✓' : (movHechos(fechaVista)? movHechos(fechaVista)+'/'+tt : '·');
     } else if(a.tipo==='si'){ txt = full? '✓' : '·'; }
     else { txt = full? '✓' : v+'/'+m; }
     return '<div class="anillo'+(full?' full':'')+(v>0&&a.tipo==='cuenta'?' tiene':'')+
@@ -1160,14 +1169,10 @@ function pintarCierre(){
     return;
   }
   card.innerHTML=
-    '<div style="margin-bottom:14px"><div class="tiny">¿Dónde perdí la calma?</div>'+
-      '<input type="text" id="c1" placeholder="Un hecho, sin adjetivos"></div>'+
-    '<div style="margin-bottom:14px"><div class="tiny">¿Dónde acerté el foco?</div><input type="text" id="c2"></div>'+
-    '<div style="margin-bottom:14px"><div class="tiny">¿Qué asumí bien?</div><input type="text" id="c3"></div>'+
-    '<div class="note" style="margin-top:0">Antes de cerrar: ¿queda la cocina como te gustaría encontrarla? '+
+    '<div class="note" style="margin-top:0">¿Queda la cocina como te gustaría encontrarla? '+
       'Si sí, el anillo Zero es tuyo.</div>'+
-    '<div style="margin-bottom:18px"><div class="tiny">La cosa de mañana</div>'+
-      '<input type="text" id="cman" class="cosa" placeholder="Una sola, terminable"></div>'+
+    '<div style="margin:16px 0 18px"><div class="tiny">La cosa de mañana</div>'+
+      '<input type="text" id="cman" class="cosa" placeholder="Una sola, terminable" enterkeyhint="done"></div>'+
     '<button class="btn primary full" data-act="cerrarDia()">Cerrar el día</button>'+
     '<div id="cierreMsg"></div>';
 }
@@ -1211,10 +1216,15 @@ var GRUPOS={
 };
 var listaActiva='espera';
 function verLista(g){ listaActiva=g; pintarListas(); }
+function pintarCompra(){
+  var el=document.getElementById('compraCard');
+  if(el) el.classList.toggle('hidden', listaActiva!=='espera');
+}
 
 function pintarListas(){
   document.querySelectorAll('#segListas button').forEach(function(b){
     b.classList.toggle('on', b.dataset.l===listaActiva); });
+  pintarCompra();
 
   document.getElementById('listasBody').innerHTML = GRUPOS[listaActiva].map(function(g){
     var arr=S[g.k]||[];
@@ -1275,18 +1285,6 @@ function avisar(txt, conDeshacer){
 function ocultarToast(){ document.getElementById('toast').classList.remove('ver'); }
 
 /* ---------------- decidir ---------------- */
-var SENAL=/\b(siempre|nunca|otra vez|va a|seguro que|jamás|todo el mundo|nadie|obviamente)\b/gi;
-function chequear(){
-  var m=document.getElementById('fA').value.match(SENAL);
-  document.getElementById('alerta').innerHTML = m
-    ? '<div class="note" style="border-color:var(--accent);color:var(--accent)">«'+
-      esc(m.join('», «'))+'» no lo puede grabar una cámara. Eso es columna B.</div>' : '';
-}
-function pasarAHoy(){
-  var t=document.getElementById('k1').value.trim(); if(!t) return;
-  S.hoy={fecha:hoyISO(),texto:t,hecho:false}; persist(); fechaVista=hoyISO(); render(); ir('hoy');
-  avisar('Ya es la cosa de hoy.');
-}
 var TRES=[false,false,false];
 function preg(i){ TRES[i]=!TRES[i]; calc(); }
 function calc(){
@@ -1589,6 +1587,166 @@ function agendaDe(f){
   return a;
 }
 
+
+/* ---------------- la rutina semanal ----------------
+   Siete sesiones editables. El anillo Mover se cierra con la sesión
+   o con el mínimo del 7.2, que es lo que sostiene los días malos. */
+/* Tipos de sesión: se aplican de un toque al editar un día. */
+var TIPOS_SES=[
+ {k:'sup',  n:'Tren superior', e:['Dominadas','Fondos','Remo','Press','Core']},
+ {k:'inf',  n:'Tren inferior', e:['Sentadilla','Peso muerto','Zancadas','Gemelos','Core']},
+ {k:'car',  n:'Carrera',       e:['Calentar 10 min','Rodaje 30–40 min','Estirar']},
+ {k:'lar',  n:'Carrera larga', e:['Rodaje largo','Agarre','Estirar']},
+ {k:'cf',   n:'CrossFit',      e:['Calentar','WOD','Enfriar']},
+ {k:'mov',  n:'Movilidad',     e:['Movilidad 15 min','Caminar 30 min']},
+ {k:'des',  n:'Descanso',      e:[]}
+];
+var RUTINA_BASE={
+ 1:{n:'Tren superior', e:['Dominadas','Fondos','Remo','Press','Core']},
+ 2:{n:'Carrera',       e:['Calentar 10 min','Rodaje 30–40 min','Estirar']},
+ 3:{n:'Tren inferior', e:['Sentadilla','Peso muerto','Zancadas','Gemelos','Core']},
+ 4:{n:'CrossFit',      e:['Calentar','WOD','Enfriar']},
+ 5:{n:'Tren superior', e:['Dominadas','Fondos','Remo','Press','Core']},
+ 6:{n:'Carrera larga', e:['Rodaje largo','Agarre','Estirar']},
+ 0:{n:'Descanso',      e:[]}
+};
+function rutina(){ if(!S.rutina) S.rutina=JSON.parse(JSON.stringify(RUTINA_BASE)); return S.rutina; }
+function sesionDe(f){
+  var d=new Date(f+'T12:00:00');
+  return rutina()[d.getDay()] || {n:'', e:[]};
+}
+function movHechos(f){ return (leer(f).mv||[]).length; }
+function movMinimo(f){ return !!leer(f).min; }
+function movCierra(f){
+  var t=sesionDe(f).e.length;
+  return movMinimo(f) || (t>0 && movHechos(f) >= Math.ceil(t/2));
+}
+function movProgreso(f){
+  var t=sesionDe(f).e.length;
+  return Math.max(movMinimo(f)?1:0, t? Math.min(1, movHechos(f)/Math.ceil(t/2)) : 0);
+}
+function sincroMov(f){
+  var d=dia(f);
+  d.mov = movCierra(f) ? 1 : 0;
+}
+function togEj(f,i){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f); d.mv=d.mv||[];
+  var k=d.mv.indexOf(i);
+  if(k>=0) d.mv.splice(k,1); else d.mv.push(i);
+  var antes=d.mov>=1;
+  sincroMov(f);
+  if(!antes && d.mov) animar='mov';
+  persist(); hojaSesion(f); render();
+}
+function togMin(f){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f); d.min = d.min?0:1;
+  var antes=d.mov>=1;
+  sincroMov(f);
+  if(!antes && d.mov) animar='mov';
+  persist(); hojaSesion(f); render();
+}
+function hojaSesion(f){
+  var ses=sesionDe(f), d=leer(f), hechos=movHechos(f), t=ses.e.length;
+  var necesita=Math.ceil(t/2);
+  abrirSheet('<h4>'+esc(ses.n||'Mover')+' · '+etiquetaDia(f).toLowerCase()+'</h4>'+
+    '<p class="muted" style="margin:2px 0 12px">Con la mitad de la sesión, o con el mínimo, el anillo cierra.</p>'+
+    (t? ses.e.map(function(x,i){
+        var ok=(d.mv||[]).indexOf(i)>=0;
+        return '<button class="op" data-act="togEj('+qq(f)+','+i+')">'+
+          '<span class="chk '+(ok?'on':'')+'">'+(ok?'✓':'')+'</span><span>'+esc(x)+'</span></button>';
+      }).join('') : '<div class="empty">Ese día no tiene sesión. Edítala en Más → Rutina.</div>')+
+    '<button class="op" data-act="togMin('+qq(f)+')" style="margin-top:6px">'+
+      '<span class="chk '+(d.min?'on':'')+'">'+(d.min?'✓':'')+'</span>'+
+      '<span>Mínimo: veinte minutos andando<div class="tiny">7.2 · lo que se cumple también en un mal día</div></span></button>'+
+    '<div class="note" style="margin:14px 0 4px'+(movCierra(f)?';border-color:var(--mov);color:var(--mov)':'')+'">'+
+      (movCierra(f)? 'Cerrado.'
+        : t? hechos+' de '+t+'. Con '+necesita+' cierra, o con el mínimo.'
+           : 'Marca el mínimo para cerrarlo.')+'</div>');
+}
+
+/* ---- edición de la rutina ---- */
+var DIAS_SEM=[1,2,3,4,5,6,0];
+function tipoSes(dow,k){
+  var t=TIPOS_SES.filter(function(x){return x.k===k})[0]; if(!t) return;
+  document.getElementById('ruN').value=t.n;
+  document.getElementById('ruE').value=t.e.join('\n');
+}
+function hojaRutina(dow){
+  var r=rutina()[dow]||{n:'',e:[]};
+  abrirSheet('<h4>'+DIAS_L[(dow+6)%7]+'</h4>'+
+    '<div class="tiny" style="margin:10px 0 7px">Tipo de sesión</div>'+
+    '<div class="chips">'+TIPOS_SES.map(function(t){
+      return '<button class="chip'+(r.n===t.n?' on':'')+'" data-act="tipoSes('+dow+','+qq(t.k)+')">'+
+        t.n+'</button>'; }).join('')+'</div>'+
+    '<div class="tiny" style="margin:16px 0 0">Nombre de la sesión</div>'+
+    '<input type="text" id="ruN" value="'+esc(r.n)+'">'+
+    '<div class="tiny" style="margin:14px 0 0">Ejercicios, uno por línea</div>'+
+    '<textarea id="ruE" rows="6">'+esc((r.e||[]).join('\n'))+'</textarea>'+
+    '<div class="row" style="margin:16px 0 8px">'+
+      '<button class="btn primary grow" data-act="guardarRutina('+dow+')">Guardar</button>'+
+      '<button class="btn" data-act="cerrarSheet()">Cancelar</button></div>');
+  setTimeout(function(){ var i=document.getElementById('ruN'); if(i) i.focus(); },240);
+}
+function guardarRutina(dow){
+  var n=document.getElementById('ruN').value.trim();
+  var e=document.getElementById('ruE').value.split('\n')
+        .map(function(x){ return x.trim(); }).filter(Boolean);
+  rutina()[dow]={n:n, e:e};
+  persist(); cerrarSheet(); render(); avisar('Rutina guardada.');
+}
+function pintarRutina(){
+  var el=document.getElementById('rutinaCard'); if(!el) return;
+  el.innerHTML = DIAS_SEM.map(function(dow){
+    var r=rutina()[dow]||{n:'',e:[]};
+    return '<button class="opr" data-act="hojaRutina('+dow+')">'+
+      '<span class="d">'+mayus(DIAS_L[(dow+6)%7].slice(0,3))+'</span>'+
+      '<span class="grow"><b>'+esc(r.n||'—')+'</b>'+
+        (r.e&&r.e.length? '<div class="tiny">'+esc(r.e.join(' · '))+'</div>':'')+'</span>'+
+      '<span class="fl">›</span></button>';
+  }).join('');
+}
+
+
+/* ---- pegar una rutina entera de una vez ---- */
+var ABREV={lun:1,mar:2,mie:3,'mié':3,jue:4,vie:5,sab:6,'sáb':6,dom:0};
+function hojaImportar(){
+  abrirSheet('<h4>Pegar una rutina</h4>'+
+    '<p class="muted" style="margin:2px 0 10px">Una línea por día. El día, dos puntos, el nombre, '+
+    'y los ejercicios separados por comas.</p>'+
+    '<div class="note" style="margin:0 0 12px;font-family:var(--sans);font-size:12.5px">'+
+      'Lun: Tren superior — dominadas, fondos, remo<br>'+
+      'Mar: Carrera — 10 min calentar, 40 min rodaje<br>'+
+      'Dom: Descanso</div>'+
+    '<textarea id="impRu" rows="8" placeholder="Lun: ..."></textarea>'+
+    '<div class="row" style="margin:16px 0 8px">'+
+      '<button class="btn primary grow" data-act="aplicarImport()">Aplicar</button>'+
+      '<button class="btn" data-act="cerrarSheet()">Cancelar</button></div>');
+  setTimeout(function(){ var i=document.getElementById('impRu'); if(i) i.focus(); },240);
+}
+function aplicarImport(){
+  var txt=document.getElementById('impRu').value, n=0;
+  txt.split('\n').forEach(function(li){
+    li=li.trim(); if(!li) return;
+    var m=li.match(/^([a-záéíóú]{3,10})\s*[:.\-–]\s*(.+)$/i); if(!m) return;
+    var dia=m[1].toLowerCase().slice(0,3);
+    if(!(dia in ABREV)) return;
+    var resto=m[2].split(/\s[—–-]\s|:/);
+    var nombre=resto[0].trim();
+    var ejs=(resto[1]||'').split(/[,;·|]/).map(function(x){return x.trim();}).filter(Boolean);
+    rutina()[ABREV[dia]]={n:nombre, e:ejs};
+    n++;
+  });
+  if(!n){ avisar('No he entendido ninguna línea.'); return; }
+  persist(); cerrarSheet(); render();
+  avisar(n===1? 'Un día actualizado.' : n+' días actualizados.');
+}
+function reiniciarRutina(){
+  S.rutina=JSON.parse(JSON.stringify(RUTINA_BASE));
+  persist(); render(); avisar('Rutina de partida restaurada.');
+}
+
 /* ---------------- la página del día ---------------- */
 function vencimientos(){
   var v=[];
@@ -1838,6 +1996,7 @@ function pintarSemana(){
       '<div class="scab"><button class="nom" data-act="abrirDia('+q(f)+')">'+
         mayus(DIAS_L[i].slice(0,3))+'</button>'+
       '<span class="fch">'+fmt(f)+'</span>'+
+      (sesionDe(f).n? '<span class="ses">'+esc(sesionDe(f).n)+'</span>':'')+
       '<span class="pts">'+pts+'</span>'+
       '<button class="mas" data-act="hojaApuntar('+q(f)+')" aria-label="Apuntar aquí">+</button></div>'+
       items+'</div>';
@@ -2007,12 +2166,13 @@ function holaFin(){ S.visto=1; persist(); document.getElementById('hola').classL
 
 /* ---------------- navegación ---------------- */
 function ir(v){
-  ['hoy','avance','listas','filtro','reglas','ajustes'].forEach(function(x){
+  ['hoy','avance','listas','reglas','ajustes'].forEach(function(x){
     document.getElementById('v-'+x).classList.toggle('hidden', x!==v); });
   document.querySelectorAll('nav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===v); });
   window.scrollTo(0,0);
   if(v==='avance') alFinal();
   if(v==='reglas'){ var b=document.getElementById('buscar'); if(b && !b.value) filtrar(); }
+  if(v==='listas') pintarCompra();
 }
 
 /* ---------------- render principal ---------------- */
@@ -2059,6 +2219,7 @@ function seguir(){
   pintarListas();
   renderAvance();
 
+  pintarRutina();
   document.getElementById('mAgua').value=S.metas.agua;
   document.getElementById('mHora').value=S.metas.hora||'';
   document.getElementById('umbral').value=S.umbral;
@@ -2074,7 +2235,6 @@ function seguir(){
 }
 
 /* ---------------- arranque ---------------- */
-document.getElementById('fA').addEventListener('input', chequear);
 document.addEventListener('keydown', function(e){
   if(e.key!=='Enter') return;
   var id=(e.target||{}).id||'';
