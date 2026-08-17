@@ -338,6 +338,9 @@ h2,.card{scroll-margin-top:92px}
 .opr .d{min-width:34px;font:600 11.5px/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
 .opr .grow b{font-weight:600;font-size:15.5px}
 .opr .fl{color:var(--ink3);font-size:17px;flex:none;padding-left:4px}
+.arqf{font:600 11px/1 var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);
+  padding:16px 0 4px;border-top:1px solid var(--line2);margin-top:6px}
+.arqf:first-child{border-top:none;margin-top:0;padding-top:8px}
 
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{border:1px solid var(--line);border-radius:999px;padding:8px 13px;font:13px/1 var(--sans);
@@ -521,6 +524,12 @@ h2,.card{scroll-margin-top:92px}
       <div class="tiny" style="margin-top:11px" id="mapaPie"></div>
     </div>
 
+    <h2>El sueño <span class="der" id="suMedia"></span></h2>
+    <div class="card">
+      <div id="suBarras"></div>
+      <div class="note" style="margin-bottom:0" id="suDiag"></div>
+    </div>
+
     <h2>Los últimos 30 días</h2>
     <div class="card">
       <div id="filas"></div>
@@ -534,8 +543,24 @@ h2,.card{scroll-margin-top:92px}
       <button data-act="verLista(espera)" data-l="espera">Espera</button>
       <button data-act="verLista(pendientes)" data-l="pendientes">Pendientes</button>
       <button data-act="verLista(cuarentena)" data-l="cuarentena">Casa</button>
+      <button data-act="verLista(archivo)" data-l="archivo">Diario</button>
     </div>
     <div id="listasBody"></div>
+
+    <div id="archivoCard" class="hidden">
+      <h2>Archivo del diario <span class="der" id="arqN"></span></h2>
+      <div class="card">
+        <input type="search" id="arqQ" placeholder="Buscar en todo lo apuntado…" data-inp="pintarArchivo()" autocomplete="off">
+        <div class="chips" style="margin-top:13px">
+          <button class="chip" data-act="filtroArq(abiertas)" data-fa="abiertas">Sin cerrar</button>
+          <button class="chip" data-act="filtroArq(notas)" data-fa="notas">Notas</button>
+          <button class="chip" data-act="filtroArq(eventos)" data-fa="eventos">Eventos</button>
+          <button class="chip" data-act="filtroArq(todo)" data-fa="todo">Todo</button>
+        </div>
+      </div>
+      <div class="card" id="arqLista" style="padding:4px 16px"></div>
+      <div class="tiny" style="margin:-4px 2px 22px">Nada de lo que apuntas se pierde: aunque no lo cierres ni lo taches, sigue aquí.</div>
+    </div>
 
     <div id="compraCard">
       <h2>¿Lo compro? <span class="der">2.1 · 2.3 · 6.4</span></h2>
@@ -585,9 +610,7 @@ h2,.card{scroll-margin-top:92px}
     <div class="card">
       <div class="row between" style="margin-bottom:8px"><span class="muted">Vasos de agua al día</span>
         <input type="number" inputmode="numeric" id="mAgua" style="width:66px;text-align:right" data-chg="guardarMetas()"></div>
-      <div class="row between"><span class="muted">Hora de acostarse</span>
-        <input type="text" id="mHora" style="width:82px;text-align:right" placeholder="23:30" data-chg="guardarMetas()"></div>
-      <div class="tiny" style="margin-top:11px">7.1 · Se fija la hora de irse a la cama y la noche se organiza hacia atrás desde ahí.</div>
+      <div class="tiny">El sueño no tiene meta: se registra. Las horas y el tipo de noche se apuntan tocando su anillo.</div>
     </div>
 
     <h2>Umbral de espera</h2>
@@ -999,7 +1022,7 @@ var ANILLOS=[
   meta:function(){ return Math.max(1,S.metas.agua||8); }},
  {k:'comida', lb:'Comida', tipo:'lista',  col:'var(--comida)', meta:function(){ return 1; }},
  {k:'mov',    lb:'Mover',  tipo:'lista',  col:'var(--mov)',    meta:function(){ return 1; }},
- {k:'sueno',  lb:'Sueño',  tipo:'si',     col:'var(--sueno)',  meta:function(){ return 1; }},
+ {k:'sueno',  lb:'Sueño',  tipo:'lista',  col:'var(--sueno)',  meta:function(){ return 1; }},
  {k:'zero',   lb:'Zero',   tipo:'si',     col:'var(--zero)',   meta:function(){ return 1; }}
 ];
 /* comida: se cierra con dos síes de tres (misma lógica que el 2.1) */
@@ -1030,12 +1053,13 @@ function hojaComida(f){
     '<div class="tiny" style="margin-bottom:8px">Si viene en bolsa y se come sin plato, no cuenta como comida.</div>');
 }
 function qq(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
-function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],min:0};
+function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],min:0,sh:null,sn:[]};
+  if(!S.dias[f].sn) S.dias[f].sn=[];
   if(!S.dias[f].mv) S.dias[f].mv=[];
   if(S.dias[f].zero===undefined) S.dias[f].zero=0;
   if(!S.dias[f].cq) S.dias[f].cq=[];
   return S.dias[f]; }
-function leer(f){ return S.dias[f] || {agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[]}; }
+function leer(f){ return S.dias[f] || {agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],sn:[],sh:null}; }
 function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
 function esBueno(d){ return completos(d) >= 3; }   // tres de cinco; cinco es día redondo
 function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
@@ -1044,7 +1068,11 @@ var animar=null;
 function anillo(k,delta){
   if(dias(fechaVista)<0){ avisar('Ese día todavía no ha llegado.'); return; }
   var a=ANILLOS.filter(function(x){return x.k===k})[0];
-  if(a.tipo==='lista'){ if(delta>0){ k==='mov'? hojaSesion(fechaVista) : hojaComida(fechaVista); } return; }
+  if(a.tipo==='lista'){ if(delta>0){
+      if(k==='mov') hojaSesion(fechaVista);
+      else if(k==='sueno') hojaSueno(fechaVista);
+      else hojaComida(fechaVista);
+    } return; }
   var d=dia(fechaVista);
   var antes=(d[k]||0)>=a.meta(), eraBueno=esBueno(d);
   var v;
@@ -1098,6 +1126,8 @@ function consejo(){
     return ['La comida del día está sin juzgar. Toca el anillo: con dos de tres cierra.','var(--comida)'];
   if(h<11 && falta_agua && (d.agua||0)===0)
     return ['Un vaso de agua antes que cualquier pantalla. Es lo más barato del día.','var(--agua)'];
+  if(h<12 && falta_sueno)
+    return ['Apunta cómo has dormido antes de que se te olvide. Dos toques.','var(--sueno)'];
   if(h>=21 && falta_sueno)
     return ['Hora de cerrar. El cargador, fuera del dormitorio.','var(--sueno)'];
   if(falta_mov && h>=10 && h<20 && sesionDe(fechaVista).n)
@@ -1129,6 +1159,9 @@ function pintarAnillos(){
     if(a.tipo==='lista' && a.k==='comida'){
       var n=(d.cq||[]).length; p=Math.min(1,n/2); full=n>=2;
       txt = full? '✓' : n+'/2';
+    } else if(a.tipo==='lista' && a.k==='sueno'){
+      full=suenoReg(fechaVista); p=full?1:0;
+      txt = full? (d.sh==='9+'?'9+':d.sh)+'h' : '·';
     } else if(a.tipo==='lista' && a.k==='mov'){
       p=movProgreso(fechaVista); full=movCierra(fechaVista);
       var tt=sesionDe(fechaVista).e.length;
@@ -1228,11 +1261,27 @@ function pintarCierre(){
   card.innerHTML=
     '<div class="note" style="margin-top:0">¿Queda la cocina como te gustaría encontrarla? '+
       'Si sí, el anillo Zero es tuyo.</div>'+
+    '<div style="margin:16px 0 4px"><div class="tiny">¿Algo dando vueltas? Apúntalo y sale de la cabeza</div>'+
+      '<div class="row"><input type="text" id="cvac" class="grow" placeholder="Lo que sea, para mañana" '+
+      'enterkeyhint="done" autocomplete="off">'+
+      '<button class="btn sm" data-act="vaciarCabeza()">Apuntar</button></div></div>'+
+    (vaciados.length? '<div class="tiny" style="margin:0 0 14px;color:var(--mov)">Fuera de la cabeza: '+
+      esc(vaciados.join(' · '))+'</div>' : '<div style="height:6px"></div>')+
     '<div style="margin:16px 0 18px"><div class="tiny">La cosa de mañana</div>'+
       '<input type="text" id="cman" class="cosa" placeholder="Una sola, terminable" enterkeyhint="done"></div>'+
     '<button class="btn primary full" data-act="cerrarDia()">Cerrar el día</button>'+
     '<div id="cierreMsg"></div>';
 }
+
+var vaciados=[];
+function vaciarCabeza(){
+  var e=document.getElementById('cvac'); if(!e) return;
+  var t=e.value.trim(); if(!t) return;
+  ents(manana()).push({i:nuevoId(), t:'t', x:t, e:0, v:0});
+  vaciados.push(t); e.value=''; persist(); render();
+  var e2=document.getElementById('cvac'); if(e2) e2.focus();
+}
+
 function abrirCierre(){ S._abrirCierre=true; pintarCierre(); }
 
 function cerrarDia(){
@@ -1241,7 +1290,7 @@ function cerrarDia(){
   if(S.hoy && S.hoy.fecha===hoyISO()) S.hist.push(S.hoy);
   S.hoy = man ? {fecha:manana(),texto:man,hecho:false} : null;
   var d=leer(hoyISO()), c=completos(d), bueno=esBueno(d);
-  S._abrirCierre=false;
+  S._abrirCierre=false; vaciados=[];
   persist(); render();
   var msg = bueno
     ? '<div class="note" style="border-color:var(--mov);color:var(--mov);margin-bottom:0">'+
@@ -1276,12 +1325,18 @@ function verLista(g){ listaActiva=g; pintarListas(); }
 function pintarCompra(){
   var el=document.getElementById('compraCard');
   if(el) el.classList.toggle('hidden', listaActiva!=='espera');
+  var a=document.getElementById('archivoCard');
+  if(a) a.classList.toggle('hidden', listaActiva!=='archivo');
 }
 
 function pintarListas(){
   document.querySelectorAll('#segListas button').forEach(function(b){
     b.classList.toggle('on', b.dataset.l===listaActiva); });
   pintarCompra();
+
+  var arch = listaActiva==='archivo';
+  document.getElementById('archivoCard').classList.toggle('hidden', !arch);
+  if(arch){ document.getElementById('listasBody').innerHTML=''; pintarArchivo(); return; }
 
   document.getElementById('listasBody').innerHTML = GRUPOS[listaActiva].map(function(g){
     var arr=S[g.k]||[];
@@ -1331,6 +1386,61 @@ function deshacer(){
   borrado=null; persist(); render(); ocultarToast();
 }
 function tog(k,i){ S[k][i].hecho=!S[k][i].hecho; persist(); render(); }
+
+
+/* ---------------- archivo: todo lo apuntado, para siempre ---------------- */
+var filArq='abiertas';
+function filtroArq(f){ filArq=f; pintarArchivo(); }
+function pintarArchivo(){
+  var cont=document.getElementById('arqLista'); if(!cont) return;
+  document.querySelectorAll('#archivoCard .chip').forEach(function(b){
+    b.classList.toggle('on', b.dataset.fa===filArq); });
+
+  var e=document.getElementById('arqQ');
+  var q=(e? e.value : '').trim().toLowerCase();
+
+  var todo=[];
+  Object.keys(S.entradas||{}).forEach(function(f){
+    (S.entradas[f]||[]).forEach(function(a){ todo.push({f:f, a:a}); });
+  });
+  todo.sort(function(x,y){ return x.f<y.f? 1 : x.f>y.f? -1 : 0; });   // lo último, arriba
+
+  var abiertasTot=todo.filter(function(o){ return o.a.t==='t' && o.a.e===0; }).length;
+  document.getElementById('arqN').textContent = abiertasTot? abiertasTot+' sin cerrar' : '';
+
+  var lista=todo.filter(function(o){
+    if(q && o.a.x.toLowerCase().indexOf(q)<0) return false;
+    if(filArq==='abiertas') return o.a.t==='t' && o.a.e===0;
+    if(filArq==='notas')    return o.a.t==='n';
+    if(filArq==='eventos')  return o.a.t==='e';
+    return true;
+  });
+
+  if(!lista.length){
+    cont.innerHTML='<div class="empty">'+(q? 'Nada con «'+esc(q)+'».'
+      : filArq==='abiertas'? 'Nada abierto. Todo cerrado o tachado.'
+      : 'Todavía no hay nada de esto.')+'</div>';
+    return;
+  }
+
+  var html='', ultimo=null;
+  lista.slice(0,400).forEach(function(o){
+    if(o.f!==ultimo){
+      ultimo=o.f;
+      html+='<div class="arqf">'+mayus(etiquetaDia(o.f))+'</div>';
+    }
+    var g = o.a.t==='t' ? (o.a.e===1?'✕' : o.a.e===2?'~' : '·') : TIPOS[o.a.t].g;
+    var cls = o.a.e===1?'hecha' : o.a.e===2?'fuera' : '';
+    html+='<div class="ap apunte '+cls+'">'+
+      '<button class="glifo" data-act="apEstado('+q2(o.f)+','+q2(o.a.i)+')">'+g+'</button>'+
+      '<div class="txt">'+esc(o.a.x)+
+        (o.a.v>1?'<span class="veces">movida '+o.a.v+' veces</span>':'')+'</div>'+
+      '<button class="mv" data-act="abrirDia('+q2(o.f)+')" aria-label="Ir a ese día">›</button></div>';
+  });
+  if(lista.length>400) html+='<div class="tiny" style="padding:12px 0">Y '+(lista.length-400)+' más. Afina la búsqueda.</div>';
+  cont.innerHTML=html;
+}
+function q2(x){ return "'"+String(x).replace(/'/g,"")+"'"; }
 
 /* ---------------- aviso flotante ---------------- */
 var toastT=null;
@@ -1543,6 +1653,7 @@ function renderAvance(){
       '<span class="pc" style="color:'+(pc>=70?a.col:'var(--ink3)')+'">'+pc+'%</span></div>';
   });
   document.getElementById('filas').innerHTML=html;
+  renderSueno();
 
   var dg=document.getElementById('diagnostico');
   if(!flojo) dg.textContent='Cuando lleves unos días, aquí te diré cuál de los cinco te está fallando.';
@@ -1648,6 +1759,52 @@ function agendaDe(f){
   return a;
 }
 
+
+
+/* ---------------- el sueño: se registra, no se aprueba ----------------
+   No se puede decidir dormir bien. Lo que sí se decide es anotarlo, y por eso
+   el anillo cierra al apuntar. El dato queda para saber qué pasa de verdad. */
+var HORAS=['<5','5','6','7','8','9+'];
+var NOCHES=[
+  {k:'cost', t:'Me costó dormirme'},
+  {k:'desv', t:'Me desvelé'},
+  {k:'pron', t:'Me levanté pronto'},
+  {k:'seg',  t:'Seguido, de un tirón'}
+];
+function suenoReg(f){ return leer(f).sh!==undefined && leer(f).sh!==null; }
+function togHora(f,h){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f);
+  d.sh = (d.sh===h)? null : h;
+  var antes=d.sueno>=1;
+  d.sueno = (d.sh===null||d.sh===undefined)? 0 : 1;
+  if(!antes && d.sueno) animar='sueno';
+  persist(); hojaSueno(f); render();
+}
+function togNoche(f,k){
+  if(dias(f)<0){ avisar('Ese día todavía no ha llegado.'); return; }
+  var d=dia(f); d.sn=d.sn||[];
+  var i=d.sn.indexOf(k);
+  if(i>=0) d.sn.splice(i,1); else d.sn.push(k);
+  persist(); hojaSueno(f); render();
+}
+function hojaSueno(f){
+  var d=leer(f);
+  abrirSheet('<h4>El sueño de '+etiquetaDia(f).toLowerCase()+'</h4>'+
+    '<p class="muted" style="margin:2px 0 12px">Esto no se aprueba ni se suspende. '+
+    'El anillo cierra por apuntarlo: una noche mala anotada es un dato ganado.</p>'+
+    '<div class="tiny" style="margin-bottom:8px">¿Cuántas horas?</div>'+
+    '<div class="chips">'+HORAS.map(function(h){
+      return '<button class="chip'+(d.sh===h?' on':'')+'" data-act="togHora('+qq(f)+','+qq(h)+')">'+
+        h+'</button>'; }).join('')+'</div>'+
+    '<div class="tiny" style="margin:18px 0 8px">¿Qué pasó? (lo que haga falta)</div>'+
+    '<div class="chips">'+NOCHES.map(function(n){
+      var ok=(d.sn||[]).indexOf(n.k)>=0;
+      return '<button class="chip'+(ok?' on':'')+'" data-act="togNoche('+qq(f)+','+qq(n.k)+')">'+
+        n.t+'</button>'; }).join('')+'</div>'+
+    '<div class="note" style="margin:18px 0 6px'+(suenoReg(f)?';border-color:var(--sueno);color:var(--sueno)':'')+'">'+
+      (suenoReg(f)? 'Apuntado. El anillo está cerrado.' : 'Elige las horas y el anillo cierra.')+'</div>');
+}
 
 /* ---------------- la rutina semanal ----------------
    Siete sesiones editables. El anillo Mover se cierra con la sesión
@@ -2003,7 +2160,7 @@ function guardarIntencion(){
   S.semanas[claveSemana(fechaVista)]=e.value.trim();
   persist(); avisar('Guardado.');
 }
-function abrirDia(f){ fechaVista=f; verVista('dia'); }
+function abrirDia(f){ fechaVista=f; verVista('dia'); ir('hoy'); }
 
 function pintarSemana(){
   var lun=lunesDe(fechaVista), cl=claveSemana(fechaVista);
@@ -2029,12 +2186,14 @@ function pintarSemana(){
   if(abiertas.length){
     mig.innerHTML='<div class="tiny" style="margin-bottom:9px">Migración · '+abiertas.length+
       (abiertas.length===1?' cosa abierta de días pasados':' cosas abiertas de días pasados')+'</div>'+
-      abiertas.slice(0,12).map(function(o){
+      abiertas.slice(0,20).map(function(o){
         return '<div class="ap"><div class="txt">'+esc(o.a.x)+
           '<div class="tiny">'+etiquetaDia(o.f)+(o.a.v?' · movida '+o.a.v+(o.a.v===1?' vez':' veces'):'')+'</div></div>'+
           '<button class="btn sm" data-act="apMover('+q(o.f)+','+q(o.a.i)+','+q(hoyISO())+')">Hoy</button>'+
           '<button class="btn sm" data-act="hojaMover('+q(o.f)+','+q(o.a.i)+')">···</button></div>';
       }).join('')+
+      (abiertas.length>20? '<div class="tiny" style="padding:10px 0">Y '+(abiertas.length-20)+
+        ' más, todas en Listas → Diario.</div>':'')+
       '<div class="note" style="margin-bottom:0">Por cada una: se hace, se mueve con fecha, o se cae. '+
       'Dejarla ahí sin decidir no es esperar, es cargar con ella (5.2).</div>';
   }
@@ -2153,6 +2312,47 @@ function pintarMes(){
     : '<div class="empty">Ni eventos ni tareas pendientes este mes.</div>';
 }
 
+
+/* ---- el sueño en Avance ---- */
+function renderSueno(){
+  var cont=document.getElementById('suBarras'); if(!cont) return;
+  var horas=[], cuenta={}, n=0;
+  NOCHES.forEach(function(x){ cuenta[x.k]=0; });
+  for(var i=29;i>=0;i--){
+    var f=menos(i), d=S.dias[f];
+    if(d && d.sh){ n++; horas.push({f:f, h:d.sh}); (d.sn||[]).forEach(function(k){ cuenta[k]=(cuenta[k]||0)+1; }); }
+    else horas.push({f:f, h:null});
+  }
+  var num={'<5':4.5,'5':5,'6':6,'7':7,'8':8,'9+':9.5};
+  var sum=0, c=0;
+  horas.forEach(function(x){ if(x.h){ sum+=num[x.h]; c++; } });
+  document.getElementById('suMedia').textContent = c? (sum/c).toFixed(1).replace('.',',')+' h de media' : '';
+
+  cont.innerHTML='<div class="filaR" style="border:none;padding:4px 0">'+
+    '<span class="spark" style="height:34px">'+horas.map(function(x){
+      var v = x.h? num[x.h] : 0;
+      return '<span style="height:'+(v? Math.round(6+(v-4)*5) : 3)+'px'+
+        (v? ';background:var(--sueno)':'')+(v>=7?'':';opacity:.55')+'"></span>';
+    }).join('')+'</span></div>'+
+    '<div class="tiny" style="margin-top:4px">Treinta noches. Las llenas son de siete horas o más.</div>'+
+    (n? '<div style="margin-top:14px">'+NOCHES.map(function(x){
+        var pc=Math.round(cuenta[x.k]/n*100);
+        return '<div class="filaR"><span class="nm" style="width:auto;flex:1">'+x.t+'</span>'+
+          '<span class="pc">'+cuenta[x.k]+'</span>'+
+          '<span class="tiny" style="width:44px;text-align:right">'+pc+'%</span></div>';
+      }).join('')+'</div>' : '');
+
+  var dg=document.getElementById('suDiag');
+  if(!n){ dg.textContent='Apunta unas cuantas noches y aquí verás el patrón: no es lo mismo costar dormirse que desvelarse.'; return; }
+  var peor=null, max=0;
+  ['cost','desv','pron'].forEach(function(k){ if(cuenta[k]>max){ max=cuenta[k]; peor=k; } });
+  var nom={cost:'te cuesta dormirte', desv:'te desvelas', pron:'te levantas pronto'};
+  dg.innerHTML = max===0
+    ? 'De '+n+' noches apuntadas, ninguna con incidencias. Eso también es un dato.'
+    : 'De '+n+' noches apuntadas, en <b>'+max+'</b> '+nom[peor]+
+      '. Ese es tu problema concreto, no «dormir mal» en general.';
+}
+
 /* ---------------- tema ---------------- */
 function tema(t){
   if(t){ S.tema=t; persist(); }
@@ -2173,7 +2373,6 @@ function tema(t){
 /* ---------------- ajustes y datos ---------------- */
 function guardarMetas(){
   S.metas.agua=Math.max(1,+document.getElementById('mAgua').value||8);
-  S.metas.hora=document.getElementById('mHora').value;
   S.umbral=+document.getElementById('umbral').value||100;
   S.borrar=document.getElementById('borrar').value;
   persist(); render(); avisar('Guardado.');
@@ -2428,7 +2627,6 @@ function seguir(){
   pintarRutina();
   pintarAvisoExport();
   document.getElementById('mAgua').value=S.metas.agua;
-  document.getElementById('mHora').value=S.metas.hora||'';
   document.getElementById('umbral').value=S.umbral;
   document.getElementById('borrar').value=S.borrar||'';
 
@@ -2449,6 +2647,7 @@ document.addEventListener('keydown', function(e){
   if(id.indexOf('in_')===0){ e.preventDefault(); add(id.slice(3)); }
   if(id==='apIn'){ e.preventDefault(); apAdd(); }
   if(id==='intTxt'){ e.preventDefault(); guardarIntencion(); }
+  if(id==='cvac'){ e.preventDefault(); vaciarCabeza(); }
 });
 window.addEventListener('scroll', function(){
   document.getElementById('cab').classList.toggle('pegado', window.scrollY>4);
