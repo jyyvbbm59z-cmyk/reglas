@@ -6,7 +6,7 @@
 // La identidad la pone Cloudflare Access. Sin identidad, la API no hace nada.
 
 const LIMITE = 512 * 1024;
-const COPIAS_MAX = 30;
+const COPIAS_MAX = 60;
 const HORAS_ENTRE_COPIAS = 24;
 
 export default {
@@ -76,6 +76,46 @@ function correoDeJwt(jwt) {
   }
 }
 
+
+/* ------------------------------------------------------- salvaguardas --- */
+
+/* Mide un estado en varias dimensiones. Sirve para detectar que una
+   escritura está borrando datos en lugar de añadirlos. */
+function magnitud(e) {
+  const d = (e && e.dias) || {};
+  let marcas = 0;
+  for (const f of Object.keys(d)) {
+    const x = d[f] || {};
+    for (const k of Object.keys(x)) {
+      const v = x[k];
+      if (Array.isArray(v)) marcas += v.length;
+      else if (typeof v === 'number' && v > 0) marcas += 1;
+    }
+  }
+  const ent = (e && e.entradas) || {};
+  let apuntes = 0;
+  for (const f of Object.keys(ent)) apuntes += (ent[f] || []).length;
+
+  let listas = 0;
+  for (const k of ['espera', 'cuarentena', 'filtro', 'bitacora', 'promesas', 'hist']) {
+    listas += ((e && e[k]) || []).length;
+  }
+  return { dias: Object.keys(d).length, marcas, apuntes, listas };
+}
+
+/* ¿La escritura nueva encoge respecto a la guardada? Se tolera una merma
+   pequeña (borrar un apunte es legítimo); se frena una masacre. */
+function encoge(antes, ahora) {
+  const perdidas = [];
+  for (const k of ['dias', 'marcas', 'apuntes', 'listas']) {
+    const a = antes[k], b = ahora[k];
+    if (a === 0) continue;
+    const caida = a - b;
+    if (caida > 3 && caida / a > 0.15) perdidas.push({ campo: k, antes: a, ahora: b });
+  }
+  return perdidas;
+}
+
 /* ------------------------------------------------------------ estado --- */
 
 async function leerEstado(env, email) {
@@ -115,6 +155,29 @@ async function grabarEstado(request, env, email) {
     return json({ error: 'conflicto', rev: revActual, estado, actualizado: actual.actualizado }, 409);
   }
 
+  /* --- freno de emergencia: no dejamos que una escritura borre el archivo --- */
+  if (actual && !cuerpo.forzar_encogimiento) {
+    let previo = null;
+    try { previo = JSON.parse(actual.json); } catch {}
+    if (previo) {
+      const perdidas = encoge(magnitud(previo), magnitud(cuerpo.estado));
+      if (perdidas.length) {
+        // Antes de nada, dejamos una copia defensiva del estado bueno.
+        try {
+          await env.DB.prepare('INSERT INTO copias (email, json, creada) VALUES (?, ?, ?)')
+            .bind(email, actual.json, new Date().toISOString()).run();
+        } catch {}
+        return json({
+          error: 'encogimiento',
+          perdidas,
+          rev: revActual,
+          estado: previo,
+          actualizado: actual.actualizado,
+        }, 409);
+      }
+    }
+  }
+
   const rev = revActual + 1;
   const t = new Date().toISOString();
 
@@ -124,6 +187,14 @@ async function grabarEstado(request, env, email) {
                                       rev = excluded.rev,
                                       actualizado = excluded.actualizado`
   ).bind(email, texto, rev, t).run();
+
+  // Si se ha forzado una escritura que encoge, guardamos el estado previo entero.
+  if (actual && cuerpo.forzar_encogimiento) {
+    try {
+      await env.DB.prepare('INSERT INTO copias (email, json, creada) VALUES (?, ?, ?)')
+        .bind(email, actual.json, t).run();
+    } catch {}
+  }
 
   // Copia de seguridad, como mucho una al día. Si falla, no tumba el guardado.
   try {
