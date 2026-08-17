@@ -601,11 +601,12 @@ h2,.card{scroll-margin-top:92px}
 
     <h2>Datos</h2>
     <div class="card">
-      <p class="tiny" style="margin:0 0 12px">Exporta de vez en cuando: es tu copia, y se abre en cualquier sitio.</p>
+      <div class="tiny" id="avisoExport" style="margin:0 0 12px"></div>
       <div class="row" style="flex-wrap:wrap">
         <button class="btn" data-act="exportar()">Exportar copia</button>
         <button class="btn" data-act="abrirImport()">Importar</button>
         <button class="btn" data-act="hojaCopias()">Copias del servidor</button>
+        <button class="btn" data-act="hojaSello()">Copia local</button>
         <input type="file" id="imp" accept=".json,application/json" class="hidden" data-chg="importar(event)">
       </div>
     </div>
@@ -702,11 +703,22 @@ document.addEventListener('change',function(e){
 
 var mem={}, hasLS=true;
 try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){ hasLS=false; }
-function guardarLocal(){ var s=JSON.stringify(S); try{ hasLS?localStorage.setItem('reglas.v1',s):(mem.d=s); }catch(e){ mem.d=s; } }
+function guardarLocal(){
+  var s=JSON.stringify(S);
+  try{ hasLS?localStorage.setItem('reglas.v1',s):(mem.d=s); }catch(e){ mem.d=s; }
+}
+/* Segunda copia local, sellada cada vez que el servidor confirma. Es la red
+   por si el estado en memoria se estropea: nunca hay una sola copia. */
+function sellarLocal(){
+  try{ if(hasLS) localStorage.setItem('reglas.bueno', JSON.stringify({t:Date.now(), e:S})); }catch(e){}
+}
+function leerSello(){
+  try{ var x=localStorage.getItem('reglas.bueno'); return x? JSON.parse(x) : null; }catch(e){ return null; }
+}
 function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
 
 var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
-         dias:{},entradas:{},semanas:{},rutina:null,umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
+         dias:{},entradas:{},semanas:{},rutina:null,tumbas:{},ultimaExport:0,umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
 function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
   if(!o.metas) o.metas=DEF.metas; return o; }
 
@@ -718,18 +730,34 @@ var NUBE={ hay:false, rev:0, email:null, estado:'local', cuando:null, tmr:null, 
 function pintarSync(){
   var e=document.getElementById('sync'); if(!e) return;
   var m={ local:'· solo en este móvil', cargando:'sincronizando…', guardando:'guardando…',
-          guardado:'guardado', error:'sin conexión', conflicto:'recargado desde el servidor' };
-  var col={ error:'var(--accent)', conflicto:'var(--accent)', guardado:'var(--ink3)' };
+          guardado:'guardado', error:'sin conexión', conflicto:'recargado desde el servidor',
+          frenado:'guardado frenado · toca aquí' };
+  var col={ error:'var(--accent)', conflicto:'var(--accent)', frenado:'var(--accent)',
+            guardado:'var(--ink3)' };
   e.innerHTML = (m[NUBE.estado]||'') + (NUBE.email? '<br><span style="opacity:.7">'+esc(NUBE.email)+'</span>' : '');
   e.style.color = col[NUBE.estado] || 'var(--ink3)';
 }
 function marcar(x){ NUBE.estado=x; pintarSync(); }
 
 /* ---- fusión al detectar conflicto: no se pierde nada de ninguno de los dos ---- */
-function unir(a,b,clave){
+/* Papelera: sin esto, la fusión (que se queda con todo) resucitaría
+   cualquier cosa que borres a propósito. Guarda la clave y cuándo. */
+function tumbas(){ if(!S.tumbas) S.tumbas={}; return S.tumbas; }
+function enterrar(k){
+  var t=tumbas(); t[k]=Date.now();
+  var ks=Object.keys(t);
+  if(ks.length>800){                      // se poda la papelera vieja
+    ks.sort(function(a,b){ return t[a]-t[b]; });
+    ks.slice(0, ks.length-800).forEach(function(x){ delete t[x]; });
+  }
+}
+function enterrado(k, tt){ return (tt||tumbas())[k]!==undefined; }
+
+function unir(a,b,clave,tt){
   var out=[], vistos={};
   (a||[]).concat(b||[]).forEach(function(i){
     var k=clave(i);
+    if(enterrado(k,tt)) return;
     if(vistos[k]===undefined){ vistos[k]=out.length; out.push(Object.assign({},i)); }
     else { var p=out[vistos[k]]; if(i.hecho) p.hecho=true; if(i.p && !p.p) p.p=i.p; }
   });
@@ -771,8 +799,10 @@ function fusionar(local, remoto){
     if(completos(dd[f]) < antes) console.warn('fusión sospechosa en', f);
   });
 
+  var tt=Object.assign({}, r.tumbas||{}, l.tumbas||{});
+  r.tumbas=tt;
   ['espera','cuarentena','filtro','bitacora','promesas'].forEach(function(k){
-    r[k]=unir(l[k], r[k], function(i){ return i.t+'|'+i.f; }); });
+    r[k]=unir(l[k], r[k], function(i){ return i.t+'|'+i.f; }, tt); });
 
   // apuntes: se unen por identificador; gana el estado más avanzado
   var ee={};
@@ -780,6 +810,7 @@ function fusionar(local, remoto){
     Object.keys(src).forEach(function(f){
       ee[f]=ee[f]||[];
       (src[f]||[]).forEach(function(it){
+        if(enterrado('ap|'+it.i, tt)) return;
         var y=ee[f].filter(function(z){return z.i===it.i})[0];
         if(!y) ee[f].push(Object.assign({},it));
         else { y.e=Math.max(y.e||0,it.e||0); y.v=Math.max(y.v||0,it.v||0); }
@@ -818,12 +849,20 @@ function subir(forzar){
   .then(function(r){
     if(r.status===409){ return r.json().then(function(j){
       NUBE.rev=j.rev;
+      if(j.error==='encogimiento'){
+        // El servidor ha frenado un guardado que borraba datos. No insistimos:
+        // se avisa y se deja decidir.
+        marcar('frenado');
+        avisoEncogimiento(j);
+        return;
+      }
       if(j.estado){ S=fusionar(S, j.estado); guardarLocal(); render(); }
       marcar('conflicto');
       setTimeout(function(){ subir(true); }, 200);   // sube ya fusionado
     }); }
     if(!r.ok) throw new Error(r.status);
-    return r.json().then(function(j){ NUBE.rev=j.rev; NUBE.cuando=j.actualizado; marcar('guardado'); });
+    return r.json().then(function(j){
+      NUBE.rev=j.rev; NUBE.cuando=j.actualizado; marcar('guardado'); sellarLocal(); });
   })
   .catch(function(){ marcar('error'); })
   .then(function(){ NUBE.enVuelo=false; if(NUBE.otra){ NUBE.otra=false; subir(); } });
@@ -1278,14 +1317,17 @@ function add(k){
 }
 var borrado=null;
 function del(k,i){
-  borrado={k:k, i:i, o:S[k][i]};
+  var o=S[k][i];
+  borrado={k:k, i:i, o:o};
+  enterrar(o.t+'|'+o.f);
   S[k].splice(i,1); persist(); render();
   avisar('Borrado.', true);
 }
 function deshacer(){
   if(!borrado) return;
-  if(borrado.k==='__ent') ents(borrado.f).splice(borrado.i,0,borrado.o);
-  else S[borrado.k].splice(borrado.i,0,borrado.o);
+  var t=tumbas();
+  if(borrado.k==='__ent'){ delete t['ap|'+borrado.o.i]; ents(borrado.f).splice(borrado.i,0,borrado.o); }
+  else { delete t[borrado.o.t+'|'+borrado.o.f]; S[borrado.k].splice(borrado.i,0,borrado.o); }
   borrado=null; persist(); render(); ocultarToast();
 }
 function tog(k,i){ S[k][i].hecho=!S[k][i].hecho; persist(); render(); }
@@ -1544,6 +1586,7 @@ function apBorrar(f,id){
   var arr=leerEnts(f), ix=arr.findIndex(function(z){return z.i===id});
   if(ix<0) return;
   borrado={k:'__ent', f:f, i:ix, o:arr[ix]};
+  enterrar('ap|'+arr[ix].i);
   arr.splice(ix,1); persist(); cerrarSheet(); render(); avisar('Borrado.', true);
 }
 function apMover(f,id,dest){
@@ -2138,14 +2181,17 @@ function guardarMetas(){
 function exportar(){
   var b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}), a=document.createElement('a');
   a.href=URL.createObjectURL(b); a.download='reglas-'+hoyISO()+'.json'; a.click();
-  avisar('Copia descargada.');
+  S.ultimaExport=Date.now(); persist(); pintarAvisoExport();
+  avisar('Copia descargada. Guárdala fuera del móvil.');
 }
 function abrirImport(){ document.getElementById('imp').click(); }
 function importar(e){
   var f=e.target.files[0]; if(!f) return; var r=new FileReader();
   r.onload=function(){ try{
       var n=completar(JSON.parse(r.result));
-      S=n; guardarLocal(); tema(); render(); if(NUBE.hay) subir(true); avisar('Importado.');
+      S=fusionar(S, n);        // importar suma, nunca resta
+      guardarLocal(); tema(); render(); if(NUBE.hay) subir(true);
+      avisar('Importado y fundido. No se ha borrado nada.');
     }catch(x){ avisar('Ese archivo no vale.'); } };
   r.readAsText(f);
 }
@@ -2166,6 +2212,54 @@ function estado(){
   document.getElementById('instalar').innerHTML=h;
 }
 
+
+
+/* ---------------- el servidor ha frenado un guardado ---------------- */
+var frenado=null;
+function avisoEncogimiento(j){
+  frenado=j;
+  var nom={dias:'días con datos', marcas:'marcas de anillos', apuntes:'apuntes', listas:'cosas en listas'};
+  abrirSheet('<h4>Guardado frenado</h4>'+
+    '<p class="muted" style="margin:2px 0 12px">El servidor ha parado una escritura porque '+
+    'borraba datos en vez de añadirlos. Tu copia buena sigue intacta allí.</p>'+
+    j.perdidas.map(function(x){
+      return '<div class="note" style="margin:0 0 8px;border-color:var(--accent);color:var(--accent)">'+
+        esc(nom[x.campo]||x.campo)+': <b>'+x.antes+' → '+x.ahora+'</b></div>'; }).join('')+
+    '<button class="btn full" style="margin:14px 0 8px" data-act="recuperarServidor()">'+
+      'Traer la copia buena del servidor</button>'+
+    '<button class="btn full" style="margin-bottom:8px" data-act="fundirServidor()">'+
+      'Fundir con lo que tengo aquí</button>'+
+    '<button class="btn full" data-act="forzarSubida()">Guardar igualmente lo de este móvil</button>'+
+    '<div class="tiny" style="margin:12px 0 6px">Si no sabes qué elegir, trae la copia buena: '+
+    'no pierdes nada, y lo de hoy lo vuelves a marcar en un minuto.</div>');
+}
+function recuperarServidor(){
+  if(!frenado||!frenado.estado) return;
+  S=completar(JSON.parse(JSON.stringify(frenado.estado)));
+  NUBE.rev=frenado.rev; guardarLocal(); sellarLocal(); tema(); render();
+  cerrarSheet(); marcar('guardado'); avisar('Recuperada la copia del servidor.');
+}
+function fundirServidor(){
+  if(!frenado||!frenado.estado) return;
+  S=fusionar(S, frenado.estado);
+  NUBE.rev=frenado.rev; guardarLocal(); render(); cerrarSheet(); subir(true);
+  avisar('Fundido. No se ha borrado nada.');
+}
+function forzarSubida(){
+  if(!frenado) return;
+  NUBE.rev=frenado.rev;
+  cerrarSheet(); marcar('guardando');
+  fetch('/api/estado',{ method:'PUT', headers:{'content-type':'application/json'},
+    body: JSON.stringify({ rev:NUBE.rev, estado:S, forzar:true, forzar_encogimiento:true }) })
+  .then(function(r){ return r.json(); })
+  .then(function(j){ if(j.ok){ NUBE.rev=j.rev; marcar('guardado'); sellarLocal();
+      avisar('Guardado. El estado anterior queda como copia.'); } })
+  .catch(function(){ marcar('error'); });
+}
+function tocarSync(){
+  if(NUBE.estado==='frenado' && frenado){ avisoEncogimiento(frenado); return; }
+  sincronizarYa();
+}
 
 /* ---------------- copias guardadas en el servidor ---------------- */
 function resumenEstado(e){
@@ -2225,6 +2319,39 @@ function reemplazarCopia(){
   S=completar(JSON.parse(JSON.stringify(copiaVista)));
   guardarLocal(); tema(); render(); if(NUBE.hay) subir(true);
   cerrarSheet(); avisar('Restaurada esa copia.');
+}
+
+
+/* ---------------- copia local sellada ---------------- */
+function hojaSello(){
+  var x=leerSello();
+  if(!x){ avisar('Todavía no hay copia local sellada.'); return; }
+  var f=new Date(x.t);
+  abrirSheet('<h4>Copia local</h4>'+
+    '<p class="muted" style="margin:2px 0 12px">Se sella en este móvil cada vez que el servidor '+
+    'confirma un guardado. Es la red de más cerca.</p>'+
+    '<div class="note" style="margin:0 0 8px"><b>La copia ('+
+      f.toLocaleDateString('es-ES',{day:'numeric',month:'short'})+' '+
+      f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})+'):</b><br>'+
+      esc(resumenEstado(x.e))+'</div>'+
+    '<div class="note" style="margin:0 0 14px"><b>Ahora mismo:</b><br>'+esc(resumenEstado(S))+'</div>'+
+    '<button class="btn full" style="margin-bottom:8px" data-act="fundirSello()">Fundir con lo que tengo</button>'+
+    '<button class="btn full" data-act="cerrarSheet()">Cancelar</button>');
+}
+function fundirSello(){
+  var x=leerSello(); if(!x) return;
+  S=fusionar(S, x.e); guardarLocal(); tema(); render(); if(NUBE.hay) subir(true);
+  cerrarSheet(); avisar('Fundida la copia local.');
+}
+function pintarAvisoExport(){
+  var el=document.getElementById('avisoExport'); if(!el) return;
+  var d = S.ultimaExport? Math.floor((Date.now()-S.ultimaExport)/86400000) : null;
+  el.innerHTML = d===null
+    ? 'Nunca has exportado. Una copia en tus archivos es la única que sobrevive a todo — '+
+      'aunque un día se caiga el servidor o pierdas la cuenta.'
+    : d>=45
+      ? '<span style="color:var(--accent)">Hace '+d+' días de la última exportación. Toca exportar.</span>'
+      : 'Última exportación hace '+(d===0?'menos de un día':d+(d===1?' día':' días'))+'.';
 }
 
 /* ---------------- bienvenida ---------------- */
@@ -2299,6 +2426,7 @@ function seguir(){
   renderAvance();
 
   pintarRutina();
+  pintarAvisoExport();
   document.getElementById('mAgua').value=S.metas.agua;
   document.getElementById('mHora').value=S.metas.hora||'';
   document.getElementById('umbral').value=S.umbral;
