@@ -255,6 +255,24 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 @keyframes roll{0%{transform:translateY(38%);opacity:0}100%{transform:none;opacity:1}}
 .roll{animation:roll .42s cubic-bezier(.2,.9,.3,1)}
 .suge{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+/* --- uso: barras, mapa de toques y reloj --- */
+.ubar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ubar .nm{font:13px/1.2 var(--sans);color:var(--ink2);min-width:82px}
+.ubar .tr{flex:1;height:9px;border-radius:5px;background:var(--vacio);overflow:hidden}
+.ubar .tr i{display:block;height:100%;border-radius:5px;background:var(--accent)}
+.ubar .vl{font:600 12px/1 var(--sans);color:var(--ink2);min-width:52px;text-align:right;
+  font-variant-numeric:tabular-nums}
+.umapa{position:relative;margin:4px auto 0;width:172px;aspect-ratio:9/19;border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;background:var(--papel2);display:grid;
+  grid-template-columns:repeat(9,1fr);grid-auto-rows:1fr}
+.umapa i{display:block}
+.umapa .lin{position:absolute;left:0;right:0;height:1px;background:var(--line)}
+.ureloj{display:flex;align-items:flex-end;gap:2px;height:46px;margin-top:4px}
+.ureloj span{flex:1;background:var(--accent);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+.ureloj span.pico{opacity:1}
+.uhoras{display:flex;justify-content:space-between;margin-top:5px}
+.uleyenda{display:flex;align-items:center;gap:7px;margin-top:11px}
+.uleyenda i{width:15px;height:9px;border-radius:3px;display:block}
 .colv{display:flex;align-items:center;gap:16px;margin-top:14px}
 .colv .btnx{background:none;border:none;color:var(--ink3);font:12px/1 var(--sans);padding:6px 0;cursor:pointer}
 .port textarea{margin-top:6px}
@@ -733,6 +751,9 @@ body.futuro #fab{opacity:.82}
     <h2>Instalar</h2>
     <div class="card" id="instalar"></div>
 
+    <h2>Uso de la app</h2>
+    <div class="card" id="usoCard"></div>
+
     <h2>Tregua</h2>
     <div class="card" id="treguaCard"></div>
 
@@ -818,6 +839,18 @@ document.addEventListener('click',function(e){
   if(t.closest('.anillo')){ return; }
   var el=t.closest('[data-act]'); if(el){ e.preventDefault(); runAct(el.dataset.act,e); }
 },false);
+/* la medición va en su propio oyente para no estorbar a la app si algo falla */
+document.addEventListener('click',function(e){
+  try{
+    if(!usoOn()) return;
+    uToque(e);
+    var t=e.target; if(!t.closest) return;
+    if(t.closest('nav button[data-v]')) return uAccion('nav');
+    var el=t.closest('[data-act]');
+    if(el){ var m=String(el.dataset.act).match(/^([A-Za-z_$][\w$]*)\(/); if(m) uAccion(m[1]); }
+    else if(t.closest('.anillo')) uAccion('anillo');
+  }catch(err){}
+},true);
 document.addEventListener('input',function(e){
   var el=e.target.closest&&e.target.closest('[data-inp]'); if(el) runAct(el.dataset.inp,e); },false);
 document.addEventListener('change',function(e){
@@ -832,6 +865,7 @@ document.addEventListener('change',function(e){
     var an=e.target.closest&&e.target.closest('.anillo');
     if(!an) return;
     e.preventDefault();
+    try{ uToque(e); }catch(err){}
     var k=an.dataset.k, signo = men? -1 : 1;
     repitio=false;
     t0=setTimeout(function(){
@@ -916,7 +950,7 @@ function leerSello(){
 function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
 
 var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
-         dias:{},entradas:{},semanas:{},rutina:null,tumbas:{},cols:[],treguas:[],portadas:{},ultimaExport:0,verReglas:1,umbral:100,borrar:'',tema:'claro',visto:0,gesto:0,metas:{agua:8,comida:3,hora:'23:30'}};
+         dias:{},entradas:{},semanas:{},rutina:null,tumbas:{},cols:[],treguas:[],portadas:{},uso:null,ultimaExport:0,verReglas:1,umbral:100,borrar:'',tema:'claro',visto:0,gesto:0,metas:{agua:8,comida:3,hora:'23:30'}};
 function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
   if(!o.metas) o.metas=DEF.metas; return o; }
 
@@ -1018,6 +1052,24 @@ function fusionar(local, remoto){
   r.entradas=ee;
   r.semanas=Object.assign({}, r.semanas||{}, l.semanas||{});
   r.portadas=Object.assign({}, r.portadas||{}, l.portadas||{});
+
+  /* la medición de uso se suma: dos aparatos miden trozos distintos del mismo día */
+  if(l.uso || r.uso){
+    var lu=l.uso||{}, ru=r.uso||{};
+    var nu={on: (lu.on!==undefined? lu.on : ru.on), desde:(lu.desde<ru.desde? lu.desde : ru.desde)||lu.desde||ru.desde,
+            dias:{}, toques:{}, ses:Math.max(lu.ses||0, ru.ses||0), ult:Math.max(lu.ult||0, ru.ult||0)};
+    [ru.dias||{}, lu.dias||{}].forEach(function(src){
+      Object.keys(src).forEach(function(f){
+        var o=nu.dias[f]=nu.dias[f]||{seg:{},ver:{},act:{},hor:[]}, d=src[f]||{};
+        ['seg','ver','act'].forEach(function(g){
+          Object.keys(d[g]||{}).forEach(function(k){ o[g][k]=(o[g][k]||0)+d[g][k]; }); });
+        (d.hor||[]).forEach(function(v,i){ o.hor[i]=(o.hor[i]||0)+(v||0); });
+      });
+    });
+    [ru.toques||{}, lu.toques||{}].forEach(function(src){
+      Object.keys(src).forEach(function(k){ nu.toques[k]=(nu.toques[k]||0)+src[k]; }); });
+    r.uso=nu;
+  }
 
   /* treguas: se unen por identificador; gana la que tenga fin apuntado */
   var tg=[], vt={};
@@ -1136,7 +1188,7 @@ var ANILLOS=[
  {k:'sueno',  lb:'Sueño',     col:'var(--sueno)', meta:function(){return 1}}
 ];
 function dia(iso){ if(!S.dias[iso]) S.dias[iso]={agua:0,comida:0,mov:0,sueno:0}; return S.dias[iso]; }
-function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
+function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(d); }).length; }
 function esBueno(d){ return completos(d) >= 3; }   // tres de cinco; cinco es día redondo
 function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
 
@@ -1225,7 +1277,7 @@ var COMIDA_Q=[
 ];
 var ANILLOS=[
  {k:'agua',   lb:'Agua',   tipo:'cuenta', col:'var(--agua)',
-  meta:function(){ return metaAgua(fechaVista); }},
+  meta:function(d){ return metaAguaDe(d); }},
  {k:'comida', lb:'Comida', tipo:'lista',  col:'var(--comida)', meta:function(){ return 1; }},
  {k:'mov',    lb:'Mover',  tipo:'lista',  col:'var(--mov)',    meta:function(){ return 1; }},
  {k:'sueno',  lb:'Sueño',  tipo:'lista',  col:'var(--sueno)',  meta:function(){ return 1; }},
@@ -1237,7 +1289,11 @@ var ANILLOS=[
    que ya lo había cumplido — cambiar la vara a mitad de partido desanima. */
 var EXTRA_DEPORTE=2;
 function aguaBase(){ return Math.max(1, S.metas.agua||8); }
-function metaAgua(f){ var d=leer(f); return d.am || aguaBase(); }
+function metaAgua(f){ return metaAguaDe(leer(f)); }
+/* La meta del agua es de CADA día (d.am), no del día que estés mirando.
+   Cuando dependía de fechaVista, marcar deporte hoy subía la meta de todos
+   los días y las cuentas cambiaban según dónde estuvieras parado. */
+function metaAguaDe(d){ return (d && d.am) || aguaBase(); }
 function ajustarMetaAgua(f){
   var d=dia(f), base=aguaBase();
   if(!d.am) d.am=base;
@@ -1279,7 +1335,7 @@ function dia(f){ if(!S.dias[f]) S.dias[f]={agua:0,comida:0,mov:0,sueno:0,zero:0,
   if(!S.dias[f].cq) S.dias[f].cq=[];
   return S.dias[f]; }
 function leer(f){ return S.dias[f] || {agua:0,comida:0,mov:0,sueno:0,zero:0,cq:[],mv:[],sn:[],sh:null}; }
-function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(); }).length; }
+function completos(d){ return ANILLOS.filter(function(a){ return (d[a.k]||0) >= a.meta(d); }).length; }
 function esBueno(d){ return completos(d) >= 3; }   // tres de cinco; cinco es día redondo
 function totalBuenos(){ var n=0; for(var k in S.dias){ if(esBueno(S.dias[k])) n++; } return n; }
 
@@ -1288,19 +1344,21 @@ function anillo(k,delta){
   if(dias(fechaVista)<0){ avisar('Ese día todavía no ha llegado.'); return; }
   var a=ANILLOS.filter(function(x){return x.k===k})[0];
   if(a.tipo==='lista'){ if(delta>0){
+      uAccion('anillo');
       if(k==='mov') hojaSesion(fechaVista);
       else if(k==='sueno') hojaSueno(fechaVista);
       else hojaComida(fechaVista);
     } return; }
+  uAccion('anillo');
   var d=dia(fechaVista);
-  var antes=(d[k]||0)>=a.meta(), eraBueno=esBueno(d);
+  var antes=(d[k]||0)>=a.meta(d), eraBueno=esBueno(d);
   var v;
   if(k==='agua') ajustarMetaAgua(fechaVista);
   if(a.tipo==='si') v = delta>0 ? ((d[k]||0)?0:1) : 0;
-  else v = Math.max(0, Math.min(a.meta(), (d[k]||0)+delta));
+  else v = Math.max(0, Math.min(a.meta(d), (d[k]||0)+delta));
   if(v===(d[k]||0)) return;
   d[k]=v;
-  if(!antes && v>=a.meta()) animar=k;
+  if(!antes && v>=a.meta(d)) animar=k;
   persist(); render();
   if(!eraBueno && esBueno(d)) festejar();
 }
@@ -1315,7 +1373,7 @@ function festejar(){
 /* ---------------- el consejo: una sola cosa, ahora ---------------- */
 function consejo(){
   var d=leer(fechaVista), c=completos(d), h=new Date().getHours();
-  var faltan=ANILLOS.filter(function(a){ return (d[a.k]||0) < a.meta(); });
+  var faltan=ANILLOS.filter(function(a){ return (d[a.k]||0) < a.meta(d); });
 
   if(dias(fechaVista)<0){
     var n=leerEnts(fechaVista).length;
@@ -1335,7 +1393,7 @@ function consejo(){
 
   // el que está más cerca de cerrarse
   var cerca=faltan.slice().sort(function(a,b){
-    return ((d[b.k]||0)/b.meta()) - ((d[a.k]||0)/a.meta()); })[0];
+    return ((d[b.k]||0)/b.meta(d)) - ((d[a.k]||0)/a.meta(d)); })[0];
   var falta_agua = faltan.some(function(a){return a.k==='agua'});
   var falta_sueno = faltan.some(function(a){return a.k==='sueno'});
   var falta_mov = faltan.some(function(a){return a.k==='mov'});
@@ -1368,7 +1426,7 @@ function compAyer(){
   if(!esHoy()) return '';
   var a=leer(menos(1)), h=leer(fechaVista);
   var na=0, nh=0;
-  ANILLOS.forEach(function(x){ na+=Math.min(1,(a[x.k]||0)/x.meta()); nh+=Math.min(1,(h[x.k]||0)/x.meta()); });
+  ANILLOS.forEach(function(x){ na+=Math.min(1,(a[x.k]||0)/x.meta(a)); nh+=Math.min(1,(h[x.k]||0)/x.meta(h)); });
   if(na===0 && nh===0) return '';
   if(nh>na)  return 'Vas por delante de ayer.';
   if(nh===na) return 'Vas igual que ayer a estas horas.';
@@ -1379,7 +1437,7 @@ function compAyer(){
 function pintarAnillos(){
   var d=leer(fechaVista), R=21, C=2*Math.PI*R;
   document.getElementById('anillos').innerHTML = ANILLOS.map(function(a){
-    var v=d[a.k]||0, m=a.meta(), full=v>=m, p=Math.min(1,v/m), txt;
+    var v=d[a.k]||0, m=a.meta(d), full=v>=m, p=Math.min(1,v/m), txt;
     if(a.tipo==='lista' && a.k==='comida'){
       var n=(d.cq||[]).length; p=Math.min(1,n/2); full=n>=2;
       txt = full? '✓' : n+'/2';
@@ -2087,10 +2145,10 @@ function omniHacer(){
   else if(r.k==='agua'){
     var d=dia(r.f); ajustarMetaAgua(r.f);
     var a=ANILLOS.filter(function(x){return x.k==='agua'})[0];
-    var antes=(d.agua||0)>=a.meta();
-    d.agua=Math.max(0, Math.min(a.meta(), (d.agua||0)+r.n));
-    if(!antes && d.agua>=a.meta()) animar='agua';
-    hecho('Van '+d.agua+' de '+a.meta()+'.');
+    var antes=(d.agua||0)>=a.meta(d);
+    d.agua=Math.max(0, Math.min(a.meta(d), (d.agua||0)+r.n));
+    if(!antes && d.agua>=a.meta(d)) animar='agua';
+    hecho('Van '+d.agua+' de '+a.meta(d)+'.');
   }
   else if(r.k==='sueno'){
     var d2=dia(r.f); d2.sh=r.h; d2.sueno=1; animar='sueno';
@@ -2145,7 +2203,7 @@ function hojaMesHTML(base){
     var dd=S.dias[f], c=dd?completos(dd):0;
     if(dd && esBueno(dd)) buenos++;
     var ani=ANILLOS.map(function(a){
-      return '<i class="'+((dd&&(dd[a.k]||0)>=a.meta())?'on':'')+'"></i>'; }).join('');
+      return '<i class="'+((dd&&(dd[a.k]||0)>=a.meta(dd))?'on':'')+'"></i>'; }).join('');
     var cosa=(S.hoy && S.hoy.fecha===f)? '<span class="prc">★ '+esc(S.hoy.texto)+'</span>' : '';
     var aps=leerEnts(f).map(function(a){
       return '<span class="prz'+(a.e===1?' pr-hecha':'')+'">'+glifoAp(a)+' '+esc(a.x)+'</span>'; }).join('');
@@ -2194,6 +2252,225 @@ function imprimir(que){
     try{ window.print(); }catch(e){}
     setTimeout(function(){ document.body.classList.remove('imprimiendo'); box.innerHTML=''; }, 800);
   }, 60);
+}
+
+
+/* ==========================================================================
+   Uso · medición propia, en este aparato y en tu servidor. Nada sale de aquí:
+   no hay librerías de terceros, ni identificadores, ni texto de lo que apuntas.
+   Solo cuentas: qué pantalla, qué botón, en qué hora del día y dónde caen los
+   dedos. Se puede apagar y se puede borrar.
+   ========================================================================== */
+var CELDAS_X=9, CELDAS_Y=19, DIAS_USO=60, ACTOS_MAX=30;
+var USO={pant:null, t0:0, n:0};
+
+function usoBase(){
+  if(!S.uso) S.uso={on:1, desde:hoyISO(), dias:{}, toques:{}, ses:0, ult:0};
+  if(!S.uso.dias) S.uso.dias={};
+  if(!S.uso.toques) S.uso.toques={};
+  return S.uso;
+}
+function usoOn(){ return S.uso? S.uso.on!==0 : true; }
+function uDia(){
+  var u=usoBase(), f=hoyISO();
+  if(!u.dias[f]) u.dias[f]={seg:{}, ver:{}, act:{}, hor:[]};
+  return u.dias[f];
+}
+function uGuardar(){
+  USO.n++;
+  usoBase().ult=Date.now();
+  if(USO.n % 25 === 0) persist(); else guardarLocal();
+}
+function uPodar(){
+  var u=usoBase(), ks=Object.keys(u.dias).sort();
+  if(ks.length>DIAS_USO) ks.slice(0, ks.length-DIAS_USO).forEach(function(k){ delete u.dias[k]; });
+  var d=uDia(), a=Object.keys(d.act);
+  if(a.length>ACTOS_MAX){
+    a.sort(function(x,y){ return d.act[y]-d.act[x]; });
+    a.slice(ACTOS_MAX).forEach(function(k){ delete d.act[k]; });
+  }
+  // tope duro: los datos mandan, la medición cede
+  var vueltas=0;
+  while(JSON.stringify(u).length > 120*1024 && vueltas++ < 200){
+    var vs=Object.keys(u.dias).sort();
+    if(vs.length<8) break;
+    delete u.dias[vs[0]];
+  }
+}
+
+/* --- tiempo por pantalla: se cierra el cronómetro anterior y se abre el nuevo --- */
+function uCerrarTiempo(){
+  if(!usoOn() || !USO.pant || !USO.t0) return;
+  var s=Math.round((Date.now()-USO.t0)/1000);
+  if(s>0 && s<3600){ var d=uDia(); d.seg[USO.pant]=(d.seg[USO.pant]||0)+s; }
+  USO.t0=Date.now();
+}
+function uPantalla(n){
+  if(!usoOn()) return;
+  uCerrarTiempo();
+  USO.pant=n; USO.t0=Date.now();
+  var d=uDia(); d.ver[n]=(d.ver[n]||0)+1;
+  uGuardar();
+}
+/* --- una acción: se guarda el nombre de la función, nunca lo que escribes --- */
+function uAccion(nombre){
+  if(!usoOn() || !nombre) return;
+  var d=uDia();
+  d.act[nombre]=(d.act[nombre]||0)+1;
+  if(!d.hor.length) d.hor=new Array(24).fill(0);
+  var h=new Date().getHours(); d.hor[h]=(d.hor[h]||0)+1;
+  uPodar(); uGuardar();
+}
+/* --- dónde cae el dedo: la pantalla se parte en una rejilla de 9 × 19 --- */
+function uToque(ev){
+  if(!usoOn() || !ev || ev.clientX===undefined) return;
+  var u=usoBase();
+  var cx=Math.min(CELDAS_X-1, Math.max(0, Math.floor(ev.clientX / (window.innerWidth/CELDAS_X))));
+  var cy=Math.min(CELDAS_Y-1, Math.max(0, Math.floor(ev.clientY / (window.innerHeight/CELDAS_Y))));
+  var k=cx+','+cy;
+  u.toques[k]=(u.toques[k]||0)+1;
+}
+/* --- sesiones: media hora sin tocar nada y se considera otra visita --- */
+function uSesion(){
+  if(!usoOn()) return;
+  var u=usoBase();
+  if(!u.ult || (Date.now()-u.ult) > 30*60*1000){ u.ses=(u.ses||0)+1; }
+  u.ult=Date.now(); guardarLocal();
+}
+
+function usoConmutar(){
+  var u=usoBase();
+  u.on = u.on? 0 : 1;
+  persist(); render();
+  avisar(u.on? 'Midiendo otra vez.' : 'Medición parada. Lo guardado sigue ahí hasta que lo borres.');
+}
+function usoBorrar(){
+  var on=usoOn();
+  S.uso={on:on?1:0, desde:hoyISO(), dias:{}, toques:{}, ses:0, ult:Date.now()};
+  USO.n=0; persist(); render();
+  avisar('Borrado todo lo medido.');
+}
+
+/* --- nombres legibles para las acciones --- */
+var USO_NOM={
+  anillo:'tocar un anillo', apAdd:'apuntar algo', apEstado:'tachar o cerrar un apunte',
+  hojaMover:'mover un apunte', abrirDia:'abrir un día', irDia:'cambiar de día',
+  irHoy:'volver a hoy', verVista:'cambiar día/semana/mes', verLista:'cambiar de lista',
+  togComida:'juzgar la comida', togHora:'apuntar horas de sueño', togNoche:'apuntar la noche',
+  togEj:'marcar un ejercicio', togMin:'marcar el mínimo', fijarCosa:'fijar la cosa del día',
+  toggleCosa:'cerrar la cosa del día', add:'añadir a una lista', del:'borrar de una lista',
+  colAdd:'añadir a mis listas', colTog:'marcar en mis listas', colNueva:'crear una lista',
+  guardarIntencion:'escribir la intención de la semana', vaciarCabeza:'vaciar la cabeza',
+  exportar:'exportar copia', tema:'cambiar de tema', migrar:'migrar un apunte',
+  apuntarRegla:'apuntar una regla', calc:'usar la calculadora', deshacer:'deshacer',
+  copiarAtajo:'copiar un atajo', treguaEmpezar:'empezar tregua', guardarPortada:'escribir la portada del mes',
+  nav:'cambiar de pestaña'
+};
+var USO_PANT={dia:'Día', semana:'Semana', mes:'Mes', avance:'Avance', listas:'Listas',
+              reglas:'Documento', ajustes:'Más'};
+
+function fmtDur(s){
+  if(s<60) return s+' s';
+  if(s<3600) return Math.round(s/60)+' min';
+  var h=Math.floor(s/3600), m=Math.round((s%3600)/60);
+  return h+' h'+(m? ' '+m+' min':'');
+}
+
+function pintarUso(){
+  var box=document.getElementById('usoCard'); if(!box) return;
+  var u=usoBase(), fs=Object.keys(u.dias).sort();
+
+  var cab='<div class="row between" style="margin-bottom:10px">'+
+    '<span class="muted">Medir el uso</span>'+
+    '<button class="conmuta'+(usoOn()?' on':'')+'" id="swUso" data-act="usoConmutar()" role="switch"><span></span></button></div>'+
+    '<div class="tiny" style="margin-bottom:14px">Se cuenta en este aparato y se guarda con tus datos, '+
+    'en tu servidor. No hay librerías de fuera ni identificadores, y no se guarda nada de lo que escribes: '+
+    'solo qué pantalla miras, qué botón tocas, a qué hora y en qué parte de la pantalla cae el dedo.</div>';
+
+  if(!fs.length){
+    box.innerHTML=cab+'<div class="empty">Todavía no hay nada medido. Usa la app y vuelve.</div>';
+    return;
+  }
+
+  /* --- totales --- */
+  var segTot=0, actTot=0, seg={}, act={}, hor=new Array(24).fill(0), ver={};
+  fs.forEach(function(f){
+    var d=u.dias[f];
+    Object.keys(d.seg||{}).forEach(function(k){ seg[k]=(seg[k]||0)+d.seg[k]; segTot+=d.seg[k]; });
+    Object.keys(d.ver||{}).forEach(function(k){ ver[k]=(ver[k]||0)+d.ver[k]; });
+    Object.keys(d.act||{}).forEach(function(k){ act[k]=(act[k]||0)+d.act[k]; actTot+=d.act[k]; });
+    (d.hor||[]).forEach(function(v,i){ hor[i]+=v||0; });
+  });
+  var media=Math.round(segTot/fs.length);
+
+  var cifras='<div class="cifras" style="margin-bottom:16px">'+
+    '<div><div class="n">'+fs.length+'</div><div class="tiny">días con uso</div></div>'+
+    '<div><div class="n">'+(u.ses||1)+'</div><div class="tiny">veces abierta</div></div>'+
+    '<div><div class="n">'+fmtDur(segTot)+'</div><div class="tiny">en total</div></div>'+
+    '<div><div class="n">'+fmtDur(media)+'</div><div class="tiny">al día</div></div>'+
+    '</div>';
+
+  /* --- barras: tiempo por pantalla (una sola tinta, es magnitud) --- */
+  var ps=Object.keys(seg).sort(function(a,b){ return seg[b]-seg[a]; });
+  var maxS=ps.length? seg[ps[0]] : 1;
+  var barras=ps.map(function(k){
+    var pc=Math.round(seg[k]/Math.max(1,segTot)*100);
+    return '<div class="ubar"><span class="nm">'+(USO_PANT[k]||k)+'</span>'+
+      '<span class="tr"><i style="width:'+Math.max(2,Math.round(seg[k]/maxS*100))+'%"></i></span>'+
+      '<span class="vl">'+fmtDur(seg[k])+'</span></div>'+
+      '<div class="tiny" style="margin:-5px 0 10px 92px">'+pc+' % del tiempo · '+(ver[k]||0)+' visitas</div>';
+  }).join('');
+
+  /* --- botones más pulsados --- */
+  var as=Object.keys(act).sort(function(a,b){ return act[b]-act[a]; }).slice(0,8);
+  var maxA=as.length? act[as[0]] : 1;
+  var lista=as.map(function(k){
+    return '<div class="ubar"><span class="nm" style="min-width:0;flex:1">'+(USO_NOM[k]||k)+'</span>'+
+      '<span class="tr" style="flex:0 0 84px"><i style="width:'+Math.round(act[k]/maxA*100)+'%"></i></span>'+
+      '<span class="vl">'+act[k]+'</span></div>';
+  }).join('');
+
+  /* --- mapa de toques: rejilla secuencial de una sola tinta --- */
+  var maxT=0, sumT=0, filas=new Array(CELDAS_Y).fill(0);
+  Object.keys(u.toques).forEach(function(k){
+    var v=u.toques[k]; sumT+=v; if(v>maxT) maxT=v;
+    var r=+k.split(',')[1]; filas[r]=(filas[r]||0)+v;
+  });
+  var celdas='';
+  for(var y=0;y<CELDAS_Y;y++){
+    for(var x=0;x<CELDAS_X;x++){
+      var v=u.toques[x+','+y]||0;
+      var p=maxT? Math.pow(v/maxT, .62) : 0;
+      celdas+='<i style="background:color-mix(in srgb, var(--accent) '+Math.round(p*88)+'%, transparent)"></i>';
+    }
+  }
+  var tercio=[0,0,0];
+  filas.forEach(function(v,i){ tercio[Math.min(2,Math.floor(i/(CELDAS_Y/3)))]+=v; });
+  var nomT=['el tercio de arriba (cabecera y anillos)','el centro (la página del día)','el tercio de abajo (pestañas y la caja)'];
+  var iMax=tercio.indexOf(Math.max.apply(null,tercio));
+  var pieMapa = sumT
+    ? Math.round(tercio[iMax]/sumT*100)+' % de los toques caen en '+nomT[iMax]+'.'
+    : 'Todavía no hay toques medidos.';
+
+  /* --- reloj: a qué horas usas la app --- */
+  var maxH=Math.max.apply(null, hor)||1;
+  var pico=hor.indexOf(maxH);
+  var reloj='<div class="ureloj">'+hor.map(function(v,i){
+      return '<span class="'+(i===pico&&v?'pico':'')+'" style="height:'+Math.max(2,Math.round(v/maxH*46))+'px"></span>';
+    }).join('')+'</div>'+
+    '<div class="uhoras tiny"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div>'+
+    (maxH>1? '<div class="tiny" style="margin-top:8px">La hora en que más la tocas es las '+pico+
+      ':00 — ahí se concentran '+Math.round(hor[pico]/Math.max(1,actTot)*100)+' % de las pulsaciones.</div>' : '');
+
+  box.innerHTML = cab + cifras +
+    '<div class="tiny" style="margin-bottom:9px">DÓNDE PASAS EL TIEMPO</div>' + (barras||'<div class="empty">Aún nada.</div>') +
+    '<div class="tiny" style="margin:18px 0 9px">QUÉ TOCAS MÁS</div>' + (lista||'<div class="empty">Aún nada.</div>') +
+    '<div class="tiny" style="margin:18px 0 9px">DÓNDE CAE EL DEDO</div>' +
+      '<div class="umapa">'+celdas+'</div>'+
+      '<div class="tiny" style="margin-top:10px">'+pieMapa+' Cada cuadro es una novena parte de ancho por una '+
+      'diecinueveava de alto; cuanto más tinta, más veces has pulsado ahí.</div>'+
+    '<div class="tiny" style="margin:18px 0 9px">A QUÉ HORAS</div>' + reloj +
+    '<div class="row" style="margin-top:18px"><button class="btn sm" data-act="usoBorrar()">Borrar lo medido</button></div>';
 }
 
 /* ---------------- archivo: todo lo apuntado, para siempre ---------------- */
@@ -2455,7 +2732,7 @@ function renderAvance(){
   ANILLOS.forEach(function(a){
     var barras='', hechos=0, hay=0, tregDias=0;
     for(var i=29;i>=0;i--){
-      var f=menos(i), d=S.dias[f], v=d?(d[a.k]||0):0, m=a.meta(), p=Math.min(1,v/m);
+      var f=menos(i), d=S.dias[f], v=d?(d[a.k]||0):0, m=a.meta(d), p=Math.min(1,v/m);
       if(enTregua(f) && v===0){ barras+='<span style="height:4px;opacity:.25"></span>'; tregDias++; continue; }
       if(v>0) hay++; if(p>=1) hechos++;
       barras+='<span style="height:'+Math.round(4+p*22)+'px'+(p>0?';background:'+a.col:'')+
@@ -2948,6 +3225,7 @@ function verVista(v){
     document.getElementById('v'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('on', x===v);
   });
   window.scrollTo(0,0);
+  uPantalla(v);
   render();
 }
 function lunesDe(f){
@@ -3023,7 +3301,7 @@ function pintarSemana(){
     var f=menos(-i, lun), d=leer(f), arr=leerEnts(f);
     var esH = f===hoyISO(), porVenir = f>hoyISO();
     var pts=porVenir? '' : ANILLOS.map(function(a){
-      return '<i style="'+((d[a.k]||0)>=a.meta()?'background:'+a.col:'')+'"></i>'; }).join('');
+      return '<i style="'+((d[a.k]||0)>=a.meta(d)?'background:'+a.col:'')+'"></i>'; }).join('');
     var cosaD = (S.hoy && S.hoy.fecha===f) ? '<div class="sitem'+(S.hoy.hecho?' hecha':'')+
       '"><span class="g">★</span><span>'+esc(S.hoy.texto)+'</span></div>' : '';
     var items = cosaD + (arr.length ? arr.map(function(a){
@@ -3415,6 +3693,7 @@ function ir(v){
   if(v==='avance') alFinal();
   if(v==='reglas'){ var b=document.getElementById('buscar'); if(b && !b.value) filtrar(); }
   if(v==='listas') pintarCompra();
+  uPantalla(v==='hoy'? vista : v);
 }
 
 /* ---------------- render principal ---------------- */
@@ -3463,6 +3742,7 @@ function seguir(){
 
   pintarRutina();
   pintarTregua();
+  pintarUso();
   pintarAtajos();
   if(vista==='mes') pintarPortada();
   pintarAvisoExport();
@@ -3502,10 +3782,15 @@ if(window.matchMedia){ try{
 }catch(e){} }
 // si la app estaba abierta y cambia el día, se refresca al volver
 document.addEventListener('visibilitychange', function(){
-  if(!document.hidden){ if(fechaVista!==hoyISO() && dias(fechaVista)<0) fechaVista=hoyISO(); render(); }
+  if(document.hidden){ uCerrarTiempo(); USO.pant=null; persist(); return; }
+  uSesion();
+  USO.t0=Date.now(); USO.pant = (document.getElementById('v-hoy').classList.contains('hidden')? USO.pant : vista);
+  if(fechaVista!==hoyISO() && dias(fechaVista)<0) fechaVista=hoyISO();
+  render();
 });
 
 tema();
+uSesion();
 aplicarVerReglas();
 verVista('dia');
 estado();
@@ -3514,6 +3799,7 @@ calc();
 if(!S.visto){ document.getElementById('hola').classList.remove('hidden'); pintarHola(); }
 arrancarNube();
 accionDeUrl();
+uPantalla(vista);
 
 </script>
 </body>
