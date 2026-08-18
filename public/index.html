@@ -239,6 +239,16 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 .rejilla i.b3{background:var(--mov)}
 .rejilla i.hoy{box-shadow:0 0 0 1.5px var(--ink2)}
 .rejilla i.fuera{background:transparent}
+.rejilla i.tre{background:repeating-linear-gradient(45deg,var(--vacio),var(--vacio) 2px,var(--paper) 2px,var(--paper) 4px)}
+.mdia.tre .d{opacity:.4}
+@keyframes roll{0%{transform:translateY(38%);opacity:0}100%{transform:none;opacity:1}}
+.roll{animation:roll .42s cubic-bezier(.2,.9,.3,1)}
+.suge{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.colv{display:flex;align-items:center;gap:10px;margin-top:14px}
+.colv .btnx{background:none;border:none;color:var(--ink3);font:12px/1 var(--sans);padding:6px 0;cursor:pointer}
+.port textarea{margin-top:6px}
+.portmes{font:400 27px/1.1 var(--serif);letter-spacing:-.01em;margin-bottom:9px}
+.portmes span{font:12px/1 var(--sans);color:var(--ink3);margin-left:9px;letter-spacing:.1em}
 .meses{display:grid;grid-auto-flow:column;grid-auto-columns:11px;gap:3px;width:max-content;
   padding:0 1px;margin-bottom:6px;height:12px;font:9.5px/1 var(--sans);color:var(--ink3);letter-spacing:.03em}
 .meses span{white-space:nowrap;overflow:visible}
@@ -253,7 +263,8 @@ details .body{padding:0 0 15px;color:var(--ink2);font-size:15px}
 /* ---------- segmentado ---------- */
 .segm{display:flex;background:var(--papel2);border-radius:10px;padding:3px;gap:3px;scroll-margin-top:92px}
 h2,.card{scroll-margin-top:92px}
-.segm button{flex:1;padding:9px 0;border-radius:8px;font:13px/1 var(--sans);color:var(--ink2);
+.segm{overflow-x:auto;scrollbar-width:none}.segm::-webkit-scrollbar{display:none}
+.segm button{flex:1 0 auto;padding:9px 7px;white-space:nowrap;border-radius:8px;font:13px/1 var(--sans);color:var(--ink2);
   touch-action:manipulation;transition:background .15s,color .15s}
 .segm button.on{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:var(--sombra)}
 
@@ -347,7 +358,7 @@ h2,.card{scroll-margin-top:92px}
   box-shadow:var(--sombra);transition:transform .2s}
 .conmuta.on{background:var(--mov);border-color:var(--mov)}
 .conmuta.on span{transform:translateX(20px)}
-body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
+body.sin-reglas .ref,body.sin-reglas h2 .der,body.sin-reglas .doc{display:none}
 
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{border:1px solid var(--line);border-radius:999px;padding:8px 13px;font:13px/1 var(--sans);
@@ -477,6 +488,7 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
   </div>
 
   <div id="vistaMes" class="hidden">
+    <div class="card port" id="portadaMes"></div>
     <div class="card"><div class="mres" id="mesResumen"></div></div>
     <div class="card">
       <div class="mcab" id="mesCab"></div>
@@ -494,7 +506,7 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
       <div class="consejo" id="consejo"></div>
       <div class="tiny ayer" id="ayer"></div>
 
-      <div class="tiny" style="margin-top:9px">Zero es el cierre del día: cocina recogida, superficies despejadas, todo en su sitio (3.1 · 3.2 · 3.4).</div>
+      <div class="tiny doc" style="margin-top:9px">Zero es el cierre del día: cocina recogida, superficies despejadas, todo en su sitio (3.1 · 3.2 · 3.4).</div>
 
       <div class="marcador">
         <div>
@@ -522,6 +534,8 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
         <div><div class="n" id="avRacha">0</div><div class="tiny">seguidos ahora</div></div>
         <div><div class="n" id="avMejor">0</div><div class="tiny">mejor racha</div></div>
         <div><div class="n" id="avMes">0</div><div class="tiny">este mes</div></div>
+        <div><div class="n" id="avDoble">0</div><div class="tiny">sin dos rojos seguidos</div></div>
+        <div><div class="n" id="avRedondos">0</div><div class="tiny">días redondos</div></div>
       </div>
     </div>
 
@@ -551,8 +565,10 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
       <button data-act="verLista(pendientes)" data-l="pendientes">Pendientes</button>
       <button data-act="verLista(cuarentena)" data-l="cuarentena">Casa</button>
       <button data-act="verLista(archivo)" data-l="archivo">Diario</button>
+      <button data-act="verLista(cols)" data-l="cols">Mis listas</button>
     </div>
     <div id="listasBody"></div>
+    <div id="colsCard" class="hidden"></div>
 
     <div id="archivoCard" class="hidden">
       <h2>Archivo del diario <span class="der" id="arqN"></span></h2>
@@ -638,6 +654,12 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
     <h2>Instalar</h2>
     <div class="card" id="instalar"></div>
 
+    <h2>Tregua</h2>
+    <div class="card" id="treguaCard"></div>
+
+    <h2>Atajos del móvil</h2>
+    <div class="card" id="atajosCard"></div>
+
     <h2>Datos</h2>
     <div class="card">
       <div class="tiny" id="avisoExport" style="margin:0 0 12px"></div>
@@ -650,12 +672,12 @@ body.sin-reglas .ref,body.sin-reglas h2 .der{display:none}
       </div>
     </div>
 
-    <h2>Revisión <span class="der">12</span></h2>
-    <div class="card">
+    <h2 class="doc">Revisión <span class="der">12</span></h2>
+    <div class="card doc">
       <p class="muted" style="margin:0 0 14px">Cada regla tiene que devolver algo medible: tiempo, dinero, atención o sueño. La que no devuelva nada en un mes se borra, sin discusión.</p>
       <div class="tiny">Qué borro este mes</div>
       <input type="text" id="borrar" data-chg="guardarMetas()">
-      <div class="tiny" style="margin-top:12px">8.6 · Un incumplimiento es un dato sobre la regla, no sobre ti.</div>
+      <div class="tiny doc" style="margin-top:12px">8.6 · Un incumplimiento es un dato sobre la regla, no sobre ti.</div>
     </div>
 
     <h2>Historial</h2>
@@ -757,7 +779,7 @@ function leerSello(){
 function leerLocal(){ try{ return JSON.parse((hasLS?localStorage.getItem('reglas.v1'):mem.d)||'null'); }catch(e){ return null; } }
 
 var DEF={hoy:null,hist:[],espera:[],cuarentena:[],filtro:[],bitacora:[],promesas:[],
-         dias:{},entradas:{},semanas:{},rutina:null,tumbas:{},ultimaExport:0,verReglas:1,umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
+         dias:{},entradas:{},semanas:{},rutina:null,tumbas:{},cols:[],treguas:[],portadas:{},ultimaExport:0,verReglas:1,umbral:100,borrar:'',tema:'claro',visto:0,metas:{agua:8,comida:3,hora:'23:30'}};
 function completar(o){ o=o||{}; Object.keys(DEF).forEach(function(k){ if(o[k]===undefined) o[k]=DEF[k]; });
   if(!o.metas) o.metas=DEF.metas; return o; }
 
@@ -858,6 +880,37 @@ function fusionar(local, remoto){
   });
   r.entradas=ee;
   r.semanas=Object.assign({}, r.semanas||{}, l.semanas||{});
+  r.portadas=Object.assign({}, r.portadas||{}, l.portadas||{});
+
+  /* treguas: se unen por identificador; gana la que tenga fin apuntado */
+  var tg=[], vt={};
+  [r.treguas||[], l.treguas||[]].forEach(function(src){
+    src.forEach(function(t){
+      if(enterrado('tre|'+t.i, tt)) return;
+      if(vt[t.i]===undefined){ vt[t.i]=tg.length; tg.push(Object.assign({},t)); }
+      else { var y=tg[vt[t.i]]; if(t.h && !y.h) y.h=t.h; }
+    });
+  });
+  r.treguas=tg;
+
+  /* colecciones: unión por identificador, y dentro, unión de elementos */
+  var cc=[], vc={};
+  [r.cols||[], l.cols||[]].forEach(function(src){
+    src.forEach(function(c){
+      if(enterrado('col|'+c.i, tt)) return;
+      if(vc[c.i]===undefined){ vc[c.i]=cc.length; cc.push({i:c.i,n:c.n,f:c.f,it:(c.it||[]).slice()}); }
+      else {
+        var y=cc[vc[c.i]];
+        (c.it||[]).forEach(function(it){
+          var z=y.it.filter(function(w){ return w.i===it.i; })[0];
+          if(!z) y.it.push(Object.assign({},it));
+          else if(it.h) z.h=1;
+        });
+      }
+    });
+  });
+  cc.forEach(function(c){ c.it=(c.it||[]).filter(function(it){ return !enterrado('cit|'+it.i, tt); }); });
+  r.cols=cc;
   r.hist=unir(l.hist, r.hist, function(i){ return i.fecha+'|'+i.texto; });
 
   // la cosa del día: gana la de fecha más reciente; a igualdad, la marcada
@@ -1133,6 +1186,8 @@ function consejo(){
              : 'Día por venir. Apunta aquí lo que ya sepas: los anillos se marcan cuando llegue.',
             'var(--ink3)'];
   }
+  if(enTregua(fechaVista))
+    return ['Tregua. Los anillos siguen ahí por si te apetece, pero este día no cuenta ni a favor ni en contra.','var(--ink3)'];
   if(!esHoy()){
     if(c===5) return ['Los cinco. Día redondo.','var(--mov)'];
     if(c>=3)  return ['Día bueno. Ya cuenta.','var(--mov)'];
@@ -1223,7 +1278,11 @@ function pintarAnillos(){
   document.getElementById('ayer').textContent=compAyer();
 
   // contador + semana
-  document.getElementById('numBuenos').textContent=totalBuenos();
+  var nb=document.getElementById('numBuenos'), tot=String(totalBuenos());
+  if(nb.textContent && nb.textContent!==tot){
+    nb.classList.remove('roll'); void nb.offsetWidth; nb.classList.add('roll');
+  }
+  nb.textContent=tot;
   var D=['L','M','X','J','V','S','D'], hoy=new Date(hoyISO()+'T12:00:00');
   var lunes=new Date(hoy); lunes.setDate(lunes.getDate()-((hoy.getDay()+6)%7));
   var s='';
@@ -1359,6 +1418,8 @@ function pintarCompra(){
   if(el) el.classList.toggle('hidden', listaActiva!=='espera');
   var a=document.getElementById('archivoCard');
   if(a) a.classList.toggle('hidden', listaActiva!=='archivo');
+  var c=document.getElementById('colsCard');
+  if(c) c.classList.toggle('hidden', listaActiva!=='cols');
 }
 
 function pintarListas(){
@@ -1366,8 +1427,10 @@ function pintarListas(){
     b.classList.toggle('on', b.dataset.l===listaActiva); });
   pintarCompra();
 
-  var arch = listaActiva==='archivo';
+  var arch = listaActiva==='archivo', mias = listaActiva==='cols';
   document.getElementById('archivoCard').classList.toggle('hidden', !arch);
+  document.getElementById('colsCard').classList.toggle('hidden', !mias);
+  if(mias){ document.getElementById('listasBody').innerHTML=''; pintarCols(); return; }
   if(arch){ document.getElementById('listasBody').innerHTML=''; pintarArchivo(); return; }
 
   document.getElementById('listasBody').innerHTML = GRUPOS[listaActiva].map(function(g){
@@ -1414,11 +1477,256 @@ function deshacer(){
   if(!borrado) return;
   var t=tumbas();
   if(borrado.k==='__ent'){ delete t['ap|'+borrado.o.i]; ents(borrado.f).splice(borrado.i,0,borrado.o); }
+  else if(borrado.k==='__col'){ delete t['col|'+borrado.o.i]; cols().splice(borrado.i,0,borrado.o); }
+  else if(borrado.k==='__cit'){ var c=colDe(borrado.c);
+    if(c){ delete t['cit|'+borrado.o.i]; c.it.splice(borrado.i,0,borrado.o); } }
   else { delete t[borrado.o.t+'|'+borrado.o.f]; S[borrado.k].splice(borrado.i,0,borrado.o); }
   borrado=null; persist(); render(); ocultarToast();
 }
 function tog(k,i){ S[k][i].hecho=!S[k][i].hecho; persist(); render(); }
 
+
+
+/* ==========================================================================
+   Colecciones · listas propias que no son ni días ni tareas con fecha
+   {i:id, n:nombre, f:fecha, it:[{i:id, x:texto, h:0|1, f:fecha}]}
+   ========================================================================== */
+function cols(){ if(!S.cols) S.cols=[]; return S.cols; }
+function colDe(id){ return cols().filter(function(c){ return c.i===id; })[0]; }
+var SUGE=['Libros','Películas','Regalos','Arreglos de casa','Herramientas que faltan','Sitios a los que ir'];
+
+function colNueva(nombre){
+  var e=document.getElementById('colNueva');
+  var n=(nombre!==undefined && nombre!=='' ? String(nombre) : (e? e.value : '')).trim();
+  if(!n) return;
+  var c={i:nuevoId(), n:n, f:hoyISO(), it:[]};
+  cols().push(c);
+  if(e) e.value='';
+  persist(); render();
+  avisar('Lista «'+n+'» creada.');
+  setTimeout(function(){ var i=document.getElementById('ci_'+c.i); if(i) i.focus(); }, 60);
+}
+function colBorrar(id){
+  var ix=-1; cols().forEach(function(c,k){ if(c.i===id) ix=k; });
+  if(ix<0) return;
+  var c=cols()[ix];
+  borrado={k:'__col', i:ix, o:c};
+  enterrar('col|'+id);
+  cols().splice(ix,1); persist(); render();
+  avisar('Lista «'+c.n+'» borrada.', true);
+}
+function colAdd(id){
+  var c=colDe(id); if(!c) return;
+  var e=document.getElementById('ci_'+id); if(!e) return;
+  var x=e.value.trim(); if(!x) return;
+  c.it.push({i:nuevoId(), x:x, h:0, f:hoyISO()});
+  e.value=''; persist(); render();
+  setTimeout(function(){ var i=document.getElementById('ci_'+id); if(i) i.focus(); }, 30);
+}
+function colTog(id, it){
+  var c=colDe(id); if(!c) return;
+  var o=c.it.filter(function(z){ return z.i===it; })[0]; if(!o) return;
+  o.h=o.h?0:1; persist(); render();
+}
+function colDel(id, it){
+  var c=colDe(id); if(!c) return;
+  var ix=-1; c.it.forEach(function(z,k){ if(z.i===it) ix=k; });
+  if(ix<0) return;
+  borrado={k:'__cit', i:ix, o:c.it[ix], c:id};
+  enterrar('cit|'+it);
+  c.it.splice(ix,1); persist(); render();
+  avisar('Borrado.', true);
+}
+function colOrden(id, d){
+  var ix=-1; cols().forEach(function(c,k){ if(c.i===id) ix=k; });
+  var j=ix+d; if(ix<0 || j<0 || j>=cols().length) return;
+  var t=cols()[ix]; cols()[ix]=cols()[j]; cols()[j]=t;
+  persist(); render();
+}
+
+function pintarCols(){
+  var box=document.getElementById('colsCard'); if(!box) return;
+  var cs=cols();
+
+  var alta='<h2>Mis listas'+(cs.length?' <span class="der">'+cs.length+'</span>':'')+'</h2>'+
+    '<div class="card"><div class="row">'+
+      '<input type="text" id="colNueva" class="grow" placeholder="Nombre de la lista" '+
+      'enterkeyhint="done" autocomplete="off">'+
+      '<button class="btn sm" data-act="colNueva()">Crear</button></div>'+
+    (cs.length? '' :
+      '<div class="suge">'+SUGE.map(function(n){
+        return '<button class="chip" data-act="colNueva('+q(n)+')">'+esc(n)+'</button>'; }).join('')+'</div>'+
+      '<div class="tiny" style="margin-top:12px">Aquí no hay anillos, ni fechas, ni rachas. '+
+      'Es el sitio de lo que no es un día: lo que quieres leer, lo que falta en casa, lo que le debes a alguien.</div>')+
+    '</div>';
+
+  var cuerpo = cs.map(function(c,ix){
+    var tot=c.it.length, hechos=c.it.filter(function(z){ return z.h; }).length;
+    var filas = tot ? c.it.map(function(z){
+        return '<li>'+
+          '<div class="chk '+(z.h?'on':'')+'" data-act="colTog('+q(c.i)+','+q(z.i)+')">'+(z.h?'✓':'')+'</div>'+
+          '<div class="grow '+(z.h?'done':'')+'">'+esc(z.x)+'</div>'+
+          '<button class="x" data-act="colDel('+q(c.i)+','+q(z.i)+')" aria-label="Borrar">×</button></li>';
+      }).join('')
+      : '<li><span class="empty">Vacía. Escribe arriba y dale a añadir.</span></li>';
+
+    return '<h2>'+esc(c.n)+' <span class="der">'+(tot? hechos+'/'+tot : '')+'</span></h2>'+
+      '<div class="card">'+
+        '<div class="row"><input type="text" id="ci_'+c.i+'" class="grow" placeholder="Añadir a '+esc(c.n).toLowerCase()+'" '+
+          'enterkeyhint="done" autocomplete="off">'+
+          '<button class="btn sm" data-act="colAdd('+q(c.i)+')">Añadir</button></div>'+
+        '<ul class="list">'+filas+'</ul>'+
+        '<div class="colv">'+
+          (ix>0? '<button class="btnx" data-act="colOrden('+q(c.i)+',-1)">↑ subir</button>':'')+
+          (ix<cs.length-1? '<button class="btnx" data-act="colOrden('+q(c.i)+',1)">↓ bajar</button>':'')+
+          '<span class="grow"></span>'+
+          '<button class="btnx" data-act="colBorrar('+q(c.i)+')">Borrar lista</button>'+
+        '</div>'+
+      '</div>';
+  }).join('');
+
+  box.innerHTML = alta + cuerpo;
+}
+
+/* ==========================================================================
+   Tregua · días que no cuentan ni a favor ni en contra
+   ========================================================================== */
+function treguas(){ if(!S.treguas) S.treguas=[]; return S.treguas; }
+function treguaActiva(){ return treguas().filter(function(t){ return !t.h; })[0]; }
+function enTregua(f){
+  return treguas().some(function(t){ return f>=t.d && (t.h? f<=t.h : f<=hoyISO()); });
+}
+function treguaEmpezar(){
+  if(treguaActiva()) return;
+  treguas().push({i:nuevoId(), d:hoyISO(), h:null});
+  persist(); render();
+  avisar('Tregua empezada. Estos días no rompen nada.');
+}
+function treguaTerminar(){
+  var t=treguaActiva(); if(!t) return;
+  t.h=hoyISO(); persist(); render();
+  avisar('Tregua terminada. Seguimos.');
+}
+function treguaBorrar(id){
+  var ix=-1; treguas().forEach(function(t,k){ if(t.i===id) ix=k; });
+  if(ix<0) return;
+  enterrar('tre|'+id);
+  treguas().splice(ix,1); persist(); render();
+}
+function pintarTregua(){
+  var box=document.getElementById('treguaCard'); if(!box) return;
+  var t=treguaActiva();
+  var pasadas=treguas().filter(function(x){ return x.h; }).slice(-3).reverse();
+  box.innerHTML =
+    (t ? '<div class="row between" style="margin-bottom:10px">'+
+           '<span class="muted">En tregua desde el '+fmt(t.d)+'</span>'+
+           '<button class="btn sm" data-act="treguaTerminar()">Terminar</button></div>'+
+         '<div class="tiny">Mientras dure, los días no cuentan como rojos: quedan grises en el mapa y la racha no se rompe.</div>'
+       : '<div class="row between" style="margin-bottom:10px">'+
+           '<span class="muted">Vacaciones, gripe, viaje</span>'+
+           '<button class="btn sm" data-act="treguaEmpezar()">Empezar tregua</button></div>'+
+         '<div class="tiny">Se marca desde hoy y se termina cuando quieras. No es blandura: es evitar el «ya la he roto, para qué seguir», que es lo que hace abandonar estas cosas.</div>') +
+    (pasadas.length? '<div class="tiny" style="margin-top:12px">Anteriores: '+
+       pasadas.map(function(x){ return fmt(x.d)+'–'+fmt(x.h); }).join(' · ')+'</div>' : '');
+}
+
+/* días seguidos sin dos rojos consecutivos: fallar un día es normal, dos es tendencia */
+function sinDobleRojo(){
+  var ks=Object.keys(S.dias).sort();
+  if(!ks.length) return 0;
+  var ini=ks[0], n=0, malo=false;
+  for(var i=1;i<800;i++){
+    var f=menos(i);
+    if(f<ini) break;
+    if(enTregua(f)){ n++; continue; }
+    var b = S.dias[f] && esBueno(S.dias[f]);
+    if(!b){ if(malo){ n--; break; } malo=true; }
+    else malo=false;
+    n++;
+  }
+  return Math.max(0,n);
+}
+
+/* ==========================================================================
+   Portada del mes · una línea, escrita a mano, que dentro de un año vale
+   más que las estadísticas
+   ========================================================================== */
+function portadas(){ if(!S.portadas) S.portadas={}; return S.portadas; }
+function guardarPortada(){
+  var e=document.getElementById('portTxt'); if(!e) return;
+  var k=fechaVista.slice(0,7), v=e.value.trim();
+  if(v) portadas()[k]=v; else delete portadas()[k];
+  persist();
+}
+function pintarPortada(){
+  var box=document.getElementById('portadaMes'); if(!box) return;
+  var base=new Date(fechaVista+'T12:00:00');
+  var k=fechaVista.slice(0,7);
+  var ant=new Date(base.getFullYear(), base.getMonth()-1, 1);
+  var kAnt=ant.getFullYear()+'-'+String(ant.getMonth()+1).padStart(2,'0');
+  var bAnt=0, dAnt=0;
+  Object.keys(S.dias).forEach(function(f){
+    if(f.slice(0,7)!==kAnt) return;
+    dAnt++; if(esBueno(S.dias[f])) bAnt++;
+  });
+  var lineaAnt = dAnt
+    ? mayus(MESES_L[ant.getMonth()])+' se cerró con '+bAnt+(bAnt===1?' día bueno':' días buenos')+'.'
+    : 'Del mes anterior no hay nada apuntado todavía.';
+  var guardada = portadas()[kAnt];
+
+  box.innerHTML =
+    '<div class="portmes">'+mayus(MESES_L[base.getMonth()])+
+      '<span>'+base.getFullYear()+'</span></div>'+
+    '<div class="tiny">'+lineaAnt+(guardada? ' · «'+esc(guardada)+'»' : '')+'</div>'+
+    '<div class="tiny" style="margin-top:16px">Una línea de '+MESES_L[base.getMonth()]+'</div>'+
+    '<textarea id="portTxt" rows="2" placeholder="Lo que recordarás de este mes" '+
+      'data-chg="guardarPortada()">'+esc(portadas()[k]||'')+'</textarea>';
+}
+
+/* ==========================================================================
+   Atajos · abrir la app con una acción ya hecha
+   ========================================================================== */
+function pintarAtajos(){
+  var box=document.getElementById('atajosCard'); if(!box) return;
+  var base=location.origin+location.pathname;
+  var filas=[['?a=agua','suma un vaso'],['?a=zero','cierra el Zero'],
+             ['?a=apunte&t=TEXTO','apunta una tarea de hoy'],['?a=nota&t=TEXTO','apunta una nota']];
+  box.innerHTML='<p class="tiny" style="margin:0 0 12px">En Atajos del iPhone: «Abrir URL» con una de estas. '+
+    'Puesto en la pantalla de inicio, en el doble toque atrás o dictado a Siri, apuntar cuesta un gesto.</p>'+
+    filas.map(function(f,ix){
+      return '<div class="row between" style="margin-bottom:9px;gap:10px">'+
+        '<span class="grow"><span class="muted">'+f[1]+'</span>'+
+        '<br><span class="tiny" style="word-break:break-all">'+esc(base+f[0])+'</span></span>'+
+        '<button class="btn sm" data-act="copiarAtajo('+ix+')">Copiar</button></div>';
+    }).join('')+
+    '<div class="tiny" style="margin-top:10px">iOS abrirá Safari y no la app instalada: es la misma cuenta y los datos van al servidor, pero el aspecto será el del navegador.</div>';
+}
+function copiarAtajo(ix){
+  var base=location.origin+location.pathname;
+  var u=base+['?a=agua','?a=zero','?a=apunte&t=TEXTO','?a=nota&t=TEXTO'][ix];
+  var ok=function(){ avisar('Copiado. Pégalo en un Atajo del iPhone.'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(u).then(ok, function(){ avisar('No he podido copiarlo. Selecciónalo a mano.'); });
+  } else {
+    try{ var t=document.createElement('textarea'); t.value=u; document.body.appendChild(t);
+      t.select(); document.execCommand('copy'); document.body.removeChild(t); ok(); }
+    catch(e){ avisar('No he podido copiarlo. Selecciónalo a mano.'); }
+  }
+}
+function accionDeUrl(){
+  try{
+    var p=new URLSearchParams(location.search), a=p.get('a');
+    if(!a) return;
+    var t=(p.get('t')||'').trim();
+    if(a==='agua'){ anillo('agua',1); avisar('Un vaso más. Van '+(leer(hoyISO()).agua||0)+'.'); }
+    else if(a==='zero'){ var d=dia(hoyISO()); d.zero=1; animar='zero'; persist(); render(); avisar('Zero cerrado.'); }
+    else if((a==='apunte'||a==='nota') && t){
+      ents(hoyISO()).push({i:nuevoId(), t:(a==='nota'?'n':'t'), x:t, e:0, v:0});
+      persist(); render(); avisar('Apuntado en hoy.');
+    }
+    if(history.replaceState) history.replaceState(null,'',location.pathname);
+  }catch(e){}
+}
 
 /* ---------------- archivo: todo lo apuntado, para siempre ---------------- */
 var filArq='abiertas';
@@ -1507,7 +1815,8 @@ function calc(){
   var q=['¿Funciona sin conexión?','¿Se puede abrir y reparar?','¿Seguirá sirviendo en diez años?'];
   var si=TRES.filter(Boolean).length;
   document.getElementById('calcAcc').innerHTML=
-    '<div class="tiny" style="margin:18px 0 8px">Umbral de entrada · 2.1 — hacen falta dos síes</div>'+
+    '<div class="tiny" style="margin:18px 0 8px"><span class="doc">Umbral de entrada · 2.1 — </span>'+
+      'hacen falta dos síes</div>'+
     q.map(function(t,i){
       return '<div class="row" style="padding:7px 0"><div class="chk '+(TRES[i]?'on':'')+
         '" data-act="preg('+i+')">'+(TRES[i]?'✓':'')+'</div><span class="grow muted">'+t+'</span></div>';
@@ -1622,6 +1931,7 @@ function rachas(){
   var act=0;
   for(var i=arranque;i<800;i++){
     var f=menos(i);
+    if(enTregua(f)) continue;                 // la tregua no suma ni rompe
     if(S.dias[f] && esBueno(S.dias[f])) act++; else break;
   }
   var fechas=Object.keys(S.dias).filter(function(f){ return esBueno(S.dias[f]); }).sort();
@@ -1644,6 +1954,9 @@ function renderAvance(){
   var mes=hoyISO().slice(0,7), nm=0;
   for(var k in S.dias){ if(k.slice(0,7)===mes && esBueno(S.dias[k])) nm++; }
   document.getElementById('avMes').textContent=nm;
+  document.getElementById('avDoble').textContent=sinDobleRojo();
+  var red=0; for(var kk in S.dias){ if(completos(S.dias[kk])===5) red++; }
+  document.getElementById('avRedondos').textContent=red;
 
   var fin=new Date(hoyISO()+'T12:00:00'), ini=new Date(fin);
   ini.setDate(ini.getDate()-363);
@@ -1652,6 +1965,7 @@ function renderAvance(){
   while(cur<=fin){
     var f=iso(cur), d=S.dias[f], n=d?completos(d):0;
     var cls = n>=4?'b3' : n===3?'b2' : n>0?'b1' : '';
+    if(!cls && enTregua(f)) cls='tre';
     celdas+='<i class="'+cls+(f===hoyISO()?' hoy':'')+'"></i>';
     filas++; if(filas%7===1) cols.push(cur.getMonth());
     cur.setDate(cur.getDate()+1);
@@ -1671,14 +1985,15 @@ function renderAvance(){
 
   var html='', flojo=null, peor=101;
   ANILLOS.forEach(function(a){
-    var barras='', hechos=0, hay=0;
+    var barras='', hechos=0, hay=0, tregDias=0;
     for(var i=29;i>=0;i--){
       var f=menos(i), d=S.dias[f], v=d?(d[a.k]||0):0, m=a.meta(), p=Math.min(1,v/m);
+      if(enTregua(f) && v===0){ barras+='<span style="height:4px;opacity:.25"></span>'; tregDias++; continue; }
       if(v>0) hay++; if(p>=1) hechos++;
       barras+='<span style="height:'+Math.round(4+p*22)+'px'+(p>0?';background:'+a.col:'')+
         (p>=1?'':';opacity:'+(.35+p*.5))+'"></span>';
     }
-    var pc=Math.round(hechos/30*100);
+    var pc=Math.round(hechos/Math.max(1,30-tregDias)*100);
     if(hay>0 && pc<peor){ peor=pc; flojo=a; }
     html+='<div class="filaR"><span class="pt" style="background:'+a.col+'"></span>'+
       '<span class="nm">'+a.lb+'</span><span class="spark">'+barras+'</span>'+
@@ -1910,7 +2225,7 @@ function hojaSesion(f){
       }).join('') : '<div class="empty">Ese día no tiene sesión. Edítala en Más → Rutina.</div>')+
     '<button class="op" data-act="togMin('+qq(f)+')" style="margin-top:6px">'+
       '<span class="chk '+(d.min?'on':'')+'">'+(d.min?'✓':'')+'</span>'+
-      '<span>Mínimo: veinte minutos andando<div class="tiny">7.2 · lo que se cumple también en un mal día</div></span></button>'+
+      '<span>Mínimo: veinte minutos andando<div class="tiny doc">7.2 · lo que se cumple también en un mal día</div></span></button>'+
     '<div class="note" style="margin:14px 0 4px'+(movCierra(f)?';border-color:var(--mov);color:var(--mov)':'')+'">'+
       (movCierra(f)? 'Cerrado.'
         : t? hechos+' de '+t+'. Con '+necesita+' cierra, o con el mínimo.'
@@ -2202,12 +2517,12 @@ function pintarSemana(){
 
   // intención de la semana
   document.getElementById('semIntencion').innerHTML=
-    '<div class="tiny" style="margin-bottom:2px">Lo que importa · semana '+numSemana(lun)+
+    '<div class="tiny" style="margin-bottom:2px">Lo que importa esta semana · semana '+numSemana(lun)+
       ' · '+rangoSemana(lun)+'</div>'+
     '<input type="text" id="intTxt" class="cosa" placeholder="Una sola cosa, también aquí" '+
       'value="'+esc(S.semanas[cl]||'')+'" enterkeyhint="done">'+
     '<div class="row" style="margin-top:12px"><button class="btn sm" data-act="guardarIntencion()">Guardar</button>'+
-    '<span class="tiny grow">Del 4.6: lo que no sirve a esto ni a lo que ya has decidido que importa, es dispersión.</span></div>';
+    '<span class="tiny grow doc">Del 4.6: lo que no sirve a esto ni a lo que ya has decidido que importa, es dispersión.</span></div>';
 
   // migración: tareas abiertas de días pasados
   var abiertas=[];
@@ -2229,8 +2544,8 @@ function pintarSemana(){
       }).join('')+
       (abiertas.length>20? '<div class="tiny" style="padding:10px 0">Y '+(abiertas.length-20)+
         ' más, todas en Listas → Diario.</div>':'')+
-      '<div class="note" style="margin-bottom:0">Por cada una: se hace, se mueve con fecha, o se cae. '+
-      'Dejarla ahí sin decidir no es esperar, es cargar con ella (5.2).</div>';
+      '<div class="note" style="margin-bottom:0">Por cada una: se hace, se mueve con fecha, o se cae.'+
+      (S.verReglas!==0? ' Dejarla ahí sin decidir no es esperar, es cargar con ella (5.2).':'')+'</div>';
   }
 
   // los siete días
@@ -2308,6 +2623,7 @@ function pintarMes(){
     var cls = n>=4?'b3' : n===3?'b2' : n>0?'b1' : '';
     if(f===hoyISO()) cls+=' hoy';
     if(f>hoyISO()) cls+=' porvenir';
+    if(!n && enTregua(f)) cls+=' tre';
     var arr=leerEnts(f);
     var hayEv=arr.some(function(a){ return a.t==='e'; });
     var hayTar=arr.some(function(a){ return a.t==='t' && a.e===0; });
@@ -2677,6 +2993,9 @@ function seguir(){
   renderAvance();
 
   pintarRutina();
+  pintarTregua();
+  pintarAtajos();
+  if(vista==='mes') pintarPortada();
   pintarAvisoExport();
   aplicarVerReglas();
   document.getElementById('mAgua').value=S.metas.agua;
@@ -2698,6 +3017,8 @@ document.addEventListener('keydown', function(e){
   var id=(e.target||{}).id||'';
   if(id==='nuevaCosa'){ e.preventDefault(); fijarCosa(); }
   if(id.indexOf('in_')===0){ e.preventDefault(); add(id.slice(3)); }
+  if(id.indexOf('ci_')===0){ e.preventDefault(); colAdd(id.slice(3)); }
+  if(id==='colNueva'){ e.preventDefault(); colNueva(); }
   if(id==='apIn'){ e.preventDefault(); apAdd(); }
   if(id==='intTxt'){ e.preventDefault(); guardarIntencion(); }
   if(id==='cvac'){ e.preventDefault(); vaciarCabeza(); }
@@ -2722,6 +3043,7 @@ pintarSync();
 calc();
 if(!S.visto){ document.getElementById('hola').classList.remove('hidden'); pintarHola(); }
 arrancarNube();
+accionDeUrl();
 
 </script>
 </body>
